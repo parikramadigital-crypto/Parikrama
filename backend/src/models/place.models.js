@@ -1,3 +1,7 @@
+// use tags or keys for search engines and categories.
+
+
+
 import mongoose from "mongoose";
 
 const placeSchema = new mongoose.Schema(
