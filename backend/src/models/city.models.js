@@ -7,7 +7,7 @@ const citySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "State",
       required: true,
-    },
+    }, 
     location: {
       type: {
         type: String,

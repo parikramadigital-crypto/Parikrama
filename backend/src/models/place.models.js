@@ -1,7 +1,5 @@
 // use tags or keys for search engines and categories.
 
-
-
 import mongoose from "mongoose";
 
 const placeSchema = new mongoose.Schema(
@@ -30,6 +28,7 @@ const placeSchema = new mongoose.Schema(
         enum: ["Point"],
         default: "Point",
       },
+      // the location coordinates are stored in indexes [0]:longitude and [1]:latitude
       coordinates: {
         type: [Number], // [lng, lat]
         required: true,
