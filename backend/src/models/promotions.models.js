@@ -3,6 +3,11 @@ import mongoose from "mongoose";
 const promotionSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    priority: {
+      type: String,
+      enum: ["Min", "Mid", "Max"],
+      default: "Min",
+    },
 
     images: [
       {

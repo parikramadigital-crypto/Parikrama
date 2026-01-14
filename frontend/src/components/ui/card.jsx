@@ -9,12 +9,12 @@ const Card = ({ name, city, state, category, description, lat, long }) => {
     window.open(url, "_blank");
   };
   return (
-    <div className="bg-neutral-200 w-full px-10 py-5 flex justify-between items-center rounded-xl ">
+    <div className="bg-neutral-200 w-full px-10 py-5 flex justify-between items-center rounded-xl text-sm">
       <div>
-        <h1 className="text-2xl tracking-wide uppercase">{name}</h1>
-        <h1>
+        <h1 className="text-2xl tracking-wide uppercase">{(name)}</h1>
+        <h2>
           <span>{city}</span>,<span>{state}</span>
-        </h1>
+        </h2>
         <h1>
           <strong>Category: </strong>
           {category}

@@ -5,10 +5,13 @@ import { CiSearch } from "react-icons/ci";
 import { useNavigate, useParams } from "react-router-dom";
 import { FetchData } from "../../utils/FetchFromApi";
 import { useEffect } from "react";
-import Card from "./card";
 import LoadingUI from "../../components/LoadingUI";
-import RandomImageSlider from "./RandomImageSlider";
-import { galleryBannerImages } from "../../constants/Constants";
+import {
+  galleryBannerImages,
+  galleryBannerImages2,
+} from "../../constants/Constants";
+import RandomImageSlider from "../../components/ui/RandomImageSlider";
+import Card from "../../components/ui/card";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
@@ -49,14 +52,18 @@ const Hero = ({ stopLoading, startLoading }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="w-[90%]">
-        <RandomImageSlider images={galleryBannerImages} />
+        <RandomImageSlider
+          images={galleryBannerImages}
+          className="lg:h-[300px] h-[200px]"
+        />
+        {/* <img
+          src="https://ik.imagekit.io/pz8qfunss/Gallery/Gallery_Banner/create%20an%20image%20with%20a%20tag%20_Our%20new%20Collections_%20with%20adding%20jewelrries%20in%20the%20background%20write%20the%20text%20on%20the%20left%20or%20right%20side%20of%20the%20image%20and%20make%20it%20look%20asthetic.jpg?updatedAt=1751825753408"
+          className="object-cover h-full w-full "
+        /> */}
       </div>
       <div className="flex  justify-center py-5 px-2">
         <div className="w-96 h-96 bg-neutral-500 rounded-xl overflow-hidden">
-          <img
-            src="https://ik.imagekit.io/pz8qfunss/Gallery/Gallery_Banner/create%20an%20image%20with%20a%20tag%20_Our%20new%20Collections_%20with%20adding%20jewelrries%20in%20the%20background%20write%20the%20text%20on%20the%20left%20or%20right%20side%20of%20the%20image%20and%20make%20it%20look%20asthetic.jpg?updatedAt=1751825753408"
-            className="object-cover h-full w-full "
-          />
+          <RandomImageSlider images={galleryBannerImages} />
         </div>
         <div className="p-4">
           <div className="flex justify-center items-center w-full">
@@ -75,7 +82,7 @@ const Hero = ({ stopLoading, startLoading }) => {
             </button>
           </div>
           {data?.length > 0 ? (
-            <div className="flex gap-2 flex-col w-full ">
+            <div className="flex gap-2 flex-col w-[650px]">
               {getRandomItems(data || [], 8).map((places) => (
                 <div key={places._id || places.id}>
                   <Card
@@ -95,10 +102,7 @@ const Hero = ({ stopLoading, startLoading }) => {
           )}
         </div>
         <div className="w-96 h-96 bg-neutral-500 rounded-xl overflow-hidden">
-          <img
-            src="https://ik.imagekit.io/pz8qfunss/Gallery/Gallery_Banner/create%20an%20image%20with%20a%20tag%20_Our%20new%20Collections_%20with%20adding%20ethnic%20wears%20in%20the%20background%20write%20the%20text%20on%20the%20right%20side%20of%20the%20image%20and%20make%20it%20look%20asthetic.jpg?updatedAt=1751825753607"
-            className="object-cover h-full w-full "
-          />
+          <RandomImageSlider images={galleryBannerImages2} />
         </div>
       </div>
     </div>

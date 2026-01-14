@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-const RandomImageSlider = ({ images }) => {
+const RandomImageSlider = ({ images, className = "", speed }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const intervalRef = useRef(null);
@@ -19,7 +19,7 @@ const RandomImageSlider = ({ images }) => {
   const startSlider = () => {
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prev) => getRandomIndex(prev));
-    }, 5000);
+    }, speed || 5000);
   };
 
   const stopSlider = () => {
@@ -45,7 +45,7 @@ const RandomImageSlider = ({ images }) => {
 
   return (
     <div
-      className="relative w-full mx-auto lg:h-[300px] h-[200px] overflow-hidden rounded-xl shadow-lg"
+      className={`relative w-full mx-auto h-full overflow-hidden rounded-xl shadow-lg ${className}`}
       onMouseEnter={() => {
         setIsHovered(true);
         stopSlider();
