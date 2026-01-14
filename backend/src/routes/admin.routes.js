@@ -9,6 +9,7 @@ import {
   regenerateAdminRefreshToken,
 } from "../controllers/admin.controllers.js";
 import { deletePromotion, makePromotion, updatePromotionImages } from "../controllers/promotion.controllers.js";
+import { upload } from "../middlewares/multer.middlewares.js";
 
 const router = Router();
 
