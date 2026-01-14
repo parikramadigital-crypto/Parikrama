@@ -7,8 +7,13 @@ import {
   registerAdmin,
   loginAdmin,
   regenerateAdminRefreshToken,
+  dashboardData,
 } from "../controllers/admin.controllers.js";
-import { deletePromotion, makePromotion, updatePromotionImages } from "../controllers/promotion.controllers.js";
+import {
+  deletePromotion,
+  makePromotion,
+  updatePromotionImages,
+} from "../controllers/promotion.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
 const router = Router();
@@ -16,7 +21,8 @@ const router = Router();
 /* Admin dashboard data */
 router.route("/register").post(registerAdmin);
 router.route("/login").post(loginAdmin);
-router.route("/refresh-tokens").post(regenerateAdminRefreshToken);
+router.route("/auth/refresh-tokens").post(regenerateAdminRefreshToken);
+router.route("/dashboard/data").get(dashboardData);
 
 router.route("/states").get(getAllStates);
 router.route("/cities").get(getAllCities);
@@ -29,7 +35,9 @@ router
 router
   .route("/promotions/modify/:promotionId")
   .post(VerifyUser, upload.array("images", 5), updatePromotionImages);
-router.route("/promotions/delete/:promotionId").delete(VerifyUser, deletePromotion);
+router
+  .route("/promotions/delete/:promotionId")
+  .delete(VerifyUser, deletePromotion);
 // router.route("/states").get(VerifyUser, getAllStates);
 // router.route("/cities").get(VerifyUser, getAllCities);
 // router.route("/places").get(VerifyUser, getAllPlaces);

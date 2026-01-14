@@ -1,12 +1,11 @@
 import { Place } from "../models/place.models.js";
+import { City } from "../models/city.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-
 //  * CREATE PLACE (SINGLE + BULK)
 export const createPlace = asyncHandler(async (req, res) => {
-
   /**
    * 🔹 BULK INSERT
    * Expected body:
@@ -46,13 +45,7 @@ export const createPlace = asyncHandler(async (req, res) => {
         entryFee,
       } = p;
 
-      if (
-        !name ||
-        !cityId ||
-        !stateId ||
-        lat == null ||
-        lng == null
-      ) {
+      if (!name || !cityId || !stateId || lat == null || lng == null) {
         throw new ApiError(
           400,
           "Each place must have name, cityId, stateId, lat, lng"
@@ -123,11 +116,8 @@ export const createPlace = asyncHandler(async (req, res) => {
     },
   });
 
-  res
-    .status(201)
-    .json(new ApiResponse(201, place, "Place created"));
+  res.status(201).json(new ApiResponse(201, place, "Place created"));
 });
-
 
 /**
  * GET ALL PLACES
@@ -144,12 +134,30 @@ export const getAllPlaces = asyncHandler(async (req, res) => {
  * GET PLACES BY CITY
  */
 export const getPlacesByCity = asyncHandler(async (req, res) => {
+  const { query } = req.params;
+
+  if (!query) {
+    throw new ApiError(400, "City name is required");
+  }
+
+  // 🔍 Find city by name (case-insensitive)
+  const city = await City.findOne({
+    name: { $regex: `^${query}$`, $options: "i" },
+  });
+
+  if (!city) {
+    throw new ApiError(404, "City not found");
+  }
+
+  // 📍 Find places for that city
   const places = await Place.find({
-    city: req.params.cityId,
+    city: city._id,
     isActive: true,
   }).populate("city state");
 
-  res.status(200).json(new ApiResponse(200, places));
+  res
+    .status(200)
+    .json(new ApiResponse(200, places, "Places fetched successfully"));
 });
 
 /**

@@ -15,6 +15,7 @@ const router = Router();
 router.route("/").get(getAllPlaces);
 router.route("/:id").get(getPlaceById);
 router.route("/city/:cityId").get(getPlacesByCity);
+router.route("/related-places/:query").get(getPlacesByCity);
 
 /* Admin routes */
 // router.route("/register-new-place").post(VerifyUser, createPlace);

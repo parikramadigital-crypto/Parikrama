@@ -4,10 +4,13 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/admin.models.js";
 import { generateAccessAndRefreshTokens } from "../utils/TokenGenerator.js";
 import Jwt from "jsonwebtoken";
+import { State } from "../models/state.models.js";
+import { City } from "../models/city.models.js";
+import { Place } from "../models/place.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
-  const token = req.body.RefreshToken;
+  const token = req.body.refreshToken;
 
   if (!token) throw new ApiError(401, "Unauthorized request");
 
@@ -31,14 +34,14 @@ const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
 
 const registerAdmin = asyncHandler(async (req, res, next) => {
   const { name, employeeId, email, phoneNumber, password } = req.body;
-//   const { adminId } = req.params;
-//   if (!adminId) {
-//     return new ApiError(400, "Invalid admin");
-//   }
-//   const validId = await Admin.findById(adminId);
-//   if (!validId) {
-//     return new ApiError(400, "Invalid admin");
-//   }
+  //   const { adminId } = req.params;
+  //   if (!adminId) {
+  //     return new ApiError(400, "Invalid admin");
+  //   }
+  //   const validId = await Admin.findById(adminId);
+  //   if (!validId) {
+  //     return new ApiError(400, "Invalid admin");
+  //   }
 
   // Validation
   if (!name || !employeeId || !email || !phoneNumber || !password) {
@@ -104,4 +107,23 @@ const loginAdmin = asyncHandler(async (req, res) => {
   );
 });
 
-export { loginAdmin, regenerateAdminRefreshToken, registerAdmin };
+const dashboardData = asyncHandler(async (req, res) => {
+  const state = await State.find();
+  const city = await City.find().populate("state");
+  const place = await Place.find().populate("city state");
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      state,
+      city,
+      place,
+    })
+  );
+});
+
+export {
+  loginAdmin,
+  regenerateAdminRefreshToken,
+  registerAdmin,
+  dashboardData,
+};
