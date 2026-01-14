@@ -23,26 +23,22 @@ const AdminLogin = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const res = await FetchData("admin/login", "post", formData);
+      console.log(res);
       if (res.data.success) {
         const { admin, tokens } = res.data.data;
 
         localStorage.setItem("AccessToken", tokens.AccessToken);
         localStorage.setItem("RefreshToken", tokens.RefreshToken);
-        localStorage.setItem("role", "Admin");
+        // localStorage.setItem("role", "Admin");
 
         dispatch(clearUser());
-        dispatch(
-          addUser({
-            user: admin,
-            role: "Admin",
-          })
-        );
+        dispatch(addUser(admin));
 
         navigate("/admin/dashboard");
       }
     } catch (err) {
-      // console.log(err);
-      setError(parseErrorMessage(err?.response?.data));
+      console.log(err);
+      // setError(parseErrorMessage(err?.response?.data));
     } finally {
       stopLoading();
     }

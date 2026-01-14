@@ -86,6 +86,7 @@ const Hero = ({ stopLoading, startLoading }) => {
               {getRandomItems(data || [], 8).map((places) => (
                 <div key={places._id || places.id}>
                   <Card
+                    placeId={places._id}
                     name={places.name}
                     city={places?.city?.name}
                     state={places?.state?.name}
