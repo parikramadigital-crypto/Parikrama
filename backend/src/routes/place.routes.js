@@ -8,6 +8,7 @@ import {
   updatePlace,
   deletePlace,
 } from "../controllers/place.controllers.js";
+import { upload } from "../middlewares/multer.middlewares.js";
 
 const router = Router();
 
@@ -19,7 +20,9 @@ router.route("/related-places/:query").get(getPlacesByCity);
 
 /* Admin routes */
 // router.route("/register-new-place").post(VerifyUser, createPlace);
-router.route("/register-new-place").post(createPlace);
+router
+  .route("/register-new-place/:adminId")
+  .post(upload.array("images", 5), createPlace);
 router.route("/:id").post(VerifyUser, updatePlace);
 router.route("/:id").delete(VerifyUser, deletePlace);
 

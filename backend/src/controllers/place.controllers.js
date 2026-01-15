@@ -3,27 +3,20 @@ import { City } from "../models/city.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { Admin } from "../models/admin.models.js";
+import { UploadImages } from "../utils/imageKit.io.js";
 
 //  * CREATE PLACE (SINGLE + BULK)
 export const createPlace = asyncHandler(async (req, res) => {
+  const { adminId } = req.params;
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    throw new ApiError(403, "Only admins can create places");
+  }
+
   /**
-   * 🔹 BULK INSERT
-   * Expected body:
-   * {
-   *   "places": [
-   *     {
-   *       "name": "...",
-   *       "cityId": "...",
-   *       "stateId": "...",
-   *       "category": "...",
-   *       "lat": 0,
-   *       "lng": 0,
-   *       "description": "...",
-   *       "averageTimeSpent": 90,
-   *       "entryFee": 0
-   *     }
-   *   ]
-   * }
+   * 🔹 BULK INSERT (NO IMAGES)
    */
   if (Array.isArray(req.body.places)) {
     const places = req.body.places;
@@ -43,6 +36,8 @@ export const createPlace = asyncHandler(async (req, res) => {
         description,
         averageTimeSpent,
         entryFee,
+        popularityScore,
+        bestTimeToVisit,
       } = p;
 
       if (!name || !cityId || !stateId || lat == null || lng == null) {
@@ -60,6 +55,9 @@ export const createPlace = asyncHandler(async (req, res) => {
         description: description || "",
         averageTimeSpent: averageTimeSpent || 60,
         entryFee: entryFee || 0,
+        popularityScore,
+        bestTimeToVisit,
+        images: [], // bulk has no images
         location: {
           type: "Point",
           coordinates: [lng, lat],
@@ -84,7 +82,7 @@ export const createPlace = asyncHandler(async (req, res) => {
   }
 
   /**
-   * 🔹 SINGLE INSERT
+   * 🔹 SINGLE INSERT (WITH IMAGES)
    */
   const {
     name,
@@ -96,10 +94,35 @@ export const createPlace = asyncHandler(async (req, res) => {
     description,
     averageTimeSpent,
     entryFee,
+    popularityScore,
+    bestTimeToVisit,
   } = req.body;
 
   if (!name || !cityId || !stateId || lat == null || lng == null) {
     throw new ApiError(400, "Required fields missing");
+  }
+
+  const images = req.files || [];
+
+  if (images.length > 5) {
+    throw new ApiError(400, "Maximum 5 images allowed per place");
+  }
+
+  const uploadedImages = [];
+
+  for (const img of images) {
+    const uploaded = await UploadImages(img.filename, {
+      folderStructure: `places/${name
+        .trim()
+        .replace(/\s+/g, "-")
+        .toLowerCase()}`,
+    });
+
+    uploadedImages.push({
+      url: uploaded.url,
+      fileId: uploaded.fileId,
+      altText: name,
+    });
   }
 
   const place = await Place.create({
@@ -110,13 +133,18 @@ export const createPlace = asyncHandler(async (req, res) => {
     description,
     averageTimeSpent,
     entryFee,
+    popularityScore,
+    bestTimeToVisit,
+    images: uploadedImages,
     location: {
       type: "Point",
       coordinates: [lng, lat],
     },
   });
 
-  res.status(201).json(new ApiResponse(201, place, "Place created"));
+  res
+    .status(201)
+    .json(new ApiResponse(201, place, "Place created successfully"));
 });
 
 /**
