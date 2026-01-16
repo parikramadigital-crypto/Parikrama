@@ -12,11 +12,11 @@ const router = Router();
 
 /* Public routes */
 router.route("/").get(getAllStates);
-router.route("/:id").get(getStateById);
+router.route("/state-by-id/:id").get(getStateById);
 
 /* Admin routes */
-router.route("/").post(VerifyUser, createState);
-router.route("/bulk").post( createState);
+router.route("/add/new/state/:adminId").post(createState);
+router.route("/bulk").post(createState);
 router.route("/:id").post(VerifyUser, updateState);
 router.route("/:id").delete(VerifyUser, deleteState);
 

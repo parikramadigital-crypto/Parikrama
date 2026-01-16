@@ -1,3 +1,6 @@
+import { Admin } from "../models/admin.models.js";
+import { City } from "../models/city.models.js";
+import { Place } from "../models/place.models.js";
 import { State } from "../models/state.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -7,6 +10,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
  * CREATE STATE
  */
 export const createState = asyncHandler(async (req, res) => {
+  const { adminId } = req.params;
   /**
    * CASE 1: BULK INSERT
    * Expected body:
@@ -58,7 +62,10 @@ export const createState = asyncHandler(async (req, res) => {
    * }
    */
   const { name, code } = req.body;
-
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    return new ApiError(403, "Only admins can create states");
+  }
   if (!name) throw new ApiError(400, "State name is required");
 
   const existing = await State.findOne({ name: name.trim() });
@@ -72,7 +79,6 @@ export const createState = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, state, "State created"));
 });
 
-
 /**
  * GET ALL STATES
  */
@@ -85,10 +91,27 @@ export const getAllStates = asyncHandler(async (req, res) => {
  * GET SINGLE STATE
  */
 export const getStateById = asyncHandler(async (req, res) => {
-  const state = await State.findById(req.params.id);
-  if (!state) throw new ApiError(404, "State not found");
+  const { id } = req.params;
 
-  res.status(200).json(new ApiResponse(200, state));
+  const state = await State.findById(id);
+  if (!state) {
+    throw new ApiError(404, "State not found");
+  }
+
+  const cities = await City.find({ state: id }).select("_id name location");
+  const places = await Place.find({ state: id }).populate("city state");
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        state,
+        cities,
+        places,
+      },
+      "State with cities fetched successfully"
+    )
+  );
 });
 
 /**

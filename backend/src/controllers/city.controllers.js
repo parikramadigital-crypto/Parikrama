@@ -1,3 +1,4 @@
+import { Admin } from "../models/admin.models.js";
 import { City } from "../models/city.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -7,7 +8,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
  * CREATE CITY (SINGLE + BULK)
  */
 export const createCity = asyncHandler(async (req, res) => {
-
+  const { adminId } = req.params;
   /**
    * 🔹 BULK INSERT
    * Expected body:
@@ -28,10 +29,7 @@ export const createCity = asyncHandler(async (req, res) => {
       const { name, stateId, lat, lng } = city;
 
       if (!name || !stateId || lat == null || lng == null) {
-        throw new ApiError(
-          400,
-          "Each city must have name, stateId, lat, lng"
-        );
+        throw new ApiError(400, "Each city must have name, stateId, lat, lng");
       }
 
       return {
@@ -63,6 +61,10 @@ export const createCity = asyncHandler(async (req, res) => {
   /**
    * 🔹 SINGLE INSERT (OLD BEHAVIOR)
    */
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    return new ApiError(403, "Only admins can create states");
+  }
   const { name, stateId, lat, lng } = req.body;
 
   if (!name || !stateId || lat == null || lng == null) {
@@ -78,11 +80,10 @@ export const createCity = asyncHandler(async (req, res) => {
     },
   });
 
-  res.status(201).json(
-    new ApiResponse(201, city, "City created")
-  );
+  res
+    .status(201)
+    .json(new ApiResponse(201, city, "City Registered successfully !"));
 });
-
 
 /**
  * GET ALL CITIES
