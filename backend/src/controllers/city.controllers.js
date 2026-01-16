@@ -1,5 +1,6 @@
 import { Admin } from "../models/admin.models.js";
 import { City } from "../models/city.models.js";
+import { Place } from "../models/place.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -132,8 +133,23 @@ export const updateCity = asyncHandler(async (req, res) => {
  * DELETE CITY
  */
 export const deleteCity = asyncHandler(async (req, res) => {
-  const deleted = await City.findByIdAndDelete(req.params.id);
-  if (!deleted) throw new ApiError(404, "City not found");
+  const { adminId, id: cityId } = req.params;
 
-  res.status(200).json(new ApiResponse(200, null, "City deleted"));
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    throw new ApiError(404, "Admin not found");
+  }
+
+  await Place.deleteMany({ city: cityId });
+
+  const deletedCity = await City.findByIdAndDelete(cityId);
+  if (!deletedCity) {
+    throw new ApiError(404, "City not found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, null, "City and related places deleted successfully")
+    );
 });

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FetchData } from "../../utils/FetchFromApi";
 import LoadingUI from "../../components/LoadingUI";
 import { PlaceCard } from "../../components/ui/PlaceCard";
 import Button from "../../components/Button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CurrentStateCity = ({ startLoading, stopLoading }) => {
   const { user } = useSelector((state) => state.auth);
@@ -12,31 +13,47 @@ const CurrentStateCity = ({ startLoading, stopLoading }) => {
   const [state, setState] = useState({});
   const [cities, setCities] = useState([]);
   const [places, setPlace] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const getState = async () => {
-      try {
-        startLoading();
-        const response = await FetchData(
-          `states/state-by-id/${stateId}`,
-          "get"
-        );
-        if (response.data.statusCode === 200) {
-          setState(response.data.data.state);
-          setCities(response.data.data.cities);
-          setPlace(response.data.data.places);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        stopLoading();
+  const getState = async () => {
+    try {
+      startLoading();
+      const response = await FetchData(`states/state-by-id/${stateId}`, "get");
+      if (response.data.statusCode === 200) {
+        setState(response.data.data.state);
+        setCities(response.data.data.cities);
+        setPlace(response.data.data.places);
       }
-    };
-
+    } catch (err) {
+      console.log(err);
+    } finally {
+      stopLoading();
+    }
+  };
+  useEffect(() => {
     getState();
   }, [user]);
 
+  const deleteCity = async ({ cityId }) => {
+    try {
+      startLoading();
+      const response = await FetchData(
+        `cities/delete-city/${user?._id}/${cityId}`,
+        "delete"
+      );
+      getState();
+      alert("City deleted successfully !");
+      navigate("/admin/dashboard");
+    } catch (err) {
+      console.log(err);
+      alert("Error in deleting city try again later.");
+    } finally {
+      stopLoading();
+    }
+  };
+
   const Table = ({ Text = "", TableData }) => {
+    const [popup, setPopup] = useState(false);
     const TableHeaders = ["City name", "Location", "Action"];
     return (
       <div className="mt-10 bg-gray-200 rounded-xl px-5 py-2">
@@ -70,8 +87,38 @@ const CurrentStateCity = ({ startLoading, stopLoading }) => {
                       <span>Lat: {data?.location?.coordinates[1]}</span>
                     </td>
                     <td>
-                      <Button label={"Delete"} />
+                      <Button label={"Delete"} onClick={() => setPopup(true)} />
                     </td>
+                    <AnimatePresence>
+                      {popup && (
+                        <motion.div
+                          whileInView={{ opacity: 1, x: 0 }}
+                          initial={{ opacity: 0, x: -100 }}
+                          exit={{ opacity: 0, x: 100 }}
+                          transition={{
+                            type: "spring",
+                            duration: 0.4,
+                            ease: "easeInOut",
+                          }}
+                          className="fixed top-0 left-0 h-screen w-full bg-white flex justify-center items-center flex-col"
+                        >
+                          <h1>
+                            Are you sure you want to delete this City, if there
+                            are places under, they will also get deleted ?
+                          </h1>
+                          <div className="flex justify-center items-center gap-5 py-5">
+                            <Button
+                              label={"Cancel"}
+                              onClick={() => setPopup(false)}
+                            />
+                            <Button
+                              label={"Confirm"}
+                              onClick={() => deleteCity({ cityId: data?._id })}
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </tr>
                 ))
               ) : (

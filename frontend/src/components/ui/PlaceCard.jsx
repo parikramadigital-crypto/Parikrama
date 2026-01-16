@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BiSolidNavigation } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RandomImageSlider from "./RandomImageSlider";
 import { useMemo } from "react";
 import Button from "../Button";
@@ -74,6 +74,7 @@ const ExpandedPlaceCard = ({ place }) => {
   const [popup, setPopup] = useState(false);
   const lat = place?.location?.coordinates[1];
   const long = place?.location?.coordinates[0];
+  const navigate = useNavigate();
 
   const images = useMemo(() => {
     return place?.images?.length ? place.images.map((img) => img.url) : [];

@@ -20,6 +20,6 @@ router.route("/state/:stateId").get(getCitiesByState);
 router.route("/register-city/:adminId").post(createCity);
 // router.route("/register-city").post(createCity);
 router.route("/:id").post(VerifyUser, updateCity);
-router.route("/:id").delete(VerifyUser, deleteCity);
+router.route("/delete-city/:adminId/:id").delete(deleteCity);
 
 export default router;

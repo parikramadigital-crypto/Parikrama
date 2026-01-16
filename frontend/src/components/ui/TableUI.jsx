@@ -4,8 +4,8 @@ const Place = ({ Text = "", TableData }) => {
   const TableHeaders = [
     "Place name",
     "Category",
-    "State name",
-    "State Code",
+    "State",
+    "City",
     "Location",
   ];
   return (
