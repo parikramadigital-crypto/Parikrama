@@ -89,7 +89,7 @@ const AddNewPlace = ({ startLoading, stopLoading }) => {
       setCities([]);
       setSelectedState("");
       alert("Place added successfully");
-      // navigate("/admin/dashboard");
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error(err);
       setError("Failed to add place. Please check details.");

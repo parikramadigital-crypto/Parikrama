@@ -11,6 +11,8 @@ import AdminRegistrationForm from "./pages/admin/AdminRegistrationForm";
 import SearchResult from "./pages/searchResult/SearchResult";
 import CurrentPlace from "./pages/place/currentPlace";
 import AddNewPlace from "./pages/place/addNewPlace";
+import AddNewStateCity from "./pages/state-city/addNewState-City";
+import CurrentStateCity from "./pages/state-city/currentState-City";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -71,16 +73,13 @@ function App() {
           />
           <Route path="/current/place/:placeId" element={<CurrentPlace />} />
           <Route
-            path="/admin/register-place"
-            element={<AddNewPlace />}
+            path="/current/state-city/:stateId"
+            element={<CurrentStateCity />}
           />
+          <Route path="/admin/register-place" element={<AddNewPlace />} />
           <Route
-            path="/admin/register-city"
-            //element={<AdminRegistrationForm />}
-          />
-          <Route
-            path="/admin/register-state"
-            //element={<AdminRegistrationForm />}
+            path="/admin/register-city-state"
+            element={<AddNewStateCity />}
           />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
 

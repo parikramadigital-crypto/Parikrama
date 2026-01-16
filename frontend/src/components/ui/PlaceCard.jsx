@@ -26,8 +26,11 @@ const PlaceCard = ({ place }) => {
     >
       {/* Image / Placeholder */}
       <div className="h-40 w-full bg-gray-100 flex items-center justify-center lg:h-auto lg:w-1/2">
-        <img src={place?.images[0]?.url} />
-        {/* <span className="text-gray-400 text-sm">No Image</span> */}
+        {place?.images?.length === 0 ? (
+          <span className="text-gray-400 text-sm">No Image</span>
+        ) : (
+          <img src={place?.images[0]?.url} />
+        )}
       </div>
 
       {/* Content */}

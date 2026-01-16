@@ -89,7 +89,7 @@ const City = ({ Text = "", TableData }) => {
           </thead>
           <tbody>
             {TableData?.length > 0 ? (
-              TableData?.slice(0, 20).map((data) => (
+              TableData?.map((data) => (
                 <tr
                   key={data._id}
                   className="hover:bg-gray-50 transition-colors duration-200 border-b"
@@ -148,7 +148,14 @@ const State = ({ Text = "", TableData }) => {
                   key={data._id}
                   className="hover:bg-gray-50 transition-colors duration-200 border-b"
                 >
-                  <td className="px-5 py-3 text-gray-700">{data?.name}</td>
+                  <td className="px-5 py-3 text-gray-700 ">
+                    <Link
+                      to={`/current/state-city/${data?._id}`}
+                      className="hover:text-blue-500 hover:underline"
+                    >
+                      {data?.name}
+                    </Link>
+                  </td>
                   <td className="px-5 py-3 text-gray-700">{data?.code}</td>
                 </tr>
               ))
