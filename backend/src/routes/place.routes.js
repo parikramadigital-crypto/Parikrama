@@ -23,7 +23,7 @@ router.route("/related-places/:query").get(getPlacesByCity);
 router
   .route("/register-new-place/:adminId")
   .post(upload.array("images", 5), createPlace);
-router.route("/:id").post(VerifyUser, updatePlace);
+router.route("/update/:placeId").post(upload.array("images", 5), updatePlace);
 router.route("/delete-place/:adminId/:id").delete(deletePlace);
 
 export default router;

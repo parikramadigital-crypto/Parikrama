@@ -43,7 +43,7 @@ export const createPlace = asyncHandler(async (req, res) => {
       if (!name || !cityId || !stateId || lat == null || lng == null) {
         throw new ApiError(
           400,
-          "Each place must have name, cityId, stateId, lat, lng"
+          "Each place must have name, cityId, stateId, lat, lng",
         );
       }
 
@@ -76,8 +76,8 @@ export const createPlace = asyncHandler(async (req, res) => {
           insertedCount: insertedPlaces.length,
           places: insertedPlaces,
         },
-        "Places added successfully"
-      )
+        "Places added successfully",
+      ),
     );
   }
 
@@ -201,15 +201,69 @@ export const getPlaceById = asyncHandler(async (req, res) => {
 /**
  * UPDATE PLACE
  */
+/**
+ * UPDATE PLACE WITH IMAGE SUPPORT
+ */
 export const updatePlace = asyncHandler(async (req, res) => {
-  const updated = await Place.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
+  const { placeId } = req.params;
+
+  const place = await Place.findById(placeId);
+  if (!place) {
+    throw new ApiError(404, "Place not found");
+  }
+
+  /* ---------- TEXT FIELD UPDATES ---------- */
+  const allowedFields = [
+    "name",
+    "category",
+    "description",
+    "averageTimeSpent",
+    "entryFee",
+  ];
+
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      place[field] = req.body[field];
+    }
   });
 
-  if (!updated) throw new ApiError(404, "Place not found");
+  /* ---------- IMAGE UPLOAD HANDLING ---------- */
+  if (req.files && req.files.length > 0) {
+    const remainingSlots = 5 - place.images.length;
 
-  res.status(200).json(new ApiResponse(200, updated, "Place updated"));
+    if (remainingSlots <= 0) {
+      throw new ApiError(400, "Maximum 5 images already uploaded");
+    }
+
+    if (req.files.length > remainingSlots) {
+      throw new ApiError(
+        400,
+        `You can upload only ${remainingSlots} more image(s)`,
+      );
+    }
+
+    const uploadedImages = [];
+
+    for (const file of req.files) {
+      const uploaded = await UploadImages(file.filename, {
+        folderStructure: `places/${place._id}`,
+      });
+
+      uploadedImages.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+        altText: place.name,
+      });
+    }
+
+    place.images.push(...uploadedImages);
+  }
+
+  await place.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, place, "Place updated successfully"));
 });
 
 /**
@@ -226,7 +280,7 @@ export const deletePlace = asyncHandler(async (req, res) => {
   const deleted = await Place.findByIdAndUpdate(
     req.params.id,
     { isActive: false },
-    { new: true }
+    { new: true },
   );
   console.log(deleted);
 
