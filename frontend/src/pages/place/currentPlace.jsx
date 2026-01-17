@@ -33,7 +33,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       const query = data?.city?.name;
       const response = await FetchData(
         `places/related-places/${query}`,
-        "get"
+        "get",
         // query
       );
       setRecommendations(response.data.data);
@@ -48,7 +48,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   }, [data]);
   useEffect(() => {
     currentPlace();
-  }, [user]);
+  }, [user, placeId]);
 
   return (
     <div className="w-full">
@@ -61,7 +61,11 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       <div className="grid lg:grid-cols-3 grid-cols-1 gap-10 md:px-20 px-10 py-20">
         {/* LEFT CONTENT (SCROLLS) */}
         <div className="col-span-2 flex flex-col gap-6">
-          <Button label={"View itinerary"} onClick={() => setPopup(true)} className={"block lg:hidden"} />
+          <Button
+            label={"View itinerary"}
+            onClick={() => setPopup(true)}
+            className={"block lg:hidden"}
+          />
           <h1 className="text-left">
             As you are interested in touring {data?.city?.name}, here are some
             more suggestions

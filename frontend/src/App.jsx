@@ -13,6 +13,7 @@ import CurrentPlace from "./pages/place/currentPlace";
 import AddNewPlace from "./pages/place/addNewPlace";
 import AddNewStateCity from "./pages/state-city/addNewState-City";
 import CurrentStateCity from "./pages/state-city/currentState-City";
+import EditPlace from "./pages/place/editPlace";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -33,7 +34,7 @@ function App() {
         const res = await FetchData(
           "admin/auth/refresh-tokens", // ✅ SINGLE endpoint
           "post",
-          { refreshToken }
+          { refreshToken },
         );
         // console.log(res);
 
@@ -77,6 +78,7 @@ function App() {
             element={<CurrentStateCity />}
           />
           <Route path="/admin/register-place" element={<AddNewPlace />} />
+          <Route path="/admin/edit-place/:placeId" element={<EditPlace />} />
           <Route
             path="/admin/register-city-state"
             element={<AddNewStateCity />}

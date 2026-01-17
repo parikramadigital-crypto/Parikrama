@@ -88,7 +88,7 @@ const ExpandedPlaceCard = ({ place }) => {
     try {
       const response = await FetchData(
         `places/delete-place/${user?._id}/${place?._id}`,
-        "delete"
+        "delete",
       );
       console.log(response);
       alert(response.data.message);
@@ -151,6 +151,7 @@ const ExpandedPlaceCard = ({ place }) => {
       {user ? (
         <div className="flex justify-center items-center gap-10">
           <Button
+            onClick={() => navigate(`/admin/edit-place/${place?._id}`)}
             label={
               <h1 className="flex justify-center items-center gap-2">
                 <FaEdit />
