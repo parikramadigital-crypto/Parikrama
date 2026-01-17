@@ -46,6 +46,7 @@ const RandomImageSlider = ({ images, className = "", speed }) => {
   return (
     <div
       className={`relative w-full mx-auto h-full overflow-hidden rounded-xl shadow-lg ${className}`}
+      style={{ minHeight: "200px" }}
       onMouseEnter={() => {
         setIsHovered(true);
         stopSlider();

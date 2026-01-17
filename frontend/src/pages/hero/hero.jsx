@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import InputBox from "../../components/InputBox";
-import logo from "../../assets/Logo.png";
 import { CiSearch } from "react-icons/ci";
-import { useNavigate, useParams } from "react-router-dom";
 import { FetchData } from "../../utils/FetchFromApi";
-import { useEffect } from "react";
 import LoadingUI from "../../components/LoadingUI";
 import {
   galleryBannerImages,
@@ -15,93 +12,136 @@ import Card from "../../components/ui/card";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
-  const searchedValue = useParams().searchData;
-  const [searchInput, setSearchInput] = useState(searchedValue || "");
-  const handleSearch = () => {
-    if (searchInput.trim()) {
-      navigate(`/employees/${searchInput}`);
-    }
-  };
+  const [searchInput, setSearchInput] = useState("");
 
-  const getData = async () => {
-    try {
-      startLoading();
-      const response = await FetchData("admin/places", "get");
-      setData(response.data.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      stopLoading();
-    }
-  };
+  /* ---------------- FETCH ALL PLACES ---------------- */
   useEffect(() => {
+    const getData = async () => {
+      try {
+        startLoading();
+        const response = await FetchData("admin/places", "get");
+        setData(response?.data?.data || []);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        stopLoading();
+      }
+    };
     getData();
   }, []);
 
-  const getRandomItems = (arr, count) => {
-    const shuffled = [...arr];
+  /* ---------------- RANDOM FEATURED PLACES (INITIAL VIEW) ---------------- */
+  const featuredPlaces = useMemo(() => {
+    if (!data.length) return [];
+    const shuffled = [...data];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return shuffled.slice(0, count);
-  };
+    return shuffled.slice(0, 8);
+  }, [data]);
 
+  /* ---------------- SEARCH LOGIC ---------------- */
+  const filteredPlaces = useMemo(() => {
+    if (!searchInput.trim()) return [];
+
+    const q = searchInput.toLowerCase().trim();
+    const startsWith = [];
+    const contains = [];
+
+    data.forEach((place) => {
+      const searchableText = `
+        ${place?.name}
+        ${place?.city?.name}
+        ${place?.state?.name}
+        ${place?.category}
+        ${place?.description}
+      `.toLowerCase();
+
+      if (searchableText.startsWith(q)) {
+        startsWith.push(place);
+      } else if (searchableText.includes(q)) {
+        contains.push(place);
+      }
+    });
+
+    return [...startsWith, ...contains];
+  }, [searchInput, data]);
+
+  /* ---------------- RENDER ---------------- */
   return (
     <div className="flex justify-center items-center flex-col">
+      {/* TOP BANNER */}
       <div className="md:w-[90%] w-full">
         <RandomImageSlider
           images={galleryBannerImages}
           className="md:h-[300px] h-[200px]"
         />
-        {/* <img
-          src="https://ik.imagekit.io/pz8qfunss/Gallery/Gallery_Banner/create%20an%20image%20with%20a%20tag%20_Our%20new%20Collections_%20with%20adding%20jewelrries%20in%20the%20background%20write%20the%20text%20on%20the%20left%20or%20right%20side%20of%20the%20image%20and%20make%20it%20look%20asthetic.jpg?updatedAt=1751825753408"
-          className="object-cover h-full w-full "
-        /> */}
       </div>
-      <div className="flex  justify-center py-5 px-2 w-full">
+
+      {/* CONTENT */}
+      <div className="flex justify-center py-5 px-2 w-full gap-6">
+        {/* LEFT SLIDER */}
         <div className="w-96 h-96 bg-neutral-500 rounded-xl overflow-hidden lg:block hidden">
           <RandomImageSlider images={galleryBannerImages} />
         </div>
+
+        {/* SEARCH + RESULTS */}
         <div className="md:p-4 w-fit overflow-hidden">
-          <div className="flex justify-center items-center w-full">
+          {/* SEARCH BAR */}
+          <div className="flex justify-center items-center w-full relative">
             <InputBox
               Value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              Placeholder="Search here..."
-              className="w-full"
-              keyPress={handleSearch}
+              Placeholder="Search by place, city, state, category..."
+              className="w-full pr-10"
             />
-            <button
-              onClick={handleSearch}
-              className="relative lg:right-10 right-0 bg-neutral-300 rounded-full p-1"
-            >
-              <CiSearch />
-            </button>
+            <CiSearch className="absolute right-3 text-gray-500" />
           </div>
-          {data?.length > 0 ? (
-            <div className="flex gap-2 flex-col xl:w-[650px]">
-              {getRandomItems(data || [], 8).map((places) => (
-                <div key={places._id || places.id}>
-                  <Card
-                    placeId={places._id}
-                    name={places.name}
-                    city={places?.city?.name}
-                    state={places?.state?.name}
-                    category={places?.category}
-                    description={places?.description}
-                    lat={places?.location?.coordinates[1]}
-                    long={places?.location?.coordinates[0]}
-                    image={places?.images[0]?.url}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>No data found...</div>
-          )}
+
+          {/* RESULTS */}
+          <div className="flex gap-2 flex-col xl:w-[650px] mt-4">
+            {searchInput ? (
+              filteredPlaces.length > 0 ? (
+                filteredPlaces
+                  .slice(0, 8)
+                  .map((place) => (
+                    <Card
+                      key={place._id}
+                      placeId={place._id}
+                      name={place.name}
+                      city={place?.city?.name}
+                      state={place?.state?.name}
+                      category={place?.category}
+                      description={place?.description}
+                      lat={place?.location?.coordinates?.[1]}
+                      long={place?.location?.coordinates?.[0]}
+                      image={place?.images?.[0]?.url}
+                    />
+                  ))
+              ) : (
+                <div className="text-gray-500">No results found…</div>
+              )
+            ) : (
+              featuredPlaces.map((place) => (
+                <Card
+                  key={place._id}
+                  placeId={place._id}
+                  name={place.name}
+                  city={place?.city?.name}
+                  state={place?.state?.name}
+                  category={place?.category}
+                  description={place?.description}
+                  lat={place?.location?.coordinates?.[1]}
+                  long={place?.location?.coordinates?.[0]}
+                  image={place?.images?.[0]?.url}
+                />
+              ))
+            )}
+          </div>
         </div>
+
+        {/* RIGHT SLIDER */}
         <div className="w-96 h-96 bg-neutral-500 rounded-xl overflow-hidden lg:block hidden">
           <RandomImageSlider images={galleryBannerImages2} />
         </div>
