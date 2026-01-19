@@ -45,28 +45,72 @@ const Hero = ({ stopLoading, startLoading }) => {
   const filteredPlaces = useMemo(() => {
     if (!searchInput.trim()) return [];
 
-    const q = searchInput.toLowerCase().trim();
-    const startsWith = [];
-    const contains = [];
+    // 1️⃣ Normalize query
+    const rawQuery = searchInput.toLowerCase().trim();
+
+    // 2️⃣ Stop words to ignore
+    const stopWords = new Set([
+      "in",
+      "near",
+      "places",
+      "place",
+      "best",
+      "famous",
+      "top",
+      "to",
+      "of",
+      "for",
+      "the",
+      "and",
+      "around",
+    ]);
+
+    // 3️⃣ Extract meaningful keywords
+    const keywords = rawQuery
+      .split(/\s+/)
+      .filter((word) => word.length > 1 && !stopWords.has(word));
+
+    if (keywords.length === 0) return [];
+
+    const rankedResults = [];
 
     data.forEach((place) => {
-      const searchableText = `
-        ${place?.name}
-        ${place?.city?.name}
-        ${place?.state?.name}
-        ${place?.category}
-        ${place?.description}
-      `.toLowerCase();
+      const searchableFields = [
+        place?.name,
+        place?.city?.name,
+        place?.state?.name,
+        place?.category,
+        place?.description,
+      ]
+        .join(" ")
+        .toLowerCase();
 
-      if (searchableText.startsWith(q)) {
-        startsWith.push(place);
-      } else if (searchableText.includes(q)) {
-        contains.push(place);
+      let score = 0;
+
+      keywords.forEach((keyword) => {
+        if (searchableFields.includes(keyword)) {
+          score += 1;
+
+          // bonus for exact word match
+          const regex = new RegExp(`\\b${keyword}\\b`, "i");
+          if (regex.test(searchableFields)) {
+            score += 1;
+          }
+        }
+      });
+
+      if (score > 0) {
+        rankedResults.push({ place, score });
       }
     });
 
-    return [...startsWith, ...contains];
+    // 4️⃣ Sort by relevance score
+    rankedResults.sort((a, b) => b.score - a.score);
+
+    // 5️⃣ Return only places
+    return rankedResults.map((item) => item.place);
   }, [searchInput, data]);
+
 
   /* ---------------- RENDER ---------------- */
   return (
