@@ -14,20 +14,22 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const fetchDashboard = async () => {
+    try {
+      startLoading();
+      const res = await FetchData("admin/dashboard/data", "get");
+      setPlaceData(res.data.data.place);
+      setCityData(res.data.data.city);
+      setStateData(res.data.data.state);
+    } catch (err) {
+      // console.log(err);
+    } finally {
+      stopLoading();
+    }
+  };
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        startLoading();
-        const res = await FetchData("admin/dashboard/data", "get");
-        setPlaceData(res.data.data.place);
-        setCityData(res.data.data.city);
-        setStateData(res.data.data.state);
-      } finally {
-        stopLoading();
-      }
-    };
     fetchDashboard();
-  }, []);
+  }, [user]);
 
   const logout = () => {
     localStorage.clear();
@@ -62,6 +64,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
           ))}
         </div>
         <div className="flex justify-center items-start gap-5">
+          <Button
+            label={"Reload Dashboard"}
+            className={"w-full text-nowrap"}
+            onClick={() => fetchDashboard()}
+          />
           {commands.map((item, index) => (
             <Button
               key={index}

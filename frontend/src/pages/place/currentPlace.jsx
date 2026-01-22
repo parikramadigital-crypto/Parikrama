@@ -53,12 +53,12 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   return (
     <div className="w-full">
       {/* Top section */}
-      <div className="w-full md:px-20 px-10">
+      <div className="w-full md:px-20 px-2">
         <ExpandedPlaceCard place={data} />
       </div>
 
       {/* Content + Sticky Circle */}
-      <div className="grid lg:grid-cols-3 grid-cols-1 gap-10 md:px-20 px-10 py-20">
+      <div className="grid lg:grid-cols-3 grid-cols-1 gap-10 md:px-20 px-5 py-20">
         {/* LEFT CONTENT (SCROLLS) */}
         <div className="col-span-2 flex flex-col gap-6">
           <Button

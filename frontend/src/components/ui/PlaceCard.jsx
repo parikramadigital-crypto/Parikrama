@@ -8,29 +8,23 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { FetchData } from "../../utils/FetchFromApi";
+import { truncateString } from "../../utils/Utility-functions";
 
 const PlaceCard = ({ place }) => {
   return (
     <Link
       to={`/current/place/${place?._id}`}
-      className="
-        w-full 
-        bg-white 
-        border border-gray-200 
-        rounded-xl 
-        shadow-sm 
-        hover:shadow-md 
-        transition
-        lg:flex
-        overflow-hidden
-      "
+      className="w-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition md:flex overflow-hidden"
     >
       {/* Image / Placeholder */}
-      <div className="h-40 w-full bg-gray-100 flex items-center justify-center lg:h-auto lg:w-1/2">
+      <div className="h-40 md:h-full w-full bg-gray-100 flex items-center justify-center lg:h-auto lg:w-1/2 overflow-hidden object-contain">
         {place?.images?.length === 0 ? (
           <span className="text-gray-400 text-sm">No Image</span>
         ) : (
-          <img src={place?.images[0]?.url} />
+          <img
+            src={place?.images[0]?.url}
+            className="object-cover w-full h-full"
+          />
         )}
       </div>
 
@@ -52,17 +46,17 @@ const PlaceCard = ({ place }) => {
 
           {/* Description */}
           <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-            {place?.description}
+            {truncateString(place?.description, 90)}
           </p>
         </div>
 
         {/* Meta Info */}
         <div className="flex justify-between text-sm text-gray-500 pt-4">
           <span>⏱ {place?.averageTimeSpent} min</span>
-          <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
+          {/* <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
             {" "}
             ₹{place?.entryFee}
-          </span>
+          </span> */}
         </div>
       </div>
     </Link>
@@ -109,8 +103,8 @@ const ExpandedPlaceCard = ({ place }) => {
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-row justify-between">
-        <div className="space-y-2">
+      <div className="p-5 flex md:flex-row flex-col justify-between">
+        <div className="space-y-2 md:w-3/4">
           {/* Name */}
           <h3 className="text-xl font-semibold text-gray-900">{place?.name}</h3>
 
@@ -133,20 +127,20 @@ const ExpandedPlaceCard = ({ place }) => {
         {/* Meta Info */}
         <button
           onClick={openMaps}
-          className={`bg-transparent px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] border h-full flex flex-col justify-center items-center text-neutral-500`}
+          className={`bg-transparent px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] border h-full flex md:flex-col justify-center items-center text-neutral-500`}
         >
           <span>
-            <BiSolidNavigation className="text-3xl" />
+            <BiSolidNavigation className="md:text-3xl" />
           </span>
           <span className="text-black">Get Directions</span>
         </button>
       </div>
       <div className="flex justify-between text-sm text-gray-500 px-5 pb-5">
         <span>⏱ {place?.averageTimeSpent} min</span>
-        <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
+        {/* <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
           {" "}
           ₹{place?.entryFee}
-        </span>
+        </span> */}
       </div>
       {user ? (
         <div className="flex justify-center items-center gap-10">
