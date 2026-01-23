@@ -15,6 +15,7 @@ import AddNewStateCity from "./pages/state-city/addNewState-City";
 import CurrentStateCity from "./pages/state-city/currentState-City";
 import EditPlace from "./pages/place/editPlace";
 import FacilitatorAuth from "./pages/facilitator/FacilitatorAuth";
+import ScrollToTop from "./components/hooks/ScrollToTop";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -32,21 +33,37 @@ function App() {
 
     const reLogin = async () => {
       try {
-        const res = await FetchData(
-          "admin/auth/refresh-tokens", // ✅ SINGLE endpoint
-          "post",
-          { refreshToken },
-        );
-        // console.log(res);
+        if (user?.role === "Admin") {
+          const res = await FetchData(
+            "admin/auth/refresh-tokens", // ✅ SINGLE endpoint
+            "post",
+            { refreshToken },
+          );
+          const { user, tokens } = res.data.data;
 
-        const { user, tokens } = res.data.data;
+          // Store new tokens
+          localStorage.setItem("AccessToken", tokens.AccessToken);
+          localStorage.setItem("RefreshToken", tokens.RefreshToken);
 
-        // Store new tokens
-        localStorage.setItem("AccessToken", tokens.AccessToken);
-        localStorage.setItem("RefreshToken", tokens.RefreshToken);
+          // Update redux
+          dispatch(addUser(user));
+        } else {
+          const res = await FetchData(
+            "facilitator/auth/refresh-token", // ✅ SINGLE endpoint
+            "post",
+            { refreshToken },
+          );
+          // console.log(res);
 
-        // Update redux
-        dispatch(addUser(user));
+          const { user, tokens } = res.data.data;
+
+          // Store new tokens
+          localStorage.setItem("AccessToken", tokens.AccessToken);
+          localStorage.setItem("RefreshToken", tokens.RefreshToken);
+
+          // Update redux
+          dispatch(addUser(user));
+        }
       } catch (error) {
         // console.log(error);
         localStorage.clear();
@@ -65,6 +82,8 @@ function App() {
 
       {/* Top padding because header is fixed */}
       <div className="pt-20">
+        <ScrollToTop />
+
         <Routes>
           {/* ================= PUBLIC ================= */}
           <Route path="/" element={<Hero />} />

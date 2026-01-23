@@ -10,6 +10,8 @@ const InputBox = ({
   onChange,
   Required = true,
   keyPress,
+  Disabled = false,
+  LabelClassname = "",
 }) => {
   return (
     <div className="flex justify-center items-center w-full">
@@ -17,13 +19,14 @@ const InputBox = ({
         {LabelName && (
           <label
             htmlFor={Name}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className={`block text-sm font-medium text-gray-700 mb-2 ${LabelClassname}`}
           >
             {LabelName}
           </label>
         )}
 
         <input
+          disabled={Disabled}
           id={Name}
           name={Name}
           type={Type}
