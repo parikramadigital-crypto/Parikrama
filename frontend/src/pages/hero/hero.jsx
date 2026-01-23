@@ -9,6 +9,7 @@ import {
 } from "../../constants/Constants";
 import RandomImageSlider from "../../components/ui/RandomImageSlider";
 import Card from "../../components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
@@ -111,7 +112,6 @@ const Hero = ({ stopLoading, startLoading }) => {
     return rankedResults.map((item) => item.place);
   }, [searchInput, data]);
 
-
   /* ---------------- RENDER ---------------- */
   return (
     <div className="flex justify-center items-center flex-col">
@@ -147,9 +147,17 @@ const Hero = ({ stopLoading, startLoading }) => {
           <div className="flex gap-2 flex-col xl:w-[650px] mt-4">
             {searchInput ? (
               filteredPlaces.length > 0 ? (
-                filteredPlaces
-                  .slice(0, 8)
-                  .map((place) => (
+                filteredPlaces.slice(0, 8).map((place) => (
+                  <motion.div
+                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, x: -100 }}
+                    exit={{ opacity: 0, x: 100 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.5,
+                      ease: "easeInOut",
+                    }}
+                  >
                     <Card
                       key={place._id}
                       placeId={place._id}
@@ -162,24 +170,36 @@ const Hero = ({ stopLoading, startLoading }) => {
                       long={place?.location?.coordinates?.[0]}
                       image={place?.images?.[0]?.url}
                     />
-                  ))
+                  </motion.div>
+                ))
               ) : (
                 <div className="text-gray-500">No results found…</div>
               )
             ) : (
               featuredPlaces.map((place) => (
-                <Card
-                  key={place._id}
-                  placeId={place._id}
-                  name={place.name}
-                  city={place?.city?.name}
-                  state={place?.state?.name}
-                  category={place?.category}
-                  description={place?.description}
-                  lat={place?.location?.coordinates?.[1]}
-                  long={place?.location?.coordinates?.[0]}
-                  image={place?.images?.[0]?.url}
-                />
+                <motion.div
+                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: -100 }}
+                  exit={{ opacity: 0, x: 100 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.5,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Card
+                    key={place._id}
+                    placeId={place._id}
+                    name={place.name}
+                    city={place?.city?.name}
+                    state={place?.state?.name}
+                    category={place?.category}
+                    description={place?.description}
+                    lat={place?.location?.coordinates?.[1]}
+                    long={place?.location?.coordinates?.[0]}
+                    image={place?.images?.[0]?.url}
+                  />
+                </motion.div>
               ))
             )}
           </div>

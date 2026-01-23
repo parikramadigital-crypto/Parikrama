@@ -18,11 +18,12 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
     setError("");
 
     const formData = new FormData(formRef.current);
-    const payload = Object.fromEntries(formData.entries());
+    // const payload = Object.fromEntries(formData.entries());
 
     try {
       startLoading();
-      const res = await FetchData("facilitator/login", "post", payload);
+      const res = await FetchData("facilitator/login", "post", formData);
+      console.log(res);
 
       if (res.data.success) {
         const { facilitator, tokens } = res.data.data;
@@ -34,7 +35,7 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
         dispatch(clearUser());
         dispatch(addUser({ user: facilitator }));
 
-        navigate("/facilitator/dashboard");
+        // navigate("/facilitator/dashboard");
       }
     } catch (err) {
       setError(err?.response?.data?.message || "Login failed");

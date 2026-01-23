@@ -79,7 +79,7 @@ const AddNewPlace = ({ startLoading, stopLoading }) => {
         `places/register-new-place/${user._id}`,
         "post",
         formData,
-        true
+        true,
       );
       console.log(res);
 
@@ -150,8 +150,8 @@ const AddNewPlace = ({ startLoading, stopLoading }) => {
             </select>
           </div>
 
-          <InputBox LabelName="Longitude" Name="lng" required />
           <InputBox LabelName="Latitude" Name="lat" required />
+          <InputBox LabelName="Longitude" Name="lng" required />
           <InputBox
             LabelName="Average Time Spent (mins)"
             Name="averageTimeSpent"

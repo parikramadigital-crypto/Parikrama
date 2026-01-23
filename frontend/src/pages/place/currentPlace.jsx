@@ -13,6 +13,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   const { placeId } = useParams();
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
   const [data, setData] = useState();
+  const [facilitator, setFacilitator] = useState([]);
   const [popup, setPopup] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
 
@@ -20,7 +21,8 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const response = await FetchData(`places/${placeId}`, "get");
-      setData(response.data.data);
+      setData(response.data.data.place);
+      setFacilitator(response.data.data.facilitators);
     } catch (err) {
       // console.log(err);
     } finally {
@@ -54,7 +56,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
     <div className="w-full">
       {/* Top section */}
       <div className="w-full md:px-20 px-2">
-        <ExpandedPlaceCard place={data} />
+        <ExpandedPlaceCard place={data} facilitator={facilitator} />
       </div>
 
       {/* Content + Sticky Circle */}
@@ -72,7 +74,14 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
           </h1>
 
           {recommendations?.map((place) => (
-            <PlaceCard key={place._id} place={place} />
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ type: "spring", duration: 0.5, ease: "easeInOut" }}
+            >
+              <PlaceCard key={place._id} place={place} />
+            </motion.div>
           ))}
         </div>
 
