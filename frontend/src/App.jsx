@@ -33,7 +33,7 @@ function App() {
 
     const reLogin = async () => {
       try {
-        if (user?.role === "Admin") {
+        if (localStorage?.role === "Admin") {
           const res = await FetchData(
             "admin/auth/refresh-tokens", // ✅ SINGLE endpoint
             "post",

@@ -29,7 +29,7 @@ const AdminLogin = ({ startLoading, stopLoading }) => {
 
         localStorage.setItem("AccessToken", tokens.AccessToken);
         localStorage.setItem("RefreshToken", tokens.RefreshToken);
-        // localStorage.setItem("role", "Admin");
+        localStorage.setItem("role", "Admin");
 
         dispatch(clearUser());
         dispatch(addUser(admin));

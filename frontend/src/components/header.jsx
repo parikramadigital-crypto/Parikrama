@@ -68,7 +68,7 @@ const Header = () => {
 
                 {/* Desktop Buttons */}
                 <div className="hidden md:flex items-center gap-4">
-                  {user ? (
+                  {user?.role === "Admin" ? (
                     <Link
                       to={`/admin/dashboard`}
                       className="bg-[#FFC20E] px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:drop-shadow-2xl transition duration-150 ease-in-out "
