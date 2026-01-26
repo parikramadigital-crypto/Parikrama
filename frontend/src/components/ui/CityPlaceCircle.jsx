@@ -1,5 +1,6 @@
 import React from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const CityPlacesCircle = ({ cityName, places = [] }) => {
   const radius = 140; // distance from center
@@ -30,9 +31,12 @@ const CityPlacesCircle = ({ cityName, places = [] }) => {
             }}
           >
             {/* POINT */}
-            <div className="w-4 h-4 rounded-full text-2xl cursor-pointer shadow-md">
+            <Link
+              to={`/current/place/${place?._id}`}
+              className="w-4 h-4 rounded-full text-2xl cursor-pointer shadow-md"
+            >
               <FaMapMarkerAlt />
-            </div>
+            </Link>
 
             {/* TOOLTIP */}
             <div className="absolute left-1/2 -translate-x-1/2 bottom-6 opacity-0 group-hover:opacity-100 transition bg-black text-white px-2 py-1 rounded whitespace-nowrap">
