@@ -122,9 +122,12 @@ const loginFacilitator = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Email/Phone and password required");
   }
 
+  // Find facilitator WITH relations
   const facilitator = await Facilitator.findOne({
     ...(email ? { email } : { phone }),
-  }).select("+password +refreshToken");
+  })
+    .select("+password +refreshToken")
+    .populate("state city place");
 
   if (!facilitator) {
     throw new ApiError(404, "Facilitator not found");
@@ -145,6 +148,12 @@ const loginFacilitator = asyncHandler(async (req, res) => {
   facilitator.refreshToken = refreshToken;
   facilitator.lastLoginAt = new Date();
   await facilitator.save();
+
+  // Remove password before sending
+  facilitator.password = undefined;
+  facilitator.refreshToken = undefined;
+
+  console.log(facilitator);
 
   res.status(200).json(
     new ApiResponse(
@@ -175,9 +184,9 @@ const refreshFacilitatorToken = asyncHandler(async (req, res) => {
 
   const decoded = Jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
-  const facilitator = await Facilitator.findById(decoded._id).select(
-    "-password",
-  );
+  const facilitator = await Facilitator.findById(decoded._id)
+    .select("-password")
+    .populate("state city place");
   if (!facilitator) throw new ApiError(401, "Invalid refresh token");
 
   const { AccessToken, RefreshToken } = await generateAccessAndRefreshTokens(
