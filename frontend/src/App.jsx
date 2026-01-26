@@ -16,6 +16,7 @@ import CurrentStateCity from "./pages/state-city/currentState-City";
 import EditPlace from "./pages/place/editPlace";
 import FacilitatorAuth from "./pages/facilitator/FacilitatorAuth";
 import ScrollToTop from "./components/hooks/ScrollToTop";
+import FacilitatorDashboard from "./pages/facilitator/FacilitatorDashboard";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -105,6 +106,10 @@ function App() {
             element={<AddNewStateCity />}
           />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/facilitator/dashboard"
+            element={<FacilitatorDashboard />}
+          />
 
           {/* ================= FALLBACK ================= */}
           <Route path="/testing" element={<SearchResult />} />

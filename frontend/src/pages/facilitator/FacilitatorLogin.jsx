@@ -35,7 +35,7 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
         dispatch(clearUser());
         dispatch(addUser({ user: facilitator }));
 
-        // navigate("/facilitator/dashboard");
+        navigate("/facilitator/dashboard");
       }
     } catch (err) {
       setError(err?.response?.data?.message || "Login failed");
