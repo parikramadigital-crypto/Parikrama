@@ -17,6 +17,7 @@ import EditPlace from "./pages/place/editPlace";
 import FacilitatorAuth from "./pages/facilitator/FacilitatorAuth";
 import ScrollToTop from "./components/hooks/ScrollToTop";
 import FacilitatorDashboard from "./pages/facilitator/FacilitatorDashboard";
+import FacilitatorReview from "./components/ui/FacilitatorReview";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -109,6 +110,10 @@ function App() {
           <Route
             path="/facilitator/dashboard"
             element={<FacilitatorDashboard />}
+          />
+          <Route
+            path="/facilitator/review/:facilitatorId"
+            element={<FacilitatorReview />}
           />
 
           {/* ================= FALLBACK ================= */}

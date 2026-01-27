@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import { IoMdLogOut } from "react-icons/io";
 import { clearUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import { FaCopy, FaRegCopy, FaStar } from "react-icons/fa";
+import useCopyUrl from "../../components/hooks/CopyUrl";
+import { MdEmail, MdOutlineWork } from "react-icons/md";
+import { IoCall } from "react-icons/io5";
 
 const FacilitatorDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { copied, copy } = useCopyUrl();
 
   const FacilitatorProfile = ({ facilitator }) => {
     if (!facilitator) return null;
@@ -19,6 +24,23 @@ const FacilitatorDashboard = () => {
       alert("You are logged out successfully");
       navigate("/");
     };
+
+    // const CopyUrlButton = () => {
+    //   const [copied, setCopied] = useState(false);
+
+    //   const copyUrl = async () => {
+    //     await navigator.clipboard.writeText(
+    //       `https://parikrama.riderskart.in/facilitator/review/${facilitator?._id}`,
+    //     );
+    //     // await navigator.clipboard.writeText(window.location.href);
+    //     setCopied(true);
+    //     setTimeout(() => setCopied(false), 2000);
+    //   };
+
+    //   return (
+    //     <Button onClick={copyUrl} label={copied ? <FaCopy /> : <FaRegCopy />} />
+    //   );
+    // };
 
     const {
       name,
@@ -41,71 +63,95 @@ const FacilitatorDashboard = () => {
     return (
       <div className="md:max-w-8xl w-full mx-auto p-6 space-y-8">
         {/* ================= HEADER ================= */}
-        <div className="flex gap-6 items-center bg-white p-6 rounded-xl shadow">
-          <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {images?.length > 0 ? (
-              <img
-                src={images[0]?.url}
-                alt={name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                No Image
+        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between bg-gray-200 p-6 rounded-xl shadow">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-10">
+            {/* image  */}
+            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+              {images?.length > 0 ? (
+                <img
+                  src={images[0]?.url}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-400">
+                  No Image
+                </div>
+              )}
+            </div>
+            {/* initial details  */}
+            <div>
+              <h1 className="text-2xl font-bold">{name}</h1>
+              <p className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit">{role}</p>
+
+              <div className="mt-2 text-sm space-y-1">
+                <p className="flex justify-start items-center gap-2 border-b border-gray-900">
+                  <MdEmail />
+                  {email}
+                </p>
+                <p className="flex justify-start items-center gap-2 border-b border-gray-900">
+                  <IoCall />
+                  {phone}
+                </p>
+                <p className="flex justify-start items-center gap-2 border-b border-gray-900">
+                  <FaStar />
+                  Rating: {rating}
+                </p>
+                <p className="flex justify-start items-center gap-2 border-b border-gray-900">
+                  <MdOutlineWork />
+                  Experience: {experienceYears} years
+                </p>
               </div>
-            )}
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold">{name}</h1>
-            <p className="text-gray-600">{role}</p>
-
-            <div className="mt-2 text-sm space-y-1">
-              <p>📧 {email}</p>
-              <p>📞 {phone}</p>
-              <p>⭐ Rating: {rating}</p>
-              <p>🧳 Experience: {experienceYears} years</p>
             </div>
           </div>
-          <Button
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <IoMdLogOut />
-                Log out
+          {/* buttons  */}
+          <div className="flex flex-col justify-center items-center md:gap-10 gap-5">
+            <div className="flex justify-center items-center bg-gray-300 p-5 rounded-xl shadow">
+              <h1 className="md:w-80">
+                Get Reviews click here to copy and share the URL to your client
               </h1>
-            }
-            className={"w-full"}
-            onClick={() => logout()}
-          />
+              <Button
+                onClick={() => copy(`/facilitator/review/${facilitator._id}`)}
+                label={copied ? <FaCopy /> : <FaRegCopy />}
+              />
+            </div>
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <IoMdLogOut />
+                  Log out
+                </h1>
+              }
+              className={"w-full"}
+              onClick={() => logout()}
+            />
+          </div>
         </div>
-
         {/* ================= LOCATION ================= */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-gray-200 p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-3">Location</h2>
 
           <div className="grid md:grid-cols-3 gap-4 text-sm">
             <p>
-              <b>State:</b> {state.name}
+              <b>State:</b> {state?.name}
             </p>
             <p>
               <b>City:</b> {city?.name}
             </p>
             <p>
-              <b>Place ID:</b> {place.name}
+              <b>Place ID:</b> {place?.name}
             </p>
           </div>
         </div>
-
         {/* ================= BIO ================= */}
         {bio && (
-          <div className="bg-white p-6 rounded-xl shadow">
+          <div className="bg-gray-200 p-6 rounded-xl shadow">
             <h2 className="text-lg font-semibold mb-3">About</h2>
             <p className="text-gray-700 whitespace-pre-line">{bio}</p>
           </div>
         )}
-
         {/* ================= LANGUAGES ================= */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-gray-200 p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-3">Languages</h2>
 
           <div className="flex flex-wrap gap-2">
@@ -119,9 +165,8 @@ const FacilitatorDashboard = () => {
             ))}
           </div>
         </div>
-
         {/* ================= VERIFICATION ================= */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-gray-200 p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-3">Verification</h2>
 
           <p>
@@ -161,9 +206,8 @@ const FacilitatorDashboard = () => {
             </div>
           )}
         </div>
-
         {/* ================= SUBSCRIPTION ================= */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-gray-200 p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-3">Subscription</h2>
 
           <div className="grid md:grid-cols-3 gap-4 text-sm">
@@ -179,9 +223,8 @@ const FacilitatorDashboard = () => {
             </p>
           </div>
         </div>
-
         {/* ================= STATS ================= */}
-        <div className="bg-white p-6 rounded-xl shadow">
+        <div className="bg-gray-200 p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-3">Stats</h2>
 
           <div className="grid md:grid-cols-3 gap-4 text-sm">
