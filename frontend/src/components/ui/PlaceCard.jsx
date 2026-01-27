@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import RandomImageSlider from "./RandomImageSlider";
 import { useMemo } from "react";
 import Button from "../Button";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import InputBox from "../InputBox";
+import { FaCopy, FaEdit, FaRegCopy, FaShareAlt, FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { FetchData } from "../../utils/FetchFromApi";
@@ -68,6 +69,7 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
   const { user } = useSelector((state) => state.auth);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
+  const [popup3, setPopup3] = useState(false);
   const [facilitatorData, setFacilitatorData] = useState(false);
   const lat = place?.location?.coordinates[1];
   const long = place?.location?.coordinates[0];
@@ -95,6 +97,21 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
       console.log(err);
     }
   };
+
+  const CopyUrlButton = () => {
+    const [copied, setCopied] = useState(false);
+
+    const copyUrl = async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+      <Button onClick={copyUrl} label={copied ? <FaCopy /> : <FaRegCopy />} />
+    );
+  };
+
   return (
     <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col pb-2">
       {/* Image / Placeholder */}
@@ -115,7 +132,14 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
           className="space-y-2 md:w-3/4"
         >
           {/* Name */}
-          <h3 className="text-xl font-semibold text-gray-900">{place?.name}</h3>
+          <h3 className="text-xl font-semibold text-gray-900 ">
+            {place?.name}{" "}
+            <span className="md:hidden">
+              <button onClick={() => setPopup3(true)}>
+                <FaShareAlt />
+              </button>
+            </span>
+          </h3>
 
           {/* Location */}
           <p className="text-sm text-gray-500">
@@ -145,6 +169,17 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
           <Button
             label={"Hire your facilitator"}
             onClick={() => setPopup2(true)}
+          />
+          <Button
+            label={
+              <h2 className="flex justify-center items-center gap-2">
+                {" "}
+                <FaShareAlt />
+                Share
+              </h2>
+            }
+            onClick={() => setPopup3(true)}
+            className={"w-full md:block hidden"}
           />
         </div>
       </div>
@@ -289,6 +324,26 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
               className="w-1/4 md:w-1/2 h-full bg-black/80"
             ></div>
             {/* <h1>Are you sure you want to delete this Place ?</h1> */}
+          </motion.div>
+        )}
+        {popup3 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full bg-black/80 flex justify-center items-center flex-col z-50"
+          >
+            <div className="bg-white p-5 rounded-xl md:w-1/2 w-[90%]">
+              <h1>Share this place</h1>
+              <div className="flex justify-center items-center gap-5">
+                <InputBox Value={window.location.href} />
+                <CopyUrlButton />
+              </div>
+              <div className="flex justify-center items-center gap-5 py-5">
+                <Button label={"Done"} onClick={() => setPopup3(false)} />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
