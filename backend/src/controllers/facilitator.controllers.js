@@ -203,7 +203,8 @@ const refreshFacilitatorToken = asyncHandler(async (req, res) => {
 });
 
 const getCurrentFacilitator = asyncHandler(async (req, res) => {
-  const facilitator = await Facilitator.findById(req.user._id);
+  const { facilitatorId } = req.params;
+  const facilitator = await Facilitator.findById(facilitatorId);
 
   if (!facilitator) {
     throw new ApiError(404, "Facilitator not found");
@@ -302,6 +303,113 @@ const verifyFacilitator = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, facilitator, "Verification updated"));
 });
 
+const addFacilitatorReview = asyncHandler(async (req, res) => {
+  const { facilitatorId } = req.params;
+
+  const {
+    customerName,
+    customerPhone,
+    communication,
+    knowledge,
+    behaviour,
+    comment,
+  } = req.body;
+
+  /* ---------- VALIDATION ---------- */
+
+  if (
+    !customerName ||
+    !customerPhone ||
+    communication == null ||
+    knowledge == null ||
+    behaviour == null
+  ) {
+    throw new ApiError(400, "All rating fields are required");
+  }
+
+  if (
+    communication < 0 ||
+    communication > 5 ||
+    knowledge < 0 ||
+    knowledge > 5 ||
+    behaviour < 0 ||
+    behaviour > 5
+  ) {
+    throw new ApiError(400, "Ratings must be between 0 and 5");
+  }
+
+  const facilitator = await Facilitator.findById(facilitatorId);
+
+  if (!facilitator) {
+    throw new ApiError(404, "Facilitator not found");
+  }
+
+  /* ---------- DUPLICATE CHECK ---------- */
+
+  const alreadyReviewed = facilitator.reviews.find(
+    (r) => r.customerPhone === customerPhone,
+  );
+
+  if (alreadyReviewed) {
+    throw new ApiError(409, "You already reviewed this facilitator");
+  }
+
+  /* ---------- PUSH REVIEW ---------- */
+
+  facilitator.reviews.push({
+    customerName,
+    customerPhone,
+    communication,
+    knowledge,
+    behaviour,
+    comment,
+  });
+
+  /* ---------- RECALCULATE AVERAGES ---------- */
+
+  const total = facilitator.reviews.length;
+
+  let commSum = 0;
+  let knowSum = 0;
+  let behSum = 0;
+
+  facilitator.reviews.forEach((r) => {
+    commSum += r.communication;
+    knowSum += r.knowledge;
+    behSum += r.behaviour;
+  });
+
+  facilitator.ratings.communicationAvg = Number((commSum / total).toFixed(1));
+
+  facilitator.ratings.knowledgeAvg = Number((knowSum / total).toFixed(1));
+
+  facilitator.ratings.behaviourAvg = Number((behSum / total).toFixed(1));
+
+  facilitator.ratings.overallAvg = Number(
+    (
+      (facilitator.ratings.communicationAvg +
+        facilitator.ratings.knowledgeAvg +
+        facilitator.ratings.behaviourAvg) /
+      3
+    ).toFixed(1),
+  );
+
+  facilitator.ratings.totalReviews = total;
+
+  await facilitator.save();
+
+  res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        ratings: facilitator.ratings,
+        latestReview: facilitator.reviews[facilitator.reviews.length - 1],
+      },
+      "Review added successfully",
+    ),
+  );
+});
+
 export {
   registerFacilitator,
   loginFacilitator,
@@ -312,4 +420,5 @@ export {
   addFacilitatorSlots,
   bookFacilitatorSlot,
   verifyFacilitator,
+  addFacilitatorReview,
 };

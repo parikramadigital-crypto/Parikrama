@@ -194,10 +194,57 @@ const facilitatorSchema = new mongoose.Schema(
     ],
 
     /* ================= STATS ================= */
-    rating: {
-      type: Number,
-      default: 0,
+    ratings: {
+      communicationAvg: { type: Number, default: 0 },
+      knowledgeAvg: { type: Number, default: 0 },
+      behaviourAvg: { type: Number, default: 0 },
+      overallAvg: { type: Number, default: 0 },
+      totalReviews: { type: Number, default: 0 },
     },
+
+    reviews: [
+      {
+        customerName: {
+          type: String,
+          required: true,
+        },
+
+        customerPhone: {
+          type: String,
+          required: true,
+        },
+
+        communication: {
+          type: Number,
+          min: 0,
+          max: 5,
+          required: true,
+        },
+
+        knowledge: {
+          type: Number,
+          min: 0,
+          max: 5,
+          required: true,
+        },
+
+        behaviour: {
+          type: Number,
+          min: 0,
+          max: 5,
+          required: true,
+        },
+
+        comment: {
+          type: String,
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
 
     totalBookings: {
       type: Number,
