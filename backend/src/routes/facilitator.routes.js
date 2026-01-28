@@ -10,6 +10,7 @@ import {
   bookFacilitatorSlot,
   verifyFacilitator,
   addFacilitatorReview,
+  facilitatorDashboard,
 } from "../controllers/facilitator.controllers.js";
 
 import { VerifyFacilitator } from "../middlewares/facilitatorAuth.middleware.js";
@@ -43,6 +44,9 @@ router.route("/logout").post(VerifyFacilitator, logoutFacilitator);
 
 // Get own profile
 router.route("/current-facilitator/:facilitatorId").get(getCurrentFacilitator);
+router
+  .route("/current-facilitator/dashboard/:facilitatorId")
+  .get(facilitatorDashboard);
 
 // Update own profile
 router

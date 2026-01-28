@@ -213,6 +213,19 @@ const getCurrentFacilitator = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, facilitator));
 });
 
+const facilitatorDashboard = asyncHandler(async (req, res) => {
+  const { facilitatorId } = req.params;
+  console.log(facilitatorId);
+  if (!facilitatorId) return new ApiError(404, "Id not valid");
+
+  const facilitator =
+    await Facilitator.findById(facilitatorId).populate("state city place");
+
+  if (!facilitator) throw new ApiError(404, "Facilitator not found");
+
+  res.status(200).json(new ApiResponse(200, facilitator));
+});
+
 const updateFacilitatorProfile = asyncHandler(async (req, res) => {
   const allowedFields = ["name", "bio", "experienceYears", "languages"];
 
@@ -416,6 +429,7 @@ export {
   logoutFacilitator,
   refreshFacilitatorToken,
   getCurrentFacilitator,
+  facilitatorDashboard,
   updateFacilitatorProfile,
   addFacilitatorSlots,
   bookFacilitatorSlot,
