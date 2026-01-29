@@ -124,7 +124,13 @@ const FacilitatorRegister = ({ startLoading, stopLoading }) => {
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-xl w-full"
       >
-        <h2 className="text-2xl font-bold mb-6">Facilitator Registration</h2>
+        <h2 className="text-2xl font-bold mb-6 flex flex-col ">
+          Facilitator Registration
+          <span className="text-xs md:text-sm font-normal">
+            You can register yourself as a Facilitator (Pandit, Temple Guide,
+            Tour Guide, Photographer etc.) for a particular place.
+          </span>
+        </h2>
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 

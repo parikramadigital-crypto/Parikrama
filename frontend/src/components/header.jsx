@@ -7,6 +7,7 @@ import { CiMenuFries } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { BiArrowFromLeft } from "react-icons/bi";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,6 +21,23 @@ const Header = () => {
 
   return (
     <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
+      {window.location.pathname === "/" ? (
+        <button
+          onClick={() => LinkNavigate("/login/facilitator")}
+          className="w-full h-fit bg-[#FFC20E] text-xs md:text-sm px-5 flex justify-between items-center py-1"
+        >
+          <h1>
+            You can register yourself as a Facilitator (Pandit, Temple Guide,
+            Tour Guide, Photographer etc.)
+          </h1>
+          <span className="md:flex justify-center items-center gap-2 hidden">
+            Register / Login <BiArrowFromLeft />
+          </span>
+        </button>
+      ) : (
+        ""
+      )}
+
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo Section */}
         <Link to={"/"} className="flex items-center">
@@ -27,9 +45,13 @@ const Header = () => {
           <img src={logo2} className="w-20" />
         </Link>
 
-        <button onClick={() => setPopup(true)}>
-          <CiMenuFries className="font-bold text-xl" />
-        </button>
+        <div className="flex justify-center items-center gap-5">
+          <Button label={"Explore more"} />
+          <Button label={"Add your near by popular place"} />
+          <button onClick={() => setPopup(true)}>
+            <CiMenuFries className="font-bold text-xl" />
+          </button>
+        </div>
       </div>
       <AnimatePresence>
         {popup && (
