@@ -1,14 +1,13 @@
-import { Place } from "../models/place.models.js";
 import { City } from "../models/city.models.js";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/admin.models.js";
+import { Place } from "../models/place.models.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { UploadImages } from "../utils/imageKit.io.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { Facilitator } from "../models/facilitator.models.js";
 
-//  * CREATE PLACE (SINGLE + BULK)
-export const createPlace = asyncHandler(async (req, res) => {
+const createPlace = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
 
   const admin = await Admin.findById(adminId);
@@ -158,10 +157,7 @@ export const createPlace = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, place, "Place created successfully"));
 });
 
-/**
- * GET ALL PLACES
- */
-export const getAllPlaces = asyncHandler(async (req, res) => {
+const getAllPlaces = asyncHandler(async (req, res) => {
   const places = await Place.find({ isActive: true })
     .populate("city state")
     .sort({ popularityScore: -1 });
@@ -169,10 +165,7 @@ export const getAllPlaces = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, places));
 });
 
-/**
- * GET PLACES BY CITY
- */
-export const getPlacesByCity = asyncHandler(async (req, res) => {
+const getPlacesByCity = asyncHandler(async (req, res) => {
   const { query } = req.params;
 
   if (!query) {
@@ -199,10 +192,7 @@ export const getPlacesByCity = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, places, "Places fetched successfully"));
 });
 
-/**
- * GET SINGLE PLACE
- */
-export const getPlaceById = asyncHandler(async (req, res) => {
+const getPlaceById = asyncHandler(async (req, res) => {
   const placeId = req.params.id;
 
   /* -------- PLACE -------- */
@@ -226,13 +216,7 @@ export const getPlaceById = asyncHandler(async (req, res) => {
   );
 });
 
-/**
- * UPDATE PLACE
- */
-/**
- * UPDATE PLACE WITH IMAGE SUPPORT
- */
-export const updatePlace = asyncHandler(async (req, res) => {
+const updatePlace = asyncHandler(async (req, res) => {
   const { placeId } = req.params;
 
   const place = await Place.findById(placeId);
@@ -294,25 +278,143 @@ export const updatePlace = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, place, "Place updated successfully"));
 });
 
-/**
- * SOFT DELETE PLACE
- */
-export const deletePlace = asyncHandler(async (req, res) => {
-  console.log("controller reached");
+const deletePlace = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
-  console.log("admin", adminId);
-  console.log("id", req.params.id);
 
   const admin = await Admin.findById(adminId);
   if (!admin) return new ApiError(404, "Invalid Admin");
-  const deleted = await Place.findByIdAndUpdate(
-    req.params.id,
-    { isActive: false },
-    { new: true },
-  );
-  console.log(deleted);
 
+  // const deleted = await Place.findByIdAndUpdate(
+  //   req.params.id,
+  //   { isActive: false },
+  //   { new: true },
+  // );
+  const deleted = await Place.findByIdAndDelete(req.params.id);
   if (!deleted) throw new ApiError(404, "Place not found");
 
   res.status(200).json(new ApiResponse(200, deleted, "Place removed"));
 });
+
+const getInactivePlaceById = asyncHandler(async (req, res) => {
+  const { placeId } = req.params;
+
+  const place = await Place.findById(placeId);
+  if (!place) throw new ApiError(400, "Place not found");
+
+  res.status(200).json(new ApiResponse(200, place));
+});
+
+const makePlaceActive = asyncHandler(async (req, res) => {
+  const { placeId } = req.params;
+
+  const place = await Place.findByIdAndUpdate(placeId, { isActive: true });
+  if (!place) throw new ApiError(400, "Place not found");
+
+  res.status(200).json(new ApiResponse(200, place, "Place removed"));
+});
+
+const uploaderPlace = asyncHandler(async (req, res) => {
+  const {
+    uploaderName,
+    uploaderContact,
+    name,
+    cityId,
+    stateId,
+    category,
+    lat,
+    lng,
+    description,
+    averageTimeSpent,
+    entryFee,
+    popularityScore,
+    bestTimeToVisit,
+  } = req.body;
+
+  if (
+    !uploaderName ||
+    !uploaderContact ||
+    !name ||
+    !cityId ||
+    !stateId ||
+    lat == null ||
+    lng == null
+  ) {
+    throw new ApiError(400, "Required fields missing");
+  }
+
+  const user = await Place.findOne(uploaderContact, { isActive: false });
+  if (user)
+    return new ApiError(
+      500,
+      "Same user cannot upload another place until the previous one gets active or verified",
+    );
+
+  const images = req.files || [];
+
+  if (images.length > 5) {
+    throw new ApiError(400, "Maximum 5 images allowed per place");
+  }
+
+  const sanitize = (str = "") =>
+    str
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9-_]/g, "")
+      .replace(/\s+/g, "-");
+
+  const safeName = sanitize(name);
+
+  const uploadedImages = [];
+
+  for (const img of images) {
+    const uploaded = await UploadImages(img.filename, {
+      folderStructure: `places/${safeName
+        .trim()
+        .replace(/\s+/g, "-")
+        .toLowerCase()}`,
+    });
+
+    uploadedImages.push({
+      url: uploaded.url,
+      fileId: uploaded.fileId,
+      altText: name,
+    });
+  }
+
+  const place = await Place.create({
+    uploaderName,
+    uploaderContact,
+    name: name.trim(),
+    city: cityId,
+    state: stateId,
+    category,
+    description,
+    averageTimeSpent,
+    entryFee,
+    popularityScore,
+    bestTimeToVisit,
+    images: uploadedImages,
+    location: {
+      type: "Point",
+      coordinates: [lng, lat],
+    },
+    isActive: false,
+  });
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, place, "Place created successfully"));
+});
+
+export {
+  createPlace,
+  getAllPlaces,
+  getPlaceById,
+  getPlacesByCity,
+  updatePlace,
+  deletePlace,
+  getInactivePlaceById,
+  makePlaceActive,
+  uploaderPlace,
+};
