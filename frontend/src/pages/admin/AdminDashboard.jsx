@@ -37,7 +37,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const formRef = useRef();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(
-    () => localStorage.getItem("activeSection") || "Dashboard",
+    () => localStorage.getItem("activeSection") || "Active Places",
   );
 
   const fetchDashboard = async () => {
