@@ -5,10 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-/**
- * CREATE CITY (SINGLE + BULK)
- */
-export const createCity = asyncHandler(async (req, res) => {
+const createCity = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
   /**
    * 🔹 BULK INSERT
@@ -54,8 +51,8 @@ export const createCity = asyncHandler(async (req, res) => {
           insertedCount: insertedCities.length,
           cities: insertedCities,
         },
-        "Cities added successfully"
-      )
+        "Cities added successfully",
+      ),
     );
   }
 
@@ -86,18 +83,12 @@ export const createCity = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, city, "City Registered successfully !"));
 });
 
-/**
- * GET ALL CITIES
- */
-export const getAllCities = asyncHandler(async (req, res) => {
+const getAllCities = asyncHandler(async (req, res) => {
   const cities = await City.find().populate("state").sort({ name: 1 });
   res.status(200).json(new ApiResponse(200, cities));
 });
 
-/**
- * GET CITIES BY STATE
- */
-export const getCitiesByState = asyncHandler(async (req, res) => {
+const getCitiesByState = asyncHandler(async (req, res) => {
   const cities = await City.find({ state: req.params.stateId })
     .populate("state")
     .sort({ name: 1 });
@@ -105,20 +96,14 @@ export const getCitiesByState = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, cities));
 });
 
-/**
- * GET SINGLE CITY
- */
-export const getCityById = asyncHandler(async (req, res) => {
+const getCityById = asyncHandler(async (req, res) => {
   const city = await City.findById(req.params.id).populate("state");
   if (!city) throw new ApiError(404, "City not found");
 
   res.status(200).json(new ApiResponse(200, city));
 });
 
-/**
- * UPDATE CITY
- */
-export const updateCity = asyncHandler(async (req, res) => {
+const updateCity = asyncHandler(async (req, res) => {
   const updated = await City.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -129,10 +114,7 @@ export const updateCity = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, updated, "City updated"));
 });
 
-/**
- * DELETE CITY
- */
-export const deleteCity = asyncHandler(async (req, res) => {
+const deleteCity = asyncHandler(async (req, res) => {
   const { adminId, id: cityId } = req.params;
 
   const admin = await Admin.findById(adminId);
@@ -150,6 +132,56 @@ export const deleteCity = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, null, "City and related places deleted successfully")
+      new ApiResponse(
+        200,
+        null,
+        "City and related places deleted successfully",
+      ),
     );
 });
+
+const createCityByPlace = asyncHandler(async (req, res) => {
+  const { adminId, placeId } = req.params;
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    return new ApiError(403, "Only admins can create states");
+  }
+
+  const { name, stateId, lat, lng } = req.body;
+
+  if (!name || !stateId || lat == null || lng == null) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const city = await City.create({
+    name: name.trim(),
+    state: stateId,
+    location: {
+      type: "Point",
+      coordinates: [lng, lat],
+    },
+  });
+
+  const place = await Place.findByIdAndUpdate(placeId, {
+    customCity: "",
+    city: city,
+  });
+  if (!place) {
+    return new ApiError(403, "Place not found");
+  }
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, city, "City Registered successfully !"));
+});
+
+export {
+  createCity,
+  getAllCities,
+  getCitiesByState,
+  getCityById,
+  updateCity,
+  deleteCity,
+  createCityByPlace,
+};

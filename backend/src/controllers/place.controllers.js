@@ -298,7 +298,7 @@ const deletePlace = asyncHandler(async (req, res) => {
 const getInactivePlaceById = asyncHandler(async (req, res) => {
   const { placeId } = req.params;
 
-  const place = await Place.findById(placeId);
+  const place = await Place.findById(placeId).populate("state city");
   if (!place) throw new ApiError(400, "Place not found");
 
   res.status(200).json(new ApiResponse(200, place));
@@ -306,15 +306,17 @@ const getInactivePlaceById = asyncHandler(async (req, res) => {
 
 const makePlaceActive = asyncHandler(async (req, res) => {
   const { placeId } = req.params;
+  console.log("placeId", placeId);
 
   const place = await Place.findByIdAndUpdate(placeId, { isActive: true });
   if (!place) throw new ApiError(400, "Place not found");
 
-  res.status(200).json(new ApiResponse(200, place, "Place removed"));
+  res.status(200).json(new ApiResponse(200, place, "Place Accepted !"));
 });
 
 const uploaderPlace = asyncHandler(async (req, res) => {
   const {
+    customCity,
     uploaderName,
     uploaderContact,
     name,
@@ -330,11 +332,93 @@ const uploaderPlace = asyncHandler(async (req, res) => {
     bestTimeToVisit,
   } = req.body;
 
+  if (!cityId || cityId === "undefined") {
+    const city = "697cb8b3be2bdf01a5326e36";
+    const otherCity = await City.findById(city);
+
+    if (
+      !uploaderName ||
+      !uploaderContact ||
+      !name ||
+      // !cityId ||
+      !stateId ||
+      lat == null ||
+      lng == null
+    ) {
+      throw new ApiError(400, "Required fields missing");
+    }
+
+    const user = await Place.findOne({ uploaderContact }, { isActive: false });
+    if (user)
+      return new ApiError(
+        500,
+        "Same user cannot upload another place until the previous one gets active or verified",
+      );
+
+    const images = req.files || [];
+
+    if (images.length > 5) {
+      throw new ApiError(400, "Maximum 5 images allowed per place");
+    }
+
+    const sanitize = (str = "") =>
+      str
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9-_]/g, "")
+        .replace(/\s+/g, "-");
+
+    const safeName = sanitize(name);
+
+    const uploadedImages = [];
+
+    for (const img of images) {
+      const uploaded = await UploadImages(img.filename, {
+        folderStructure: `places/${safeName
+          .trim()
+          .replace(/\s+/g, "-")
+          .toLowerCase()}`,
+      });
+
+      uploadedImages.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+        altText: name,
+      });
+    }
+
+    const place = await Place.create({
+      customCity,
+      uploaderName,
+      uploaderContact,
+      name: name.trim(),
+      city: otherCity,
+      state: stateId,
+      category,
+      description,
+      averageTimeSpent,
+      entryFee,
+      popularityScore,
+      bestTimeToVisit,
+      images: uploadedImages,
+      location: {
+        type: "Point",
+        coordinates: [lng, lat],
+      },
+      isActive: false,
+    });
+
+    res
+      .status(201)
+      .json(new ApiResponse(201, place, "Place created successfully"));
+  }
+
   if (
     !uploaderName ||
     !uploaderContact ||
     !name ||
-    !cityId ||
+    // !cityId ||
     !stateId ||
     lat == null ||
     lng == null
@@ -342,7 +426,7 @@ const uploaderPlace = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields missing");
   }
 
-  const user = await Place.findOne(uploaderContact, { isActive: false });
+  const user = await Place.findOne({ uploaderContact }, { isActive: false });
   if (user)
     return new ApiError(
       500,
@@ -383,6 +467,7 @@ const uploaderPlace = asyncHandler(async (req, res) => {
   }
 
   const place = await Place.create({
+    customCity,
     uploaderName,
     uploaderContact,
     name: name.trim(),

@@ -46,6 +46,7 @@ const placeSchema = new mongoose.Schema(
 
     uploaderName: { type: String },
     uploaderContact: { type: String },
+    customCity: { type: String },
 
     popularityScore: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
