@@ -29,7 +29,7 @@ const Place = ({ Text = "", TableData = [] }) => {
   }, [search, TableData]);
 
   return (
-    <div className="mt-10">
+    <div>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold text-nowrap">
           {Text} (<span className="text-sm">{filteredData.length}</span>)
@@ -145,7 +145,7 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
   };
 
   return (
-    <div className="mt-10">
+    <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold text-nowrap">
           {Text} (<span className="text-sm">{filteredData.length}</span>){" "}
@@ -243,7 +243,7 @@ const City = ({ Text = "", TableData = [] }) => {
   }, [search, TableData]);
 
   return (
-    <div className="mt-10">
+    <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold">
           {Text} (<span className="text-sm">{filteredData.length}</span>)
@@ -316,7 +316,7 @@ const State = ({ Text = "", TableData = [] }) => {
   }, [search, TableData]);
 
   return (
-    <div className="mt-10">
+    <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold">
           {Text} (<span className="text-sm">{filteredData.length}</span>)
@@ -406,7 +406,7 @@ const Facilitator = ({ Text = "", TableData = [] }) => {
   }, [search, TableData]);
 
   return (
-    <div className="mt-10">
+    <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold">
           {Text} (<span className="text-sm">{filteredData.length}</span>)
@@ -517,7 +517,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
   };
 
   return (
-    <div className="mt-10">
+    <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold text-nowrap">
           {Text} (<span className="text-sm">{filteredData.length}</span>){" "}

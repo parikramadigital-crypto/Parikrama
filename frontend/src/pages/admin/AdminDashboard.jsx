@@ -19,6 +19,7 @@ import { LuRefreshCw } from "react-icons/lu";
 import { IoMdLogOut } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import InputBox from "../../components/InputBox";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [placeData, setPlaceData] = useState([]);
@@ -28,11 +29,16 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [inactivePlaceData, setInactivePlaceData] = useState([]);
   const [inactiveFacilitator, setInactiveFacilitator] = useState([]);
   const [popup, setPopup] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formRef = useRef();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(
+    () => localStorage.getItem("activeSection") || "Dashboard",
+  );
 
   const fetchDashboard = async () => {
     try {
@@ -50,6 +56,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       stopLoading();
     }
   };
+
   useEffect(() => {
     fetchDashboard();
   }, [user]);
@@ -68,6 +75,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     { label: "Admin Id", value: user?.employeeId },
     { label: "Role", value: user?.role },
   ];
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -148,73 +156,157 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     }
   };
 
+  const sections = [
+    "Active Places",
+    "Cities",
+    "States",
+    "Inactive Places",
+    "Verified Facilitator",
+    "Non-Verified Facilitator",
+  ];
+
   return user ? (
-    <div className="p-6 px-20">
-      <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
-      <div className="flex w-full shadow-2xl p-5 rounded-xl bg-neutral-200 justify-between ">
-        <div className="md:space-y-2">
-          {userDetails.map((item, index) => (
-            <h1 key={index}>
-              <strong>{item.label} :</strong> {item.value ?? "NA"}
-            </h1>
-          ))}
-        </div>
-        {/* BUTTONS  */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* <div className="flex justify-center items-start gap-5"> */}
-          <Button
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <LuRefreshCw />
-                Reload Dashboard
-              </h1>
-            }
-            className={"w-full text-nowrap"}
-            onClick={() => fetchDashboard()}
-          />
-          <Button
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <RiImageAddFill /> Add new banner
-              </h1>
-            }
-            className={"w-full text-nowrap"}
-            onClick={() => setPopup(true)}
-          />
-          {commands.map((item, index) => (
-            <Button
-              key={index}
-              label={item.label}
-              className={"w-full text-nowrap"}
-              onClick={() => navigate(item.path)}
-            />
-          ))}
-          <Button
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <IoMdLogOut />
-                Log out
-              </h1>
-            }
-            className={"w-full"}
-            onClick={() => logout()}
-          />
+    <div className="flex flex-col gap-10">
+      <h2 className="text-2xl font-bold mb-2 px-20">Admin Dashboard</h2>
+
+      {/* ADMIN DETAILS  */}
+      <div className="w-full px-20">
+        <div className="rounded-xl overflow-hidden">
+          <button
+            className={"w-full bg-gray-300 px-10 py-2"}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="flex justify-between items-center">
+              <h2 className="font-semibold uppercase">
+                Your Details and Quick Actions
+              </h2>
+
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <FaChevronDown className="w-6 h-6" />
+              </motion.div>
+            </div>
+          </button>
+
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <div className="flex w-full shadow-2xl p-5 rounded-b-xl bg-neutral-200 justify-between ">
+                  <div className="md:space-y-2">
+                    {userDetails.map((item, index) => (
+                      <h1 key={index}>
+                        <strong>{item.label} :</strong> {item.value ?? "NA"}
+                      </h1>
+                    ))}
+                  </div>
+                  {/* BUTTONS  */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {/* <div className="flex justify-center items-start gap-5"> */}
+                    <Button
+                      label={
+                        <h1 className="flex justify-center items-center gap-2">
+                          <LuRefreshCw />
+                          Reload Dashboard
+                        </h1>
+                      }
+                      className={"w-full text-nowrap"}
+                      onClick={() => fetchDashboard()}
+                    />
+                    <Button
+                      label={
+                        <h1 className="flex justify-center items-center gap-2">
+                          <RiImageAddFill /> Add new banner
+                        </h1>
+                      }
+                      className={"w-full text-nowrap"}
+                      onClick={() => setPopup(true)}
+                    />
+                    {commands.map((item, index) => (
+                      <Button
+                        key={index}
+                        label={item.label}
+                        className={"w-full text-nowrap"}
+                        onClick={() => navigate(item.path)}
+                      />
+                    ))}
+                    <Button
+                      label={
+                        <h1 className="flex justify-center items-center gap-2">
+                          <IoMdLogOut />
+                          Log out
+                        </h1>
+                      }
+                      className={"w-full"}
+                      onClick={() => logout()}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-      <Place TableData={placeData} Text="Listed Places" />
-      <City TableData={cityData} Text="Listed Cities" />
-      <State TableData={stateData} Text="Listed States" />
-      <Facilitator TableData={facilitator} Text="Active Facilitator" />
-      <InactivePlace
-        TableData={inactivePlaceData}
-        Text="Places under review"
-        user={user?._id}
-      />
-      <InactiveFacilitator
-        TableData={inactiveFacilitator}
-        Text="Facilitator under review"
-        user={user?._id}
-      />
+
+      {/* Tables  */}
+      <div className="flex w-full bg-neutral-200 px-5 py-5">
+        <aside className="static bottom-0 left-0 w-60 flex justify-start items-center h-full">
+          <nav>
+            <ul className="flex gap-5 items-start flex-col">
+              {sections.map((section, idx) => (
+                <li
+                  key={section}
+                  className={`cursor-pointer transition-all duration-300 rounded-xl shadow-2xl w-full p-4 ${
+                    activeSection === section
+                      ? "bg-[#FFC20E] underline"
+                      : "bg-white text-black"
+                  }`}
+                  onClick={() => {
+                    setActiveSection(section);
+                    setMenuOpen(false); // close menu on click (mobile)
+                  }}
+                >
+                  {section}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+        <main className="w-full px-5">
+          {activeSection === "Active Places" && (
+            <Place TableData={placeData} Text="Listed Places" />
+          )}
+          {activeSection === "Cities" && (
+            <City TableData={cityData} Text="Listed Cities" />
+          )}
+          {activeSection === "States" && (
+            <State TableData={stateData} Text="Listed States" />
+          )}
+          {activeSection === "Inactive Places" && (
+            <InactivePlace
+              TableData={inactivePlaceData}
+              Text="Places under review"
+              user={user?._id}
+            />
+          )}
+          {activeSection === "Verified Facilitator" && (
+            <Facilitator TableData={facilitator} Text="Active Facilitator" />
+          )}
+          {activeSection === "Non-Verified Facilitator" && (
+            <InactiveFacilitator
+              TableData={inactiveFacilitator}
+              Text="Facilitator under review"
+              user={user?._id}
+            />
+          )}
+        </main>
+      </div>
 
       <AnimatePresence>
         {popup && (
