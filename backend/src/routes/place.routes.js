@@ -26,7 +26,7 @@ router
   .post(upload.array("images", 5), uploaderPlace);
 
 /* Admin routes */
-router.route("/active-new-place/:placeId").post(VerifyUser, makePlaceActive);
+router.route("/active-new-place/:placeId").post(makePlaceActive);
 router
   .route("/register-new-place/:adminId")
   .post(upload.array("images", 5), createPlace);

@@ -182,7 +182,7 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
                 <tr key={data._id} className="hover:bg-gray-50 border-b">
                   <td>
                     <Link
-                      to={`/current/place/${data?._id}`}
+                      to={`/review/current/place/${data?._id}`}
                       className="px-5 py-3 block hover:text-blue-500 hover:underline"
                     >
                       {data?.name}
