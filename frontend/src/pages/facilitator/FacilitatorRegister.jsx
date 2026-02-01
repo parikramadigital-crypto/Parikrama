@@ -134,7 +134,7 @@ const FacilitatorRegister = ({ startLoading, stopLoading }) => {
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-        <div className="grid md:grid-cols-2 gap-3">
+        <div className="md:grid md:grid-cols-2 gap-3">
           <InputBox
             LabelName="Full Name"
             Name="name"

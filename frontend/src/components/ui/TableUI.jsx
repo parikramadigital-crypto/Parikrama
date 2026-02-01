@@ -40,6 +40,7 @@ const Place = ({ Text = "", TableData = [] }) => {
             Placeholder="Search place..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
 
@@ -160,6 +161,7 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
             Placeholder="Search inactive place..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
@@ -255,6 +257,7 @@ const City = ({ Text = "", TableData = [] }) => {
             Placeholder="Search city..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
@@ -328,6 +331,7 @@ const State = ({ Text = "", TableData = [] }) => {
             Placeholder="Search state..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
@@ -418,6 +422,7 @@ const Facilitator = ({ Text = "", TableData = [] }) => {
             Placeholder="Search facilitator..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>
@@ -532,6 +537,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
             Placeholder="Search inactive facilitator..."
             Value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
           />
         </div>
       </div>

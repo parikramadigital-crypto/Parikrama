@@ -255,7 +255,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       </div>
 
       {/* Tables  */}
-      <div className="flex w-full bg-neutral-200 px-5 py-5">
+      <div className="flex w-full bg-neutral-200 px-5 py-5 rounded-xl">
         <aside className="static bottom-0 left-0 w-60 flex justify-start items-center h-full">
           <nav>
             <ul className="flex gap-5 items-start flex-col">

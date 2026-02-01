@@ -107,75 +107,71 @@ const GuestPlace = ({ startLoading, stopLoading }) => {
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="p-8 rounded-xl shadow-md w-3/4 bg-white"
+        className="p-8 rounded-xl shadow-md md:w-3/4 bg-white"
       >
         <h2 className="text-2xl font-bold mb-6">Add New Place</h2>
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         {success && <p className="text-green-600 text-sm mb-3">{success}</p>}
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="md:grid grid-cols-2 gap-5">
           <InputBox LabelName="Your Name" Name="uploaderName" required />
           <InputBox LabelName="Your Contact" Name="uploaderContact" required />
           <InputBox LabelName="Place Name" Name="name" required />
           <InputBox LabelName="Category" Name="category" />
 
           {/* STATE SELECT */}
-          <div>
-            <label className="block text-sm font-medium mb-1">State</label>
-            <select
-              name="stateId"
-              required
-              className="w-full border rounded-md px-3 py-2"
-              onChange={(e) => setSelectedState(e.target.value)}
-            >
-              <option value="">Select State</option>
-              {states.map((state) => (
-                <option key={state._id} value={state._id}>
-                  {state.name}
-                </option>
-              ))}
-            </select>
+          <div className="flex justify-center items-center w-full">
+            <div className="py-4 w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                State
+              </label>
+              <select
+                name="stateId"
+                required
+                className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
+                onChange={(e) => setSelectedState(e.target.value)}
+              >
+                <option value="">Select State</option>
+                {states.map((state) => (
+                  <option key={state._id} value={state._id}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* CITY SELECT */}
-          <div>
-            <label className="block text-sm font-medium mb-1">City</label>
-            <select
-              name="cityId"
-              required
-              className="w-full border rounded-md px-3 py-2"
-              value={selectedCity}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSelectedCity(value);
-                setShowOtherCityInput(value === "undefined");
-              }}
-            >
-              <option value="">Select City</option>
+          <div className="flex justify-center items-center w-full">
+            <div className="py-4 w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                City
+              </label>
+              <select
+                name="cityId"
+                required
+                className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
+                value={selectedCity}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedCity(value);
+                  setShowOtherCityInput(value === "undefined");
+                }}
+              >
+                <option value="">Select City</option>
 
-              {cities.map((city) => (
-                <option key={city._id} value={city._id}>
-                  {city.name}
-                </option>
-              ))}
+                {cities.map((city) => (
+                  <option key={city._id} value={city._id}>
+                    {city.name}
+                  </option>
+                ))}
 
-              <option value="undefined">Others</option>
-            </select>
-
-            {/* <select
-              name="cityId"
-              required
-              className="w-full border rounded-md px-3 py-2"
-            >
-              <option value="">Select City</option>
-              {cities.map((city) => (
-                <option key={city._id} value={city._id}>
-                  {city.name}
-                </option>
-              ))}
-            </select> */}
+                <option value="undefined">Others</option>
+              </select>
+            </div>
           </div>
+
           {showOtherCityInput && (
             <InputBox
               LabelName="Enter City Name"
