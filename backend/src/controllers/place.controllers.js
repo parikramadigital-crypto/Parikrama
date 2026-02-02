@@ -492,6 +492,77 @@ const uploaderPlace = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, place, "Place created successfully"));
 });
 
+const explorePlaces = asyncHandler(async (req, res) => {
+  // this controller fetches places sorted by popularity score
+  const places = await Place.find({ isActive: true })
+    .populate("city state")
+    .sort({
+      popularityScore: -1, // highest first
+      createdAt: -1, // fallback sorting
+    });
+
+  if (!places.length) {
+    throw new ApiError(404, "No places found");
+  }
+  // this controller suggests places according to the categories i provide
+  const IMPORTANT_CATEGORIES = [
+    "temple",
+    "nature",
+    "beach",
+    "waterfall",
+    "mountain",
+    "heritage",
+    "historical",
+    "wildlife",
+    "park",
+    "lake",
+  ];
+
+  const categorizedPlace = await Place.find({
+    isActive: true,
+    category: {
+      $in: IMPORTANT_CATEGORIES.map((word) => new RegExp(word, "i")),
+    },
+  })
+    .populate("city state")
+    .sort({
+      popularityScore: -1,
+      createdAt: -1,
+    });
+
+  if (!categorizedPlace.length) {
+    throw new ApiError(404, "No categorizedPlace found");
+  }
+
+  const enrichedPlaces = categorizedPlace.map((place, index) => {
+    let label = "Low";
+
+    if (place.popularityScore >= 5) label = "Trending";
+    else if (place.popularityScore >= 4) label = "Popular";
+    else if (place.popularityScore >= 3) label = "Rising";
+
+    return {
+      ...place.toObject(),
+
+      popularity: {
+        score: place.popularityScore,
+        rank: index + 1,
+        label,
+      },
+    };
+  });
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { places, enrichedPlaces },
+        "Places fetched successfully (sorted by popularity)",
+      ),
+    );
+});
+
 export {
   createPlace,
   getAllPlaces,
@@ -502,4 +573,5 @@ export {
   getInactivePlaceById,
   makePlaceActive,
   uploaderPlace,
+  explorePlaces,
 };
