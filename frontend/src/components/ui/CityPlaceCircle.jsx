@@ -7,7 +7,7 @@ const CityPlacesCircle = ({ cityName, places = [] }) => {
   const centerSize = 120;
 
   return (
-    <div className="relative w-[400px] h-[400px] mx-auto flex items-center justify-center bg-gray-200 rounded-xl shadow">
+    <div className="relative md:w-[400px] w-full h-[400px] md:mx-auto flex items-center justify-center bg-gray-200 rounded-xl shadow">
       {/* CENTER CIRCLE */}
       <div
         className="absolute flex items-center justify-center rounded-full bg-[#FFC20E] font-semibold text-lg shadow-lg"

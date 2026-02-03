@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { BiChevronDown, BiChevronUp, BiSolidNavigation } from "react-icons/bi";
+import {
+  BiArrowFromLeft,
+  BiChevronDown,
+  BiChevronUp,
+  BiSolidNavigation,
+} from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
 import RandomImageSlider from "./RandomImageSlider";
 import { useMemo } from "react";
@@ -113,249 +118,270 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
   };
 
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col pb-2">
-      {/* Image / Placeholder */}
-      <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
-        {images.length > 0 ? (
-          <RandomImageSlider images={images} />
-        ) : (
-          <span className="text-gray-400">No images available</span>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-5 flex md:flex-row flex-col justify-between">
-        <motion.div
-          whileInView={{ opacity: 1, x: 0 }}
-          initial={{ opacity: 0, x: -100 }}
-          transition={{ type: "spring", duration: 1, ease: "easeInOut" }}
-          className="space-y-2 md:w-3/4"
-        >
-          {/* Name */}
-          <h3 className="text-xl font-semibold text-gray-900 ">
-            {place?.name}{" "}
-            <span className="md:hidden">
-              <button onClick={() => setPopup3(true)}>
-                <FaShareAlt />
-              </button>
-            </span>
-          </h3>
-
-          {/* Location */}
-          <p className="text-sm text-gray-500">
-            {place?.city?.name}, {place?.state?.name}
-          </p>
-
-          {/* Category */}
-          <p className="inline-block w-fit text-xs px-3 py-1 rounded-full bg-[#FFC20E]">
-            {place?.category}
-          </p>
-
-          {/* Description */}
-          <p className="text-sm text-gray-600 ">{place?.description}</p>
-        </motion.div>
-
-        {/* Meta Info */}
-        <div className="flex flex-col justify-center items-center gap-5 h-fit">
-          <button
-            onClick={openMaps}
-            className={`bg-transparent px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] border h-full flex md:flex-col justify-center items-center text-neutral-500`}
-          >
-            <span>
-              <BiSolidNavigation className="md:text-3xl" />
-            </span>
-            <span className="text-black">Get Directions</span>
-          </button>
-          <Button
-            label={"Hire your facilitator"}
-            onClick={() => setPopup2(true)}
-          />
-          <Button
-            label={
-              <h2 className="flex justify-center items-center gap-2">
-                {" "}
-                <FaShareAlt />
-                Share
-              </h2>
-            }
-            onClick={() => setPopup3(true)}
-            className={"w-full md:block hidden"}
-          />
+    <div>
+      <div className="w-full bg-white border border-gray-200 rounded-t-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col pb-2">
+        {/* Image / Placeholder */}
+        <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
+          {images.length > 0 ? (
+            <RandomImageSlider images={images} />
+          ) : (
+            <span className="text-gray-400">No images available</span>
+          )}
         </div>
-      </div>
-      <div className="flex justify-between text-sm text-gray-500 px-5 pb-5">
-        <span>Exploration time ⏱ : {place?.averageTimeSpent || "NA"} min</span>
-        <span>
-          Best time to visit: <strong>{place?.bestTimeToVisit}</strong>
-        </span>
-        {/* <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
+
+        {/* Content */}
+        <div className="py-5 px-3 flex md:flex-row flex-col justify-between">
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            transition={{ type: "spring", duration: 1, ease: "easeInOut" }}
+            className="space-y-2 md:w-3/4"
+          >
+            {/* Name */}
+            <h3 className="text-xl font-semibold text-gray-900 ">
+              {place?.name}{" "}
+              <span className="md:hidden">
+                <button onClick={() => setPopup3(true)}>
+                  <FaShareAlt />
+                </button>
+              </span>
+            </h3>
+
+            {/* Location */}
+            <p className="text-sm text-gray-500">
+              {place?.city?.name}, {place?.state?.name}
+            </p>
+
+            {/* Category */}
+            <p className="inline-block w-fit text-xs px-3 py-1 rounded-full bg-[#FFC20E]">
+              {place?.category}
+            </p>
+
+            {/* Description */}
+            <p className="text-sm text-gray-600 text-justify indent-8">
+              {place?.description}
+            </p>
+          </motion.div>
+
+          {/* Meta Info */}
+          <div className="flex flex-col justify-center items-center gap-5 h-fit">
+            <button
+              onClick={openMaps}
+              className={`bg-transparent px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] border h-full flex md:flex-col justify-center items-center text-neutral-500`}
+            >
+              <span>
+                <BiSolidNavigation className="md:text-3xl" />
+              </span>
+              <span className="text-black">Get Directions</span>
+            </button>
+            <Button
+              label={"Get a facilitator"}
+              onClick={() => setPopup2(true)}
+            />
+            <Button
+              label={
+                <h2 className="flex justify-center items-center gap-2">
+                  {" "}
+                  <FaShareAlt />
+                  Share
+                </h2>
+              }
+              onClick={() => setPopup3(true)}
+              className={"w-full md:block hidden"}
+            />
+          </div>
+        </div>
+        <div className="flex justify-between text-sm text-gray-500 md:px-5 px-2 pb-5 w-full">
+          <span>
+            Exploration time ⏱ : <br />
+            {place?.averageTimeSpent || "NA"} min
+          </span>
+          <span>
+            Best time to visit: <br /> <strong>{place?.bestTimeToVisit}</strong>
+          </span>
+          {/* <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
           {" "}
           ₹{place?.entryFee}
         </span> */}
-      </div>
-      {user ? (
-        <div className="flex justify-center items-center gap-10">
-          <Button
-            onClick={() => navigate(`/admin/edit-place/${place?._id}`)}
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <FaEdit />
-                Edit
-              </h1>
-            }
-          />
-          <Button
-            onClick={() => setPopup(true)}
-            label={
-              <h1 className="flex justify-center items-center gap-2">
-                <FaTrash /> Delete
-              </h1>
-            }
-            className={
-              "text-black hover:bg-red-500 hover:text-white duration-300 ease-in-out"
-            }
-          />
         </div>
-      ) : (
-        ""
-      )}
-      <AnimatePresence>
-        {popup && (
-          <motion.div
-            whileInView={{ opacity: 1, x: 0 }}
-            initial={{ opacity: 0, x: -100 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
-            className="fixed top-0 left-0 h-screen w-full bg-white flex justify-center items-center flex-col z-50"
-          >
-            <h1>Are you sure you want to delete this Place ?</h1>
-            <div className="flex justify-center items-center gap-5 py-5">
-              <Button label={"Cancel"} onClick={() => setPopup(false)} />
-              <Button label={"Confirm"} onClick={() => deletePlace()} />
-            </div>
-          </motion.div>
+        {user ? (
+          <div className="flex justify-center items-center gap-10">
+            <Button
+              onClick={() => navigate(`/admin/edit-place/${place?._id}`)}
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <FaEdit />
+                  Edit
+                </h1>
+              }
+            />
+            <Button
+              onClick={() => setPopup(true)}
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <FaTrash /> Delete
+                </h1>
+              }
+              className={
+                "text-black hover:bg-red-500 hover:text-white duration-300 ease-in-out"
+              }
+            />
+          </div>
+        ) : (
+          ""
         )}
-        {popup2 && (
-          <motion.div
-            whileInView={{ opacity: 1, x: 0 }}
-            initial={{ opacity: 0, x: -100 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
-            className="fixed top-0 left-0 h-screen w-full flex justify-center items-center z-50 "
-          >
-            <div className="bg-white md:w-3/4 w-full h-full flex flex-col justify-start items-center py-10 overflow-scroll">
-              {facilitator?.length > 0
-                ? facilitator.map((fac) => (
-                    <div className="flex flex-col justify-between items-center bg-neutral-200 px-10 py-5 w-[90%] rounded-xl">
-                      <div className="flex flex-col md:flex-row justify-center items-start md:items-center md:gap-5">
-                        <div className="w-10 h-10 md:w-20 md:h-20 rounded-full overflow-hidden object-fill bg-red-500 flex justify-center items-center ">
-                          <img
-                            src={fac?.images[0]?.url}
-                            className="h-full w-full"
-                          />
+        <AnimatePresence>
+          {popup && (
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+              className="fixed top-0 left-0 h-screen w-full bg-white flex justify-center items-center flex-col z-50"
+            >
+              <h1>Are you sure you want to delete this Place ?</h1>
+              <div className="flex justify-center items-center gap-5 py-5">
+                <Button label={"Cancel"} onClick={() => setPopup(false)} />
+                <Button label={"Confirm"} onClick={() => deletePlace()} />
+              </div>
+            </motion.div>
+          )}
+          {popup2 && (
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+              className="fixed top-0 left-0 h-screen w-full flex justify-center items-center z-50 "
+            >
+              <div className="bg-white md:w-3/4 w-full h-full flex flex-col justify-start items-center py-10 overflow-scroll">
+                {facilitator?.length > 0
+                  ? facilitator.map((fac) => (
+                      <div className="flex flex-col justify-between items-center bg-neutral-200 px-10 py-5 w-[90%] rounded-xl">
+                        <div className="flex flex-col md:flex-row justify-center items-start md:items-center md:gap-5">
+                          <div className="w-10 h-10 md:w-20 md:h-20 rounded-full overflow-hidden object-fill bg-red-500 flex justify-center items-center ">
+                            <img
+                              src={fac?.images[0]?.url}
+                              className="h-full w-full"
+                            />
+                          </div>
+                          <h2 className="flex flex-col w-48 text-nowrap overflow-hidden">
+                            <strong>{fac?.name}</strong>{" "}
+                            <span className="text-xs">
+                              {fac?.experienceYears} year Experience
+                            </span>
+                            <span className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit text-xs">
+                              {fac?.role}
+                            </span>
+                          </h2>
+                          {facilitatorData ? (
+                            ""
+                          ) : (
+                            <Button
+                              label={"Call"}
+                              className={"w-full md:w-fit"}
+                            />
+                          )}
                         </div>
-                        <h2 className="flex flex-col w-48 text-nowrap overflow-hidden">
-                          <strong>{fac?.name}</strong>{" "}
-                          <span className="text-xs">
-                            {fac?.experienceYears} year Experience
-                          </span>
-                          <span className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit text-xs">
-                            {fac?.role}
-                          </span>
-                        </h2>
                         {facilitatorData ? (
-                          ""
+                          <button
+                            onClick={() => setFacilitatorData(false)}
+                            className="flex justify-center items-center hover:bg-neutral-300 border border-neutral-300 px-2 py-1 rounded-xl text-xs"
+                          >
+                            Close <BiChevronUp className="text-2xl" />
+                          </button>
                         ) : (
-                          <Button
-                            label={"Call"}
-                            className={"w-full md:w-fit"}
-                          />
+                          <button
+                            onClick={() => setFacilitatorData(true)}
+                            className="flex justify-center items-center hover:bg-neutral-300 border border-neutral-300 px-2 py-1 rounded-xl text-xs"
+                          >
+                            More about <BiChevronDown className="text-2xl" />
+                          </button>
                         )}
-                      </div>
-                      {facilitatorData ? (
-                        <button
-                          onClick={() => setFacilitatorData(false)}
-                          className="flex justify-center items-center hover:bg-neutral-300 border border-neutral-300 px-2 py-1 rounded-xl text-xs"
-                        >
-                          Close <BiChevronUp className="text-2xl" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setFacilitatorData(true)}
-                          className="flex justify-center items-center hover:bg-neutral-300 border border-neutral-300 px-2 py-1 rounded-xl text-xs"
-                        >
-                          More about <BiChevronDown className="text-2xl" />
-                        </button>
-                      )}
-                      {/* <button
+                        {/* <button
                     onClick={() => setFacilitatorData(true)}
                     className="flex justify-center items-center hover:bg-neutral-300 border border-neutral-300 px-2 py-1 rounded-xl text-xs"
                   >
                     More about <BiChevronDown className="text-2xl" />
                   </button> */}
-                      <AnimatePresence>
-                        {facilitatorData && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{
-                              duration: 0.5,
-                              ease: [0.4, 0, 0.2, 1],
-                            }}
-                          >
-                            <p>
-                              <strong>Languages :</strong> {fac?.languages}{" "}
-                            </p>
-                            <p className="flex flex-col text-xs">
-                              <strong>About</strong>
-                              {fac?.bio}
-                            </p>
-                            {fac?.verification?.status === "Pending" ? (
+                        <AnimatePresence>
+                          {facilitatorData && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{
+                                duration: 0.5,
+                                ease: [0.4, 0, 0.2, 1],
+                              }}
+                            >
                               <p>
-                                <strong>Note : </strong>Please contact and hire
-                                on your own risk, this facilitator is not
-                                verified yet.
+                                <strong>Languages :</strong>{" "}
+                                {fac?.languages}{" "}
                               </p>
-                            ) : (
-                              ""
-                            )}
-                            <Button label={"Call"} />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ))
-                : "No facilitator available for this place.."}
-            </div>
-            <div
-              onClick={() => setPopup2(false)}
-              className="w-1/4 md:w-1/2 h-full bg-black/80"
-            ></div>
-            {/* <h1>Are you sure you want to delete this Place ?</h1> */}
-          </motion.div>
-        )}
-        {popup3 && (
-          <motion.div
-            whileInView={{ opacity: 1, x: 0 }}
-            initial={{ opacity: 0, x: -100 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
-            className="fixed top-0 left-0 h-screen w-full bg-black/80 flex justify-center items-center flex-col z-50"
-          >
-            <div className="bg-white p-5 rounded-xl md:w-1/2 w-[90%]">
-              <h1>Share this place</h1>
-              <div className="flex justify-center items-center gap-5">
-                <InputBox Value={window.location.href} />
-                <CopyUrlButton />
+                              <p className="flex flex-col text-xs">
+                                <strong>About</strong>
+                                {fac?.bio}
+                              </p>
+                              {fac?.verification?.status === "Pending" ? (
+                                <p>
+                                  <strong>Note : </strong>Please contact and
+                                  hire on your own risk, this facilitator is not
+                                  verified yet.
+                                </p>
+                              ) : (
+                                ""
+                              )}
+                              <Button label={"Call"} />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))
+                  : "No facilitator available for this place.."}
               </div>
-              <div className="flex justify-center items-center gap-5 py-5">
-                <Button label={"Done"} onClick={() => setPopup3(false)} />
+              <div
+                onClick={() => setPopup2(false)}
+                className="w-1/4 md:w-1/2 h-full bg-black/80"
+              ></div>
+              {/* <h1>Are you sure you want to delete this Place ?</h1> */}
+            </motion.div>
+          )}
+          {popup3 && (
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+              className="fixed top-0 left-0 h-screen w-full bg-black/80 flex justify-center items-center flex-col z-50"
+            >
+              <div className="bg-white p-5 rounded-xl md:w-1/2 w-[90%]">
+                <h1>Share this place</h1>
+                <div className="flex justify-center items-center gap-5">
+                  <InputBox Value={window.location.href} />
+                  <CopyUrlButton />
+                </div>
+                <div className="flex justify-center items-center gap-5 py-5">
+                  <Button label={"Done"} onClick={() => setPopup3(false)} />
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <Link
+        // onClick={() => LinkNavigate("/login/facilitator")}
+        to={"/login/facilitator"}
+        className="w-full h-fit bg-[#FFC20E] text-xs md:text-sm px-5 flex justify-between items-center py-1 rounded-b-xl shadow-sm"
+      >
+        <h1>
+          You can register yourself as a Facilitator (Pandit, Temple Guide, Tour
+          Guide, Photographer etc.)
+        </h1>
+        <span className="flex justify-center items-center gap-2 ">
+          Register / Login <BiArrowFromLeft />
+        </span>
+      </Link>
     </div>
   );
 };

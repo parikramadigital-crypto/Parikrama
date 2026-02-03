@@ -16,6 +16,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   const [facilitator, setFacilitator] = useState([]);
   const [popup, setPopup] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
+  const [count, setCount] = useState(4);
 
   const currentPlace = async () => {
     try {
@@ -60,20 +61,27 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       </div>
 
       {/* Content + Sticky Circle */}
-      <div className="grid lg:grid-cols-3 grid-cols-1 gap-10 md:px-20 px-5 py-20">
+      <div className="flex  gap-10 md:px-20 px-5 py-20 ">
         {/* LEFT CONTENT (SCROLLS) */}
-        <div className="col-span-2 flex flex-col gap-6">
-          <Button
+        <div className="flex flex-col justify-center items-center gap-6 w-full">
+          <div className="w-full overflow-x-hidden flex flex-col gap-2 justify-center items-center md:hidden">
+            <h1>This is a itinerary of {data?.city?.name}</h1>
+            <CityPlacesCircle
+              cityName={data?.city?.name}
+              places={recommendations}
+            />
+          </div>
+          {/* <Button
             label={"View itinerary"}
             onClick={() => setPopup(true)}
             className={"block lg:hidden"}
-          />
+          /> */}
           <h1 className="text-left">
             As you are interested in touring {data?.city?.name}, here are some
             more suggestions
           </h1>
 
-          {recommendations?.map((place) => (
+          {recommendations?.slice(0, count).map((place) => (
             <motion.div
               whileInView={{ opacity: 1, x: 0 }}
               initial={{ opacity: 0, x: -100 }}
@@ -83,10 +91,18 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
               <PlaceCard key={place._id} place={place} />
             </motion.div>
           ))}
+          {count >= recommendations?.length ? (
+            <Button label={"Show less"} onClick={() => setCount(4)} />
+          ) : (
+            <Button
+              label={"Show More"}
+              onClick={() => setCount((count) => count + 4)}
+            />
+          )}
         </div>
 
         {/* RIGHT STICKY */}
-        <div className="sticky top-20 self-start lg:block hidden">
+        <div className="sticky top-20 self-start lg:block hidden w-fit">
           <CityPlacesCircle
             cityName={data?.city?.name}
             places={recommendations}
