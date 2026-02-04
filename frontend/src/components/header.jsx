@@ -42,7 +42,7 @@ const Header = () => {
         {/* Logo Section */}
         <Link to={"/"} className="flex items-center">
           <img src={logo} className="w-10" />
-          <img src={logo2} className="w-20" />
+          <img src={logo2} className="w-28" />
         </Link>
 
         <div className="flex justify-center items-center gap-5">

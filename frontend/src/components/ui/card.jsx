@@ -22,7 +22,7 @@ const Card = ({
   return (
     <Link
       to={`/current/place/${placeId}`}
-      className="bg-neutral-100 w-full md:px-10 py-2 flex justify-between items-center rounded-xl hover:shadow-xl duration-300 ease-in-out"
+      className="bg-neutral-100 w-full md:px-10 px-1 py-2 flex justify-between items-center rounded-xl hover:shadow-xl duration-300 ease-in-out"
     >
       <div className="h-full flex flex-col items-start gap-2">
         <h1 className="md:text-xl text-base md:tracking-wide uppercase">
