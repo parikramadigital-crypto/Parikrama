@@ -116,7 +116,7 @@ const Hero = ({ stopLoading, startLoading }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       {/* TOP BANNER */}
-      <div className="md:w-[90%] w-full">
+      <div className="md:w-[99%] w-full">
         <RandomImageSlider
           images={galleryBannerImages}
           className="md:h-[300px] h-[200px]"

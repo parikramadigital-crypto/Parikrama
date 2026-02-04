@@ -53,7 +53,7 @@ const Place = ({ Text = "", TableData = [] }) => {
         /> */}
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
@@ -166,7 +166,7 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
         </div>
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
@@ -262,7 +262,7 @@ const City = ({ Text = "", TableData = [] }) => {
         </div>
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
@@ -336,7 +336,7 @@ const State = ({ Text = "", TableData = [] }) => {
         </div>
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
@@ -427,7 +427,7 @@ const Facilitator = ({ Text = "", TableData = [] }) => {
         </div>
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
@@ -542,7 +542,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
         </div>
       </div>
 
-      <div className="w-full mt-1 h-96 overflow-scroll">
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
           <thead className="bg-gray-100 text-gray-600">
             <tr>
