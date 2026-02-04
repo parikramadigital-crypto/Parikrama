@@ -20,6 +20,9 @@ import { IoMdLogOut } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import InputBox from "../../components/InputBox";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import CategoryPieChart from "../../components/ui/CategoryPieChart";
+import StatesDonutChart from "../../components/ui/StatesDonutChart";
+import CitiesByStateBarChart from "../../components/ui/CitiesByStateBarChart";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [placeData, setPlaceData] = useState([]);
@@ -37,7 +40,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const formRef = useRef();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState(
-    () => localStorage.getItem("activeSection") || "Active Places",
+    () => localStorage.getItem("activeSection") || "Overview",
   );
 
   const fetchDashboard = async () => {
@@ -157,6 +160,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   };
 
   const sections = [
+    "Overview",
     "Active Places",
     "Cities",
     "States",
@@ -166,9 +170,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   ];
 
   return user ? (
-    <div className="flex flex-col gap-10">
-      <h2 className="text-2xl font-bold mb-2 px-20">Admin Dashboard</h2>
-
+    <div className="flex flex-col h-screen gap-5 justify-between items-start">
+      {/* <h2 className="text-2xl font-bold mb-2 px-20">Admin Dashboard</h2> */}
       {/* ADMIN DETAILS  */}
       <div className="w-full px-20">
         <div className="rounded-xl overflow-hidden">
@@ -255,8 +258,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       </div>
 
       {/* Tables  */}
-      <div className="flex w-full bg-neutral-200 px-5 py-5 rounded-xl">
-        <aside className="static bottom-0 left-0 w-60 flex justify-start items-center h-full">
+      <div className="flex w-full bg-neutral-200 px-5 py-5 rounded-xl h-full gap-5">
+        <aside className="static bottom-0 left-0 w-60 flex justify-start items-start h-full">
           <nav>
             <ul className="flex gap-5 items-start flex-col">
               {sections.map((section, idx) => (
@@ -278,7 +281,14 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             </ul>
           </nav>
         </aside>
-        <main className="w-full px-5">
+        <main className="w-full px-5 overflow-scroll bg-neutral-100 rounded-md pb-5">
+          {activeSection === "Overview" && (
+            <div className="flex justify-start items-start gap-5 pb-5 overflow-y-scroll w-fit">
+              <CategoryPieChart places={placeData} />
+              <StatesDonutChart states={stateData} />
+              <CitiesByStateBarChart cities={cityData} />
+            </div>
+          )}
           {activeSection === "Active Places" && (
             <Place TableData={placeData} Text="Listed Places" />
           )}
@@ -307,7 +317,6 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
           )}
         </main>
       </div>
-
       <AnimatePresence>
         {popup && (
           <motion.div
