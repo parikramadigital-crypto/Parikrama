@@ -165,7 +165,18 @@ const FacilitatorRegister = ({ startLoading, stopLoading }) => {
         onSubmit={step === "REGISTER" ? handleRegister : handleVerifyOtp}
         className="bg-white p-8 rounded-xl w-full"
       >
-        <h2 className="text-2xl font-bold mb-6">Facilitator Registration</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          Facilitator Registration{" "}
+          <span className="text-xs md:text-sm font-normal">
+            You can register yourself as a Facilitator (Pandit, Temple Guide,
+            Tour Guide, Photographer etc.) for a particular place.
+          </span>
+          <span className="text-xs md:text-sm font-normal">
+            <strong>Note: </strong>Password be at least min 8 & max 20
+            characters, should contain 1 uppercase, 1 lowercase, 1 digit, and 1
+            special character
+          </span>
+        </h2>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 
