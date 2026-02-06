@@ -48,6 +48,14 @@ const registerFacilitator = asyncHandler(async (req, res) => {
   if (existing) {
     throw new ApiError(409, "Facilitator already exists");
   }
+  // Must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 digit, and 1 special character
+  if (
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/.test(
+      password,
+    )
+  ) {
+    throw new ApiError(400, "Invalid password");
+  }
 
   const sanitize = (str = "") =>
     str
@@ -89,6 +97,7 @@ const registerFacilitator = asyncHandler(async (req, res) => {
     }
   }
 
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const facilitator = await Facilitator.create({
     name,
     email,
@@ -107,12 +116,62 @@ const registerFacilitator = asyncHandler(async (req, res) => {
       documentNumber,
       documents: documents,
     },
+    otp,
   });
 
-  res
-    .status(201)
+  res.status(201).json(
+    new ApiResponse(
+      201,
+      // { otp },
+      { facilitator, otp },
+      "Facilitator registered successfully",
+    ),
+  );
+});
+
+const verifyOTP = asyncHandler(async (req, res) => {
+  const { facilitatorId, otp } = req.body;
+
+  if (!facilitatorId || !otp) {
+    throw new ApiError(400, "Facilitator ID and OTP are required");
+  }
+
+  // Find facilitator
+  const facilitator = await Facilitator.findById(facilitatorId);
+
+  if (!facilitator) {
+    throw new ApiError(
+      404,
+      "Facilitator not found please restart registration !",
+    );
+  }
+
+  // Compare OTP
+  if (String(facilitator.otp) !== String(otp)) {
+    // Delete wrong registration
+    await Facilitator.findByIdAndDelete(facilitatorId);
+
+    throw new ApiError(
+      401,
+      "Invalid OTP. Registration cancelled. Please register again.",
+    );
+  }
+
+  // OTP MATCHED
+  facilitator.isVerified = true;
+  facilitator.otp = undefined; // remove otp
+  facilitator.otpExpiresAt = undefined;
+
+  await facilitator.save();
+
+  return res
+    .status(200)
     .json(
-      new ApiResponse(201, facilitator, "Facilitator registered successfully"),
+      new ApiResponse(
+        200,
+        facilitator,
+        "OTP verified successfully. Registration completed.",
+      ),
     );
 });
 
@@ -523,8 +582,33 @@ const RejectDocumentVerification = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, facilitator, "Documents rejected successfully"));
 });
 
+const deleteFacilitator = asyncHandler(async (req, res) => {
+  const { adminId, facilitatorId } = req.params;
+
+  if (!adminId || !facilitatorId) {
+    throw new ApiError(400, "Invalid request");
+  }
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    throw new ApiError(403, "Not a valid admin");
+  }
+
+  const facilitator = await Facilitator.findByIdAndDelete(facilitatorId);
+  if (!facilitator) {
+    throw new ApiError(404, "Not a valid facilitator");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, facilitator, "Facilitator deleted successfully"),
+    );
+});
+
 export {
   registerFacilitator,
+  verifyOTP,
   loginFacilitator,
   logoutFacilitator,
   refreshFacilitatorToken,
@@ -539,4 +623,5 @@ export {
   deactivateFacilitator,
   AcceptDocumentVerification,
   RejectDocumentVerification,
+  deleteFacilitator,
 };

@@ -255,6 +255,9 @@ const facilitatorSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    otp: {
+      type: Number,
+    },
   },
   { timestamps: true },
 );

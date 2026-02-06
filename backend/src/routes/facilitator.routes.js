@@ -14,6 +14,8 @@ import {
   deactivateFacilitator,
   AcceptDocumentVerification,
   RejectDocumentVerification,
+  verifyOTP,
+  deleteFacilitator,
 } from "../controllers/facilitator.controllers.js";
 
 import { VerifyFacilitator } from "../middlewares/facilitatorAuth.middleware.js";
@@ -33,6 +35,7 @@ router.route("/register").post(
   ]),
   registerFacilitator,
 );
+router.route("/verify-otp").post(verifyOTP);
 
 // Login facilitator
 router.route("/login").post(loginFacilitator);
@@ -69,6 +72,9 @@ router.route("/book-slot").post(VerifyUser, bookFacilitatorSlot);
 /* ================= ADMIN ================= */
 
 // Admin verifies facilitator
+router
+  .route("/delete-facilitator/:adminId/:facilitatorId")
+  .delete(deleteFacilitator);
 router.route("/activate/:adminId/:facilitatorId").post(activateFacilitator);
 router
   .route("/de-activate/:adminId/:facilitatorId")
