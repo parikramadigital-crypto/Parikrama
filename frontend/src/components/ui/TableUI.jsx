@@ -507,10 +507,10 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
     );
   }, [search, TableData]);
 
-  const deletePlace = async ({ placeId }) => {
+  const deleteFacilitator = async ({ facilitatorId }) => {
     try {
       const response = await FetchData(
-        `places/delete-place/${user}/${placeId}`,
+        `facilitator/delete-facilitator/${user}/${facilitatorId}`,
         "delete",
       );
       console.log(response);
@@ -575,7 +575,9 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
                   <td className="px-5 py-3">{data?.experienceYears} years</td>
                   <td className="px-5 py-3">
                     <button
-                      onClick={() => deletePlace({ placeId: data._id })}
+                      onClick={() =>
+                        deleteFacilitator({ facilitatorId: data._id })
+                      }
                       className="bg-red-300 p-1 rounded-md font-bold text-red-900"
                     >
                       Delete

@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { addUser, clearUser } from "../../redux/slices/authSlice";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const FacilitatorLogin = ({ startLoading, stopLoading }) => {
   const formRef = useRef();
@@ -38,7 +39,7 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
         navigate("/facilitator/dashboard");
       }
     } catch (err) {
-      setError(err?.response?.data?.message || "Login failed");
+      setError(parseErrorMessage(err?.response?.data) || "Login failed");
     } finally {
       stopLoading();
     }
@@ -53,7 +54,11 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
       >
         <h2 className="text-2xl font-bold mb-6">Facilitator Login</h2>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-4 fixed top-36 right-10 bg-white px-4 py-2 rounded shadow z-50">
+            {error}
+          </p>
+        )}
 
         <InputBox
           LabelName="Email or Phone"

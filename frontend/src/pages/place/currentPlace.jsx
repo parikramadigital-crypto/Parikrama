@@ -63,7 +63,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       {/* Content + Sticky Circle */}
       <div className="flex  gap-10 md:px-20 px-5 py-20 ">
         {/* LEFT CONTENT (SCROLLS) */}
-        <div className="flex flex-col justify-center items-center gap-6 w-full">
+        <div className="flex flex-col justify-center items-start gap-6 w-full">
           <div className="w-full overflow-x-hidden flex flex-col gap-2 justify-center items-center md:hidden">
             <h1>This is a itinerary of {data?.city?.name}</h1>
             <CityPlacesCircle
@@ -83,6 +83,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
 
           {recommendations?.slice(0, count).map((place) => (
             <motion.div
+              className="w-full"
               whileInView={{ opacity: 1, x: 0 }}
               initial={{ opacity: 0, x: -100 }}
               exit={{ opacity: 0, x: 100 }}
@@ -104,6 +105,8 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
         {/* RIGHT STICKY */}
         <div className="sticky top-20 self-start lg:block hidden w-fit">
           <CityPlacesCircle
+            cityLong={data?.city?.location?.coordinates[0]}
+            cityLat={data?.city?.location?.coordinates[1]}
             cityName={data?.city?.name}
             places={recommendations}
           />
@@ -122,6 +125,8 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
               <Button label={"Close"} onClick={() => setPopup(false)} />
             </div>
             <CityPlacesCircle
+              cityLong={data?.city?.location?.coordinates[0]}
+              cityLat={data?.city?.location?.coordinates[1]}
               cityName={data?.city?.name}
               places={recommendations}
             />
