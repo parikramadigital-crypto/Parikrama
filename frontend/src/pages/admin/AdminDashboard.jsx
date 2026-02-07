@@ -19,10 +19,11 @@ import { LuRefreshCw } from "react-icons/lu";
 import { IoMdLogOut } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import InputBox from "../../components/InputBox";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaUserPlus } from "react-icons/fa";
 import CategoryPieChart from "../../components/ui/CategoryPieChart";
 import StatesDonutChart from "../../components/ui/StatesDonutChart";
 import CitiesByStateBarChart from "../../components/ui/CitiesByStateBarChart";
+import AdminRegistrationForm from "./AdminRegistrationForm";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [placeData, setPlaceData] = useState([]);
@@ -32,6 +33,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [inactivePlaceData, setInactivePlaceData] = useState([]);
   const [inactiveFacilitator, setInactiveFacilitator] = useState([]);
   const [popup, setPopup] = useState(false);
+  const [popup2, setPopup2] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -222,6 +224,16 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                       className={"w-full text-nowrap"}
                       onClick={() => fetchDashboard()}
                     />
+                    {/* <Button
+                      label={
+                        <h1 className="flex justify-center items-center gap-2">
+                          <FaUserPlus />
+                          Add Sub-Admin
+                        </h1>
+                      }
+                      className={"w-full text-nowrap"}
+                      onClick={() => setPopup2(true)}
+                    /> */}
                     <Button
                       label={
                         <h1 className="flex justify-center items-center gap-2">
@@ -414,6 +426,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 </div>
               </form>
             </div>
+          </motion.div>
+        )}
+        {popup2 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/80 overflow-scroll"
+          >
+            <AdminRegistrationForm onCancel={() => setPopup2(false)} />
           </motion.div>
         )}
       </AnimatePresence>
