@@ -19,7 +19,7 @@ import { upload } from "../middlewares/multer.middlewares.js";
 const router = Router();
 
 /* Admin dashboard data */
-router.route("/register").post(registerAdmin);
+router.route("/register/:adminId").post(registerAdmin);
 router.route("/login").post(loginAdmin);
 router.route("/auth/refresh-tokens").post(regenerateAdminRefreshToken);
 router.route("/dashboard/data").get(dashboardData);

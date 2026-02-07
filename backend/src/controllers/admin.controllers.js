@@ -35,14 +35,12 @@ const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
 
 const registerAdmin = asyncHandler(async (req, res, next) => {
   const { name, employeeId, email, phoneNumber, password } = req.body;
-  //   const { adminId } = req.params;
-  //   if (!adminId) {
-  //     return new ApiError(400, "Invalid admin");
-  //   }
-  //   const validId = await Admin.findById(adminId);
-  //   if (!validId) {
-  //     return new ApiError(400, "Invalid admin");
-  //   }
+  const { adminId } = req.params;
+  if (!adminId) return new ApiError(400, "Invalid admin");
+  const admin = await Admin.findById(adminId);
+  if (!admin) {
+    return new ApiError(400, "Invalid admin");
+  }
 
   // Validation
   if (!name || !employeeId || !email || !phoneNumber || !password) {
@@ -61,24 +59,23 @@ const registerAdmin = asyncHandler(async (req, res, next) => {
   }
 
   // Create admin
-  const admin = await Admin.create({
+  const createAdmin = await Admin.create({
     name,
     employeeId,
     email,
     phoneNumber,
     password, // hashed by pre-save hook
+    // role: "Sub-Admin",
   });
 
   // Remove sensitive fields
-  const adminData = await Admin.findById(admin._id).select("-password");
+  // const adminData = await Admin.findById(createAdmin._id);
 
   return res
     .status(201)
-    .json(new ApiResponse(201, adminData, "Admin registered successfully"));
+    .json(new ApiResponse(201, createAdmin, "Admin registered successfully"));
 });
-/* =======================
-   Admin LOGIN
-======================= */
+
 const loginAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
