@@ -91,7 +91,12 @@ const CityPlacesCircle = ({ cityName, places = [], cityLong, cityLat }) => {
         <span className="flex justify-center items-center gap-2">
           I <FaHeart className="text-red-500" />
         </span>
-        <span>{cityName}</span>
+        {/* <span>{cityName}</span> */}
+        <span
+          className={`${cityName?.length > 18 ? "text-[11px]" : cityName?.length > 12 ? "text-xs" : "text-sm md:text-base"}`}
+        >
+          {cityName}
+        </span>
       </div>
 
       {/* PLACES AROUND CIRCLE */}

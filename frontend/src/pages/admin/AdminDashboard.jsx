@@ -46,6 +46,16 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [activeSection, setActiveSection] = useState(
     () => localStorage.getItem("activeSection") || "Overview",
   );
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const res = await FetchData("analytics/visitors", "get");
+      setStats(res.data.data);
+    };
+
+    fetchStats();
+  }, []);
 
   const fetchDashboard = async () => {
     try {
@@ -271,6 +281,23 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               </motion.div>
             )}
           </AnimatePresence>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white p-4 shadow rounded">
+          <h3>Total Visits</h3>
+          <p className="text-2xl font-bold">{stats?.totalVisits}</p>
+        </div>
+
+        <div className="bg-white p-4 shadow rounded">
+          <h3>Today's Visitors</h3>
+          <p className="text-2xl font-bold">{stats?.todayVisits}</p>
+        </div>
+
+        <div className="bg-white p-4 shadow rounded">
+          <h3>Unique Users</h3>
+          <p className="text-2xl font-bold">{stats?.uniqueVisitors}</p>
         </div>
       </div>
 
