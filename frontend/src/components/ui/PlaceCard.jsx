@@ -158,7 +158,7 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
             </p>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 whitespace-pre-line">
+            <p className="text-sm text-gray-600 whitespace-pre-line text-justify">
               {place?.description}
             </p>
           </motion.div>

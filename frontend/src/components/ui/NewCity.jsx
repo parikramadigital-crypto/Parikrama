@@ -74,14 +74,14 @@ const NewCity = ({ startLoading, stopLoading }) => {
           </div>
           <InputBox Placeholder="City name" LabelName="City Name" Name="name" />
           <InputBox
-            Placeholder="Longitude"
-            LabelName="Longitude of city"
-            Name="lng"
-          />
-          <InputBox
             Placeholder="Latitude"
             LabelName="Latitude of city"
             Name="lat"
+          />
+          <InputBox
+            Placeholder="Longitude"
+            LabelName="Longitude of city"
+            Name="lng"
           />
         </div>
         <div className="flex justify-center items-center gap-2">
