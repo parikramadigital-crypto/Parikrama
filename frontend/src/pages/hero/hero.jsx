@@ -3,10 +3,6 @@ import InputBox from "../../components/InputBox";
 import { CiSearch } from "react-icons/ci";
 import { FetchData } from "../../utils/FetchFromApi";
 import LoadingUI from "../../components/LoadingUI";
-import {
-  galleryBannerImages,
-  galleryBannerImages2,
-} from "../../constants/Constants";
 import RandomImageSlider from "../../components/ui/RandomImageSlider";
 import Card from "../../components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,10 +11,12 @@ const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [topBanner, setTopBanner] = useState([]);
-  const [rightBanner, setRightBanner] = useState();
-  const [leftBanner, setLeftBanner] = useState();
+  const [topBannerMobile, setTopBannerMobile] = useState([]);
+  const [rightBanner, setRightBanner] = useState([]);
+  const [leftBanner, setLeftBanner] = useState([]);
 
   const top = topBanner?.map((banner) => [banner?.images?.url]);
+  const topMobile = topBannerMobile?.map((banner) => [banner?.images?.url]);
   const right = rightBanner?.map((banner) => [banner?.images?.url]);
   const left = leftBanner?.map((banner) => [banner?.images?.url]);
   /* ---------------- FETCH BANNERS ---------------- */
@@ -28,6 +26,7 @@ const Hero = ({ stopLoading, startLoading }) => {
       startLoading();
       const response = await FetchData("promotions/get/all/promotions", "get");
       setTopBanner(response.data.data.promotionsMax);
+      setTopBannerMobile(response.data.data.promotionsMaxMobile);
       setRightBanner(response.data.data.promotionsMid);
       setLeftBanner(response.data.data.promotionsMin);
     } catch (err) {
@@ -139,8 +138,11 @@ const Hero = ({ stopLoading, startLoading }) => {
   return (
     <div className="flex justify-center items-center flex-col">
       {/* TOP BANNER */}
-      <div className="md:w-[99%] w-full">
+      <div className="md:w-[99%] hidden md:block">
         <RandomImageSlider images={top} className="md:h-[300px] h-[200px]" />
+      </div>
+      <div className="w-full md:hidden">
+        <RandomImageSlider images={topMobile} className="h-[200px]" />
       </div>
 
       {/* CONTENT */}

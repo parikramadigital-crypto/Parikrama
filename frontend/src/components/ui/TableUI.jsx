@@ -138,12 +138,9 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
         `places/delete-place/${user}/${placeId}`,
         "delete",
       );
-      console.log(response);
       alert(response.data.message);
       alert("Kindly reload the dashboard");
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -514,12 +511,9 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
         `facilitator/delete-facilitator/${user}/${facilitatorId}`,
         "delete",
       );
-      console.log(response);
       alert(response.data.message);
       alert("Kindly reload the dashboard");
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -604,7 +598,6 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
 
 const Promotions = ({ Text = "", TableData = [], user }) => {
   const [search, setSearch] = useState("");
-  console.log(TableData);
 
   const TableHeaders = [
     "Promotion name",
@@ -622,6 +615,7 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
     return TableData.filter((c) =>
       `
         ${c?.name}
+        ${c?.priority === "Max" ? "Top" : c?.priority === "Mid" ? "Right" : "Left"}
         ${c?.place?.name}
       `
         .toLowerCase()
@@ -635,12 +629,9 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
         `promotions/delete-promotion/${user}/${promotionId}`,
         "delete",
       );
-      console.log(response);
       alert(response.data.message);
       alert("Kindly reload the dashboard");
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -677,7 +668,16 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
             {filteredData.length > 0 ? (
               filteredData.map((data) => (
                 <tr key={data._id} className="hover:bg-gray-50 border-b">
-                  <td className="px-5 py-3">{data?.name}</td>
+                  <td className="px-5 py-3">
+                    {data?.name}
+                    {data?.isMobile === true ? (
+                      <p className="bg-[#FFC20D] p-1 text-nowrap rounded-full">
+                        Mobile Banner
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </td>
                   <td className="px-5 py-3">{data?.place?.name}</td>
                   <td className="px-5 py-3">
                     {data?.priority === "Max" ? "Top" : ""}

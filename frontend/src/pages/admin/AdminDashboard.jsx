@@ -47,6 +47,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     () => localStorage.getItem("activeSection") || "Overview",
   );
   const [stats, setStats] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -153,21 +154,30 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
 
   const SubmitPromotion = async (e) => {
     e.preventDefault();
+
     try {
       startLoading();
+
       const formData = new FormData(formRef.current);
+
+      // force priority if mobile
+      if (formData.get("isMobile") === "true") {
+        formData.set("priority", "Max");
+      }
+
       for (let pair of formData.entries()) {
         console.log(pair[0] + ": " + pair[1]);
       }
+
       const response = await FetchData(
         `promotions/make/promotions/${user?._id}`,
         "post",
         formData,
         true,
       );
-      console.log(response);
+
       cancelPopup();
-      alert("Banner added successfully!");
+      alert(response.data.message);
     } catch (err) {
       console.log(err);
     } finally {
@@ -383,7 +393,43 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 ref={formRef}
                 className="flex flex-col justify-center gap-3"
               >
-                {/* banner name  */}
+                {/* MOBILE TOGGLE */}
+                <div className="flex justify-center items-center gap-5">
+                  <label className="block text-sm font-medium">
+                    Is this Mobile Banner?
+                  </label>
+
+                  <div className="flex items-center gap-4">
+                    {/* Toggle Switch */}
+                    <button
+                      type="button"
+                      onClick={() => setIsMobile((prev) => !prev)}
+                      className={`relative w-14 h-7 flex items-center rounded-full transition ${
+                        isMobile ? "bg-[#FFC20E]" : "bg-gray-300"
+                      }`}
+                    >
+                      <span
+                        className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform transition ${
+                          isMobile ? "translate-x-7" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+
+                    <span className="text-sm font-medium">
+                      {isMobile
+                        ? "Make sure the banner should be (w * h): 1920*300 px"
+                        : ""}
+                    </span>
+                  </div>
+
+                  {/* Hidden input so FormData sends value */}
+                  <input
+                    type="hidden"
+                    name="isMobile"
+                    value={isMobile ? "true" : "false"}
+                  />
+                </div>
+                {/* banner name */}
                 <InputBox
                   LabelName="Name for promotion"
                   Type="text"
@@ -391,26 +437,36 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   Name="name"
                   required
                 />
-                {/* priority  */}
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Where to insert this banner
-                  </label>
-                  <select
-                    name="priority"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
-                    // onChange={(e) => handleCityChange(e.target.value)}
-                  >
-                    <option value="">Select banner location</option>
-                    {priority.map((location) => (
-                      <option key={location.id} value={location.value}>
-                        {location.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {/* Place  */}
+
+                {/* PRIORITY (HIDE WHEN MOBILE) */}
+                {!isMobile && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Where to insert this banner
+                    </label>
+
+                    <select
+                      name="priority"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+                    >
+                      <option value="">Select banner location</option>
+
+                      {priority.map((location) => (
+                        <option key={location.id} value={location.value}>
+                          {location.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* AUTO PRIORITY FOR MOBILE */}
+                {isMobile && (
+                  <input type="hidden" name="priority" value="Max" />
+                )}
+
+                {/* Place */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Place
@@ -421,6 +477,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
                   >
                     <option value="">Select place</option>
+
                     {placeData.map((place) => (
                       <option key={place._id} value={place._id}>
                         {place.name}
@@ -428,11 +485,13 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                     ))}
                   </select>
                 </div>
-                {/* image  */}
+
+                {/* image */}
                 <div className="col-span-2 bg-gray-200 py-5 px-2 rounded-xl">
                   <label className="block text-sm font-medium mb-1">
                     Banner Image
                   </label>
+
                   <input
                     type="file"
                     name="image"
@@ -441,9 +500,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                     className="bg-gray-300 w-fit py-2 px-5 rounded-xl"
                   />
 
-                  {/* PREVIEWS */}
                   {imagePreviews.length > 0 && (
-                    <div className="mt-3 w-[100%] gap-5 rounded-xl overflow-hidden bg-neutral-300 object-center object-cover flex justify-center items-center flex-col">
+                    <div className="mt-3 w-full gap-5 rounded-xl overflow-hidden bg-neutral-300 flex justify-center items-center flex-col">
                       {imagePreviews.map((src, idx) => (
                         <img
                           key={idx}
@@ -452,6 +510,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                           className="w-[50%]"
                         />
                       ))}
+
                       <Button
                         label={"Choose another"}
                         onClick={() => setImagePreviews([])}
@@ -459,6 +518,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                     </div>
                   )}
                 </div>
+
                 <div className="flex justify-center items-center gap-10 w-full">
                   <Button label={"Cancel"} onClick={() => cancelPopup()} />
                   <Button label={"Confirm"} type={"submit"} />
