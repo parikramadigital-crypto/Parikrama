@@ -135,7 +135,7 @@ function App() {
           <Route path="/testing" element={<SearchResult />} />
         </Routes>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
