@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/header";
 import Hero from "./pages/hero/hero";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -28,6 +28,8 @@ function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
   // console.log(user);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const refreshToken = localStorage.getItem("RefreshToken");
@@ -135,7 +137,7 @@ function App() {
           <Route path="/testing" element={<SearchResult />} />
         </Routes>
       </div>
-      {/* <Footer /> */}
+      {isHome && <Footer />}
     </div>
   );
 }
