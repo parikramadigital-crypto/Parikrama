@@ -9,12 +9,24 @@ import {
 
 const router = Router();
 
-router.post("/terms/:adminId", upsertTermsOfService);
-router.post("/privacy/:adminId", upsertPrivacyPolicy);
-router.post("/how-site-work/:adminId", upsertHowSiteWork);
+/* ================= GET CMS ================= */
+router.route("/").get(getTermsAndConditions);
 
+/* ================= CREATE / UPDATE ================= */
+/* (UPSERT style — create if not exists, update if exists) */
+router.route("/termsOfService/:adminId").post(upsertTermsOfService);
+
+router.route("/privacyPolicy/:adminId").post(upsertPrivacyPolicy);
+
+router.route("/howThisSiteWork/:adminId").post(upsertHowSiteWork);
+
+/* ================= DELETE SECTION ================= */
+/*
+  section values allowed:
+  - termsOfService
+  - privacyPolicy
+  - howThisSiteWork
+*/
 router.delete("/:section/:adminId", deleteTermsSection);
-
-router.get("/", getTermsAndConditions);
 
 export default router;
