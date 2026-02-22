@@ -16,6 +16,7 @@ const EditPlace = ({ stopLoading, startLoading }) => {
   const [formData, setFormData] = useState(null);
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState([]);
+  const [telecast, setIsTelecast] = useState(null);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -30,6 +31,7 @@ const EditPlace = ({ stopLoading, startLoading }) => {
 
       setPlace(p);
       setRemovedImages([]);
+      setIsTelecast(p.isLiveDarshan);
 
       setFormData({
         name: p.name,
@@ -37,6 +39,7 @@ const EditPlace = ({ stopLoading, startLoading }) => {
         description: p.description,
         averageTimeSpent: p.averageTimeSpent,
         entryFee: p.entryFee,
+        telecastLink: p.telecastLink,
       });
     } catch {
       setError("Failed to load place");
@@ -211,6 +214,60 @@ const EditPlace = ({ stopLoading, startLoading }) => {
             className="w-full border p-2 rounded"
           />
         </div>
+
+        <div className="flex justify-start items-start gap-5 flex-col">
+          {formData.telecastLink ? (
+            ""
+          ) : (
+            <div>
+              <label className="block text-sm font-medium">
+                Set live telecast active
+              </label>
+
+              <div className="flex items-center gap-4">
+                {/* Toggle Switch */}
+                <button
+                  type="button"
+                  onClick={() => setIsTelecast((prev) => !prev)}
+                  className={`relative w-14 h-7 flex items-center rounded-full transition ${
+                    telecast ? "bg-[#FFC20E]" : "bg-gray-300"
+                  }`}
+                >
+                  <span
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-md transform transition ${
+                      telecast ? "translate-x-7" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Hidden input so FormData sends value */}
+          {/* <input
+            type="hidden"
+            name="telecastLink"
+            value={telecast ? "true" : "false"}
+            /> */}
+          {telecast && (
+            <InputBox
+              Name="telecastLink"
+              LabelName="Telecast Link"
+              // Required={false}
+              onChange={handleChange}
+              Value={formData.telecastLink}
+            />
+          )}
+        </div>
+        {formData.telecastLink && (
+          <InputBox
+            Name="telecastLink"
+            LabelName="Telecast Link"
+            // Required={false}
+            onChange={handleChange}
+            Value={formData.telecastLink}
+          />
+        )}
 
         <Button label="Update Place" type="submit" />
       </form>
