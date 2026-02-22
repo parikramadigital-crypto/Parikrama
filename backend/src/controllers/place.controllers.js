@@ -231,7 +231,10 @@ const updatePlace = asyncHandler(async (req, res) => {
     "description",
     "averageTimeSpent",
     "entryFee",
+    "telecastLink",
   ];
+
+  console.log("Line 237", req.body);
 
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
