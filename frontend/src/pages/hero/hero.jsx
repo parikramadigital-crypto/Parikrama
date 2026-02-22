@@ -5,7 +5,7 @@ import { FetchData } from "../../utils/FetchFromApi";
 import LoadingUI from "../../components/LoadingUI";
 import RandomImageSlider from "../../components/ui/RandomImageSlider";
 import Card from "../../components/ui/card";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);

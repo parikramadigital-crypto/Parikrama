@@ -20,7 +20,7 @@ const social_links = [
         FaceBook
       </h1>
     ),
-    path: "/",
+    path: "https://www.facebook.com/ParikramaGlobal",
   },
   {
     label: (
@@ -29,7 +29,7 @@ const social_links = [
         YouTube
       </h1>
     ),
-    path: "/",
+    path: "https://www.youtube.com/@Parikrama-e3b",
   },
 ];
 
@@ -55,7 +55,13 @@ const Footer = () => {
       </div>
       <div className="flex flex-col justify-start items-start">
         {social_links.map((s) => (
-          <Link to={s.path}>{s.label}</Link>
+          <Link
+            to={s.path}
+            target="blank"
+            className="text-sm text-gray-500 hover:text-black hover:font-semibold hover:underline duration-200 ease-in-out"
+          >
+            {s.label}
+          </Link>
         ))}
       </div>
     </div>
