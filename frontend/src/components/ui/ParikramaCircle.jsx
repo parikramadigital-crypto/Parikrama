@@ -1,17 +1,18 @@
 import React from "react";
 import logo from "../../assets/Logo1.png";
+import { Link } from "react-router-dom";
 
 const ParikramaCircle = () => {
   const radius = 120;
   const centerSize = 100;
 
   const items = [
-    "Book a Facilitator",
-    "Explore Places",
-    "Book Flight tickets",
-    "Book Bus tickets",
-    "Be a Facilitator",
-    "Plan Your Journey",
+    { title: "Register as Facilitator", url: "/login/facilitator" },
+    { title: "Book a Facilitator", url: "/" },
+    { title: "Explore Places", url: "/explore" },
+    { title: "Book Flight Tickets", url: "/flights-busses" },
+    { title: "Book Bus Tickets", url: "/flights-busses" },
+    { title: "Plan Your Journey", url: "/" },
   ];
 
   return (
@@ -52,9 +53,12 @@ const ParikramaCircle = () => {
             />
 
             {/* item card */}
-            <div className="relative bg-black text-white rounded shadow text-xs text-center p-1">
-              {item}
-            </div>
+            <Link
+              to={item.url}
+              className="relative bg-black text-white rounded shadow text-xs text-center p-1"
+            >
+              {item.title}
+            </Link>
           </div>
         );
       })}

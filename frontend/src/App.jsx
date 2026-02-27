@@ -26,6 +26,7 @@ import Footer from "./components/Footer";
 import TermsOfService from "./pages/cms/termsOfService";
 import PrivacyPolicy from "./pages/cms/privacyPolicy";
 import HowThisSiteWorks from "./pages/cms/howThisSiteWorks";
+import FlightBus from "./pages/flightBus/FlightBus";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -136,11 +137,12 @@ function App() {
             element={<FacilitatorReview />}
           />
 
+          <Route path="/flights-busses" element={<FlightBus />} />
+
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/how-this-site-works" element={<HowThisSiteWorks />} />
           {/* ================= FALLBACK ================= */}
-          <Route path="/testing" element={<SearchResult />} />
         </Routes>
       </div>
       {isHome && <Footer />}
