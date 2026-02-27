@@ -36,15 +36,15 @@ const FlightBus = ({ stopLoading, startLoading }) => {
   };
 
   return (
-    <div className="flex justify-between items-center w-full px-20 h-full ">
-      <div className="w-96 h-96 rounded-xl overflow-hidden flex justify-center items-center flex-col gap-5">
+    <div className="flex justify-between items-center w-full md:px-20 px-20 h-full flex-col md:flex-row gap-5">
+      <div className="md:w-96 w-[90vw] h-96 rounded-xl overflow-hidden flex justify-center items-center flex-col gap-5">
         <h1 className="font-semibold text-xl">Book Flight, Bus or Hotels</h1>
         <RandomImageSlider images={right} />
       </div>
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="w-[50vw] shadow p-10 rounded-md"
+        className="md:w-[50vw] w-[90vw] shadow p-10 rounded-md"
       >
         <InputBox Placeholder="Name" Type="text" LabelName="Name" />
         <InputBox
