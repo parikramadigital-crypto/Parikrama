@@ -6,7 +6,7 @@ import { clearUser } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { FaCopy, FaRegCopy, FaStar } from "react-icons/fa";
 import useCopyUrl from "../../components/hooks/CopyUrl";
-import { MdEmail, MdOutlineWork } from "react-icons/md";
+import { MdEmail, MdLocalOffer, MdOutlineWork } from "react-icons/md";
 import { IoCall } from "react-icons/io5";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
@@ -107,16 +107,26 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
             </div>
           </div>
           {/* buttons  */}
-          <div className="flex flex-col justify-center items-center md:gap-10 gap-5">
+          <div className="flex flex-col justify-center items-center gap-5">
             <div className="flex justify-center items-center bg-gray-300 p-5 rounded-xl shadow">
               <h1 className="md:w-80">
-                Get Reviews click here to copy and share the URL to your client
+                For reviews click here to copy and share the URL to your client
               </h1>
               <Button
                 onClick={() => copy(`/facilitator/review/${facilitator._id}`)}
                 label={copied ? <FaCopy /> : <FaRegCopy />}
               />
             </div>
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <MdLocalOffer />
+                  List Packages or Clubs
+                </h1>
+              }
+              className={"w-full"}
+              onClick={() => navigate("/travel-packages")}
+            />
             <Button
               label={
                 <h1 className="flex justify-center items-center gap-2">

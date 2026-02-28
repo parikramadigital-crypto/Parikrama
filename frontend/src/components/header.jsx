@@ -35,7 +35,7 @@ const Header = () => {
     {
       className: "w-full",
       label: (
-        <h1 className="flex justify-center items-center gap-2">
+        <h1 className="flex justify-between items-center">
           <MdLocalOffer className="text-2xl" />
           Packages
         </h1>
@@ -45,7 +45,7 @@ const Header = () => {
     {
       className: "w-full",
       label: (
-        <h1 className="flex justify-center items-center gap-2">
+        <h1 className="flex justify-between items-center">
           <LiaHotelSolid className="text-2xl" />
           Book Hotels
         </h1>
@@ -55,7 +55,7 @@ const Header = () => {
     {
       className: "w-full",
       label: (
-        <h1 className="flex justify-center items-center gap-2">
+        <h1 className="flex justify-between items-center">
           <MdOutlineFlight className="text-2xl" />
           Book Flights
         </h1>
@@ -65,7 +65,7 @@ const Header = () => {
     {
       className: "w-full",
       label: (
-        <h1 className="flex justify-center items-center gap-2">
+        <h1 className="flex justify-between items-center">
           <FaBusSimple className="text-2xl" />
           Book Busses
         </h1>
@@ -75,7 +75,7 @@ const Header = () => {
     {
       className: "w-full",
       label: (
-        <h1 className="flex justify-center items-center gap-2">
+        <h1 className="flex justify-between items-center">
           <FaUserTie className="text-2xl" />
           Facilitator Login
         </h1>
