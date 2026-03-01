@@ -27,7 +27,8 @@ import TermsOfService from "./pages/cms/termsOfService";
 import PrivacyPolicy from "./pages/cms/privacyPolicy";
 import HowThisSiteWorks from "./pages/cms/howThisSiteWorks";
 import FlightBus from "./pages/flightBus/FlightBus";
-import TravelPackages from "./pages/travelPackages/TravelPackages";
+import TravelPackagesForm from "./pages/travelPackagesForm/TravelPackagesForm";
+import PackagesListing from "./pages/travelPackagesForm/PackageListing";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -139,7 +140,11 @@ function App() {
           />
 
           <Route path="/flights-busses" element={<FlightBus />} />
-          <Route path="/travel-packages" element={<TravelPackages />} />
+          <Route path="/travel-packages" element={<PackagesListing />} />
+          <Route
+            path="/travel-packages/form"
+            element={<TravelPackagesForm />}
+          />
 
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
