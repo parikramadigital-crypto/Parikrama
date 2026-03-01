@@ -37,7 +37,7 @@ const Header = () => {
       label: (
         <h1 className="flex justify-between items-center">
           <MdLocalOffer className="text-2xl" />
-          Packages
+          Travel Packages
         </h1>
       ),
       url: "/travel-packages",
@@ -47,7 +47,7 @@ const Header = () => {
       label: (
         <h1 className="flex justify-between items-center">
           <LiaHotelSolid className="text-2xl" />
-          Book Hotels
+          Hotel Booking
         </h1>
       ),
       url: "/flights-busses",
@@ -57,7 +57,7 @@ const Header = () => {
       label: (
         <h1 className="flex justify-between items-center">
           <MdOutlineFlight className="text-2xl" />
-          Book Flights
+          Flight Booking
         </h1>
       ),
       url: "/flights-busses",
@@ -67,7 +67,7 @@ const Header = () => {
       label: (
         <h1 className="flex justify-between items-center">
           <FaBusSimple className="text-2xl" />
-          Book Busses
+          Bus Booking
         </h1>
       ),
       url: "/flights-busses",
