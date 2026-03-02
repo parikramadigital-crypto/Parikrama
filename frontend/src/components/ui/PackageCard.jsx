@@ -43,7 +43,7 @@ const PackageCard = ({ data }) => {
         </div>
 
         {/* Price */}
-        <div className="flex justify-between items-center pt-3 border-t">
+        <div className="flex justify-between items-end pt-3 border-t">
           <div>
             <p className="text-xs text-gray-400">Starting Price</p>
             <p className="text-xl font-bold">₹ {data.price.toLocaleString()}</p>
@@ -53,7 +53,7 @@ const PackageCard = ({ data }) => {
             onClick={() => setModel(true)}
             className="text-[#FFC20E] font-semibold"
           >
-            Details →
+            Book Now →
           </button>
         </div>
       </div>
