@@ -26,6 +26,7 @@ import StatesDonutChart from "../../components/ui/StatesDonutChart";
 import CitiesByStateBarChart from "../../components/ui/CitiesByStateBarChart";
 import AdminRegistrationForm from "./AdminRegistrationForm";
 import AdminCMS from "./AdminCMS";
+import PackageRegisteration from "./PackageRegisteration";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [placeData, setPlaceData] = useState([]);
@@ -38,6 +39,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [popup3, setPopup3] = useState(false);
+  const [popup4, setPopup4] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -189,6 +191,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const sections = [
     "Overview",
     "Promotions",
+    "Packages",
     "Active Places",
     "Cities",
     "States",
@@ -305,7 +308,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      {/* <div className="grid grid-cols-3 gap-4">
         <div className="bg-white p-4 shadow rounded">
           <h3>Total Visits</h3>
           <p className="text-2xl font-bold">{stats?.totalVisits}</p>
@@ -320,7 +323,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
           <h3>Unique Users</h3>
           <p className="text-2xl font-bold">{stats?.uniqueVisitors}</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Tables  */}
       <div className="flex w-full bg-neutral-200 px-5 py-5 rounded-xl h-full gap-5">
@@ -348,7 +351,23 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
         </aside>
         <main className="w-full px-5 overflow-scroll bg-neutral-100 rounded-md pb-5">
           {activeSection === "Overview" && (
-            <div className="flex justify-start items-start gap-5 pb-5 overflow-y-scroll w-fit">
+            <div className="flex justify-start items-start gap-5 pb-5 pt-5 overflow-y-scroll w-fit">
+              <div className="flex flex-col gap-4">
+                <div className="bg-white p-4 shadow rounded">
+                  <h3>Total Visits</h3>
+                  <p className="text-2xl font-bold">{stats?.totalVisits}</p>
+                </div>
+
+                <div className="bg-white p-4 shadow rounded">
+                  <h3>Today's Visitors</h3>
+                  <p className="text-2xl font-bold">{stats?.todayVisits}</p>
+                </div>
+
+                <div className="bg-white p-4 shadow rounded">
+                  <h3>Unique Users</h3>
+                  <p className="text-2xl font-bold">{stats?.uniqueVisitors}</p>
+                </div>
+              </div>
               <CategoryPieChart places={placeData} />
               <StatesDonutChart states={stateData} />
               <CitiesByStateBarChart cities={cityData} />
@@ -360,6 +379,14 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               Text="Promotions"
               user={user?._id}
             />
+          )}
+          {activeSection === "Packages" && (
+            <div className="w-full h-full flex flex-col justify-start items-start">
+              <Button
+                label={"List new package"}
+                onClick={() => setPopup4(true)}
+              />
+            </div>
           )}
           {activeSection === "Active Places" && (
             <Place TableData={placeData} Text="Listed Places" />
@@ -559,6 +586,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-start items-start flex-col z-50 bg-black/90 overflow-scroll"
           >
             <AdminCMS adminId={user?._id} onCancel={() => setPopup3(false)} />
+          </motion.div>
+        )}
+        {popup4 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <PackageRegisteration onCancel={() => setPopup4(false)} />
           </motion.div>
         )}
       </AnimatePresence>
