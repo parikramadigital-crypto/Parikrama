@@ -30,6 +30,7 @@
 }
 
 /* For hiding scroll bar */
+/*this css setting will interrupt during building a dist file, it will not stop the process but will give error*/
 @layer utilities {
   @variants responsive {
     /* Hide scrollbar for Chrome, Safari, and Opera */
