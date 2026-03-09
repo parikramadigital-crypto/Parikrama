@@ -13,6 +13,7 @@ import {
   InactiveFacilitator,
   InactivePlace,
   Promotions,
+  TravelPackages,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -36,6 +37,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [inactivePlaceData, setInactivePlaceData] = useState([]);
   const [inactiveFacilitator, setInactiveFacilitator] = useState([]);
   const [promotionData, setPromotionData] = useState([]);
+  const [packageData, setPackageData] = useState([]);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [popup3, setPopup3] = useState(false);
@@ -73,6 +75,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setInactivePlaceData(res.data.data.inactivePlace); // done
       setInactiveFacilitator(res.data.data.inactiveFacilitator); //done
       setPromotionData(res.data.data.promotions); //done
+      setPackageData(res.data.data.packages); //done
     } catch (err) {
       // console.log(err);
     } finally {
@@ -385,6 +388,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               <Button
                 label={"List new package"}
                 onClick={() => setPopup4(true)}
+              />
+              <TravelPackages
+                TableData={packageData}
+                Text="Travel Packages"
+                user={user?._id}
               />
             </div>
           )}
