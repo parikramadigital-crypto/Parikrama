@@ -9,6 +9,7 @@ import { City } from "../models/city.models.js";
 import { Place } from "../models/place.models.js";
 import { Facilitator } from "../models/facilitator.models.js";
 import { Promotion } from "../models/promotions.models.js";
+import { TravelPackages } from "../models/package.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -120,6 +121,7 @@ const dashboardData = asyncHandler(async (req, res) => {
     isVerified: false,
   }).populate("state city place");
   const promotions = await Promotion.find().populate("place");
+  const packages = await TravelPackages.find().populate("place");
 
   return res.status(200).json(
     new ApiResponse(200, {
@@ -130,6 +132,7 @@ const dashboardData = asyncHandler(async (req, res) => {
       activeFacilitator,
       inactiveFacilitator,
       promotions,
+      packages,
     }),
   );
 });
