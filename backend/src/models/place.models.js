@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const placeSchema = new mongoose.Schema(
   {
-    
     name: { type: String, required: true, trim: true },
     city: {
       type: mongoose.Schema.Types.ObjectId,
@@ -53,6 +52,10 @@ const placeSchema = new mongoose.Schema(
     isActive: { type: Boolean, default: true },
     isLiveTelecast: { type: Boolean, default: true },
     telecastLink: String,
+    telecastedUser: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true },
 );
