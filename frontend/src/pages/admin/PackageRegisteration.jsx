@@ -11,13 +11,13 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
   const formRef = useRef();
   const [error, setError] = useState("");
   const [tags, setTags] = useState("");
-  const [places, setPlaces] = useState([]);
+  // const [places, setPlaces] = useState([]);
 
   useEffect(() => {
     const loadPlaces = async () => {
       try {
         const res = await FetchData("places", "get");
-        setPlaces(res?.data?.data || []);
+        // setPlaces(res?.data?.data || []);
       } catch (err) {
         console.log(err);
       }
@@ -59,7 +59,7 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
         alert("Package Created Successfully");
 
         formRef.current.reset();
-        offPopup
+        offPopup;
         setTags("");
       }
     } catch (err) {
@@ -98,10 +98,12 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
         {/* <InputBox
           LabelName="Place ID"
           Name="place"
-          Placeholder="MongoDB Place ID"
+          Placeholder="MongoDB Place ID"s
           required
         /> */}
-        <div className="py-4">
+        <InputBox LabelName="State" Name="state" Placeholder="State name" />
+        <InputBox LabelName="City" Name="city" Placeholder="City name" />
+        {/* <div className="py-4">
           <label className="block text-sm font-medium mb-1">Place</label>
           <select
             name="place"
@@ -115,7 +117,7 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
 
         {/* Description */}
         <InputBox
