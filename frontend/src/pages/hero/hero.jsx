@@ -140,7 +140,7 @@ const Hero = ({ stopLoading, startLoading }) => {
 
   /* ---------------- RENDER ---------------- */
   return (
-    <div className="flex justify-center items-center flex-col">
+    <div className="flex justify-center items-center flex-col pb-10">
       {/* TOP BANNER */}
       <div className="md:w-[99%] hidden md:block">
         <RandomImageSlider images={top} className="md:h-[300px] h-[200px]" />
@@ -251,8 +251,26 @@ const Hero = ({ stopLoading, startLoading }) => {
         </div>
 
         {/* RIGHT SLIDER */}
-        <div className="w-96 h-96 bg-neutral-500 rounded-xl overflow-hidden lg:block hidden sticky top-24 left-0">
-          <RandomImageSlider images={right} />
+        <div className="w-96 h-fit bg-neutral-500 rounded-xl lg:block sticky top-24 left-0 flex justify-center items-center flex-col gap-10">
+          <div className="h-96">
+            <RandomImageSlider images={right} />
+          </div>
+          <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5">
+            View Live Telecast of places who offer{" "}
+            <Button
+              label={"View Live Telecast"}
+              onClick={() => navigate("/live-telecasts")}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-center items-center w-full">
+        <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5">
+          View Live Telecast of places who offer{" "}
+          <Button
+            label={"View Live Telecast"}
+            onClick={() => navigate("/live-telecasts")}
+          />
         </div>
       </div>
     </div>

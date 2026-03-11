@@ -209,6 +209,17 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
               onClick={() => setPopup3(true)}
               className={"w-full md:block hidden"}
             />
+            {place?.telecastLink ? (
+              <Link
+                to={place.telecastLink}
+                target="blank"
+                className="bg-[#FFC20E] px-4 py-2 rounded-2xl hover:scale-105 hover:drop-shadow-2xl transition duration-150 ease-in-out"
+              >
+                Live Telecast
+              </Link>
+            ) : (
+              ""
+            )}
           </div>
         </div>
         <div className="flex justify-between text-sm text-gray-500 md:px-5 px-2 pb-5 w-full">
