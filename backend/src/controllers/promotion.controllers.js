@@ -164,16 +164,25 @@ const getAllPromotions = asyncHandler(async (req, res) => {
     isMobile: true,
   }).select("images.url place");
   if (!promotionsMax) throw new ApiError(404, "No promotions found");
+  const telecastPlace = await Place.find({
+    telecastLink: { $exists: true, $ne: "" },
+    // isLiveTelecast: true,
+  }).populate("city state");
+  if (!telecastPlace) throw new ApiError(404, "No Telecast found");
 
-  res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        { promotionsMin, promotionsMid, promotionsMax, promotionsMaxMobile },
-        "Promotions fetched successfully",
-      ),
-    );
+  res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        promotionsMin,
+        promotionsMid,
+        promotionsMax,
+        promotionsMaxMobile,
+        telecastPlace,
+      },
+      "Promotions fetched successfully",
+    ),
+  );
 });
 
 export {

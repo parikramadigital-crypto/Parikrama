@@ -121,7 +121,8 @@ const dashboardData = asyncHandler(async (req, res) => {
     isVerified: false,
   }).populate("state city place");
   const promotions = await Promotion.find().populate("place");
-  const packages = await TravelPackages.find().populate("place");
+  const packages = await TravelPackages.find();
+  // const packages = await TravelPackages.find().populate("place");
 
   return res.status(200).json(
     new ApiResponse(200, {
