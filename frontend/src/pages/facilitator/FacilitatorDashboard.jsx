@@ -10,6 +10,8 @@ import { MdEmail, MdLocalOffer, MdOutlineWork } from "react-icons/md";
 import { IoCall } from "react-icons/io5";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
+import FacilitatorRegister from "./FacilitatorRegister";
+import { motion, AnimatePresence } from "framer-motion";
 
 const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
   const { user } = useSelector((state) => state.auth);
@@ -17,6 +19,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { copied, copy } = useCopyUrl();
+  const [editProfile, setEditProfile] = useState(false);
 
   const DashboardData = async () => {
     try {
@@ -34,7 +37,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
 
   useEffect(() => {
     DashboardData();
-  }, []);
+  }, [user]);
 
   const FacilitatorProfile = ({ facilitator }) => {
     if (!facilitator) return null;
@@ -84,7 +87,9 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
             {/* initial details  */}
             <div>
               <h1 className="text-2xl font-bold">{name}</h1>
-              <p className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit">{role}</p>
+              <p className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit capitalize">
+                {role}
+              </p>
 
               <div className="mt-2 text-sm space-y-1">
                 <p className="flex justify-start items-center gap-2 border-b border-gray-900">
@@ -108,25 +113,20 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
           </div>
           {/* buttons  */}
           <div className="flex flex-col justify-center items-center gap-5">
-            <div className="flex justify-center items-center bg-gray-300 p-5 rounded-xl shadow">
-              <h1 className="md:w-80">
-                For reviews click here to copy and share the URL to your client
-              </h1>
-              <Button
-                onClick={() => copy(`/facilitator/review/${facilitator._id}`)}
-                label={copied ? <FaCopy /> : <FaRegCopy />}
-              />
-            </div>
-            <Button
-              label={
-                <h1 className="flex justify-center items-center gap-2">
-                  <MdLocalOffer />
-                  List Packages or Clubs
+            {data?.languages && data?.images[0]?.url ? (
+              <div className="flex justify-center items-center bg-gray-300 p-5 rounded-xl shadow">
+                <h1 className="md:w-80">
+                  For reviews click here to copy and share the URL to your
+                  client
                 </h1>
-              }
-              className={"w-full"}
-              onClick={() => navigate("/travel-packages")}
-            />
+                <Button
+                  onClick={() => copy(`/facilitator/review/${facilitator._id}`)}
+                  label={copied ? <FaCopy /> : <FaRegCopy />}
+                />
+              </div>
+            ) : (
+              ""
+            )}
             <Button
               label={
                 <h1 className="flex justify-center items-center gap-2">
@@ -145,13 +145,28 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
 
           <div className="grid md:grid-cols-3 gap-4 text-sm">
             <p>
-              <b>State:</b> {state?.name}
+              <b>State:</b>{" "}
+              {state?.name || (
+                <span className="bg-neutral-300 p-1 rounded-md text-center">
+                  No data available kindly complete your profile
+                </span>
+              )}
             </p>
             <p>
-              <b>City:</b> {city?.name}
+              <b>City:</b>{" "}
+              {city?.name || (
+                <span className="bg-neutral-300 p-1 rounded-md text-center">
+                  No data available kindly complete your profile
+                </span>
+              )}
             </p>
             <p>
-              <b>Place ID:</b> {place?.name}
+              <b>Place ID:</b>{" "}
+              {place?.name || (
+                <span className="bg-neutral-300 p-1 rounded-md text-center">
+                  No data available kindly complete your profile
+                </span>
+              )}
             </p>
           </div>
         </div>
@@ -197,7 +212,12 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
           </p>
 
           <p className="mt-2">
-            Document Number: {verification?.documentNumber}
+            Document Number:{" "}
+            {verification?.documentNumber || (
+              <span className="bg-neutral-300 p-1 rounded-md text-center">
+                No data available kindly complete your profile
+              </span>
+            )}
           </p>
 
           {/* DOCUMENT IMAGES */}
@@ -248,10 +268,41 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
       </div>
     );
   };
+
   return data ? (
     <div className="md:px-20">
-      <h2 className="text-2xl font-bold mb-6">Facilitator Dashboard</h2>
+      <h2 className="md:text-2xl font-bold mb-6 flex flex-col md:flex-row justify-start items-center md:gap-10">
+        Facilitator Dashboard
+        <span>
+          {data?.languages && data?.images[0]?.url ? (
+            ""
+          ) : (
+            <Button
+              label={"Complete your profile"}
+              className={"text-xs md:text-base font-normal"}
+              onClick={() => setEditProfile(true)}
+            />
+          )}
+        </span>
+      </h2>
       <FacilitatorProfile facilitator={data} />
+      <AnimatePresence>
+        {editProfile && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full z-50 bg-black/90 overflow-scroll flex justify-center items-start"
+          >
+            <FacilitatorRegister
+              completeProfile={true}
+              onCancel={() => setEditProfile(false)}
+              facilitatorId={data?._id}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   ) : (
     <div className="flex justify-center items-center w-full">
