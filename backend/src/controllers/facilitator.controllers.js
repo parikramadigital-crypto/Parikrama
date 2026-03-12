@@ -10,34 +10,28 @@ import { Admin } from "../models/admin.models.js";
 const registerFacilitator = asyncHandler(async (req, res) => {
   const {
     name,
-    email,
     phone,
     password,
     role,
-    place,
-    city,
-    state,
-    experienceYears,
-    bio,
-    languages,
-    documentNumber,
+    // place,
+    // city,
+    // state,
+    // experienceYears,
+    // bio,
+    // languages,
+    // documentNumber,
   } = req.body;
 
   console.log(
     name,
-    email,
     phone,
     password,
     role,
-    place,
-    city,
-    state,
-    experienceYears,
-    bio,
-    languages,
-    documentNumber,
   );
-  if (!name || !phone || !password || !role || !place || !city || !state) {
+  // if (!name || !phone || !password || !role || !place || !city || !state) {
+  //   throw new ApiError(400, "Required fields missing");
+  // }
+  if (!name || !phone || !password) {
     throw new ApiError(400, "Required fields missing");
   }
 
@@ -57,65 +51,65 @@ const registerFacilitator = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid password");
   }
 
-  const sanitize = (str = "") =>
-    str
-      .toString()
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9-_]/g, "")
-      .replace(/\s+/g, "-");
+  // const sanitize = (str = "") =>
+  //   str
+  //     .toString()
+  //     .toLowerCase()
+  //     .trim()
+  //     .replace(/[^a-z0-9-_]/g, "")
+  //     .replace(/\s+/g, "-");
 
-  const safeName = sanitize(name);
-  const safePhone = sanitize(phone);
+  // const safeName = sanitize(name);
+  // const safePhone = sanitize(phone);
 
-  /* ---------------- PROFILE IMAGE ---------------- */
-  let profileImages = [];
-  if (req.files?.profileImage?.length) {
-    const img = req.files.profileImage[0];
-    const uploaded = await UploadImages(img.filename, {
-      folderStructure: `facilitators/${safeName}-${safePhone}/profile`,
-    });
+  // /* ---------------- PROFILE IMAGE ---------------- */
+  // let profileImages = [];
+  // if (req.files?.profileImage?.length) {
+  //   const img = req.files.profileImage[0];
+  //   const uploaded = await UploadImages(img.filename, {
+  //     folderStructure: `facilitators/${safeName}-${safePhone}/profile`,
+  //   });
 
-    profileImages.push({
-      url: uploaded.url,
-      fileId: uploaded.fileId,
-    });
-  }
+  //   profileImages.push({
+  //     url: uploaded.url,
+  //     fileId: uploaded.fileId,
+  //   });
+  // }
 
-  /* ---------------- DOCUMENT IMAGES ---------------- */
-  let documents = [];
-  if (req.files?.documentImage?.length) {
-    for (const doc of req.files.documentImage) {
-      const uploaded = await UploadImages(doc.filename, {
-        folderStructure: `facilitators/${safeName}-${safePhone}/documents`,
-      });
+  // /* ---------------- DOCUMENT IMAGES ---------------- */
+  // let documents = [];
+  // if (req.files?.documentImage?.length) {
+  //   for (const doc of req.files.documentImage) {
+  //     const uploaded = await UploadImages(doc.filename, {
+  //       folderStructure: `facilitators/${safeName}-${safePhone}/documents`,
+  //     });
 
-      documents.push({
-        url: uploaded.url,
-        fileId: uploaded.fileId,
-      });
-    }
-  }
+  //     documents.push({
+  //       url: uploaded.url,
+  //       fileId: uploaded.fileId,
+  //     });
+  //   }
+  // }
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const facilitator = await Facilitator.create({
     name,
-    email,
+    // email,
     phone,
     password,
     role,
-    place,
-    city,
-    state,
-    experienceYears: Number(experienceYears) || 0,
-    languages: languages ? languages.split(",").map((l) => l.trim()) : [],
-    images: profileImages,
-    bio,
-    languages,
-    verification: {
-      documentNumber,
-      documents: documents,
-    },
+    // place,
+    // city,
+    // state,
+    // experienceYears: Number(experienceYears) || 0,
+    // languages: languages ? languages.split(",").map((l) => l.trim()) : [],
+    // images: profileImages,
+    // bio,
+    // languages,
+    // verification: {
+    //   documentNumber,
+    //   documents: documents,
+    // },
     otp,
   });
 
@@ -177,6 +171,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
 const loginFacilitator = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
+  console.log(email, phone, password);
 
   if ((!email && !phone) || !password) {
     throw new ApiError(400, "Email/Phone and password required");
@@ -225,6 +220,82 @@ const loginFacilitator = asyncHandler(async (req, res) => {
       "Login successful",
     ),
   );
+});
+
+const completeFacilitatorProfileByHimself = asyncHandler(async (req, res) => {
+  const {
+    email,
+    place,
+    city,
+    state,
+    experienceYears,
+    bio,
+    languages,
+    documentNumber,
+  } = req.body;
+
+  const { facilitatorId } = req.params;
+  const facilitator = await Facilitator.findById(facilitatorId);
+  if (!facilitator) throw new ApiError(404, "Invalid request");
+
+  const sanitize = (str = "") =>
+    str
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9-_]/g, "")
+      .replace(/\s+/g, "-");
+
+  const safeName = sanitize(facilitator.name);
+  const safePhone = sanitize(facilitator.phone);
+
+  let profileImages = [];
+  if (req.files?.profileImage?.length) {
+    const img = req.files.profileImage[0];
+    const uploaded = await UploadImages(img.filename, {
+      folderStructure: `facilitators/${safeName}-${safePhone}/profile`,
+    });
+
+    profileImages.push({
+      url: uploaded.url,
+      fileId: uploaded.fileId,
+    });
+  }
+
+  /* ---------------- DOCUMENT IMAGES ---------------- */
+  let documents = [];
+  if (req.files?.documentImage?.length) {
+    for (const doc of req.files.documentImage) {
+      const uploaded = await UploadImages(doc.filename, {
+        folderStructure: `facilitators/${safeName}-${safePhone}/documents`,
+      });
+
+      documents.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+      });
+    }
+  }
+
+  const updateFacilitator = await Facilitator.findByIdAndUpdate(facilitatorId, {
+    email,
+    place,
+    city,
+    state,
+    experienceYears: Number(experienceYears) || 0,
+    languages: languages ? languages.split(",").map((l) => l.trim()) : [],
+    images: profileImages,
+    bio,
+    languages,
+    verification: {
+      documentNumber,
+      documents: documents,
+    },
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, updateFacilitator, "Profile updated"));
 });
 
 const logoutFacilitator = asyncHandler(async (req, res) => {
@@ -610,6 +681,7 @@ export {
   registerFacilitator,
   verifyOTP,
   loginFacilitator,
+  completeFacilitatorProfileByHimself,
   logoutFacilitator,
   refreshFacilitatorToken,
   getCurrentFacilitator,

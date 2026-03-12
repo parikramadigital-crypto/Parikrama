@@ -42,7 +42,7 @@ const facilitatorSchema = new mongoose.Schema(
     role: {
       type: String,
       // enum: ["Guide", "Pandit", "Instructor", "Local Host"],
-      required: true,
+      // required: true,
     },
 
     bio: String,
@@ -58,19 +58,19 @@ const facilitatorSchema = new mongoose.Schema(
     place: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Place",
-      required: true,
+      // required: true,
     },
 
     city: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "City",
-      required: true,
+      // required: true,
     },
 
     state: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "State",
-      required: true,
+      // required: true,
     },
 
     /* ================= IMAGES ================= */
@@ -150,17 +150,17 @@ const facilitatorSchema = new mongoose.Schema(
       {
         date: {
           type: Date,
-          required: true,
+          // required: true,
         },
 
         startTime: {
           type: String, // "09:00"
-          required: true,
+          // required: true,
         },
 
         endTime: {
           type: String, // "11:00"
-          required: true,
+          // required: true,
         },
 
         isBooked: {
@@ -206,33 +206,33 @@ const facilitatorSchema = new mongoose.Schema(
       {
         customerName: {
           type: String,
-          required: true,
+          // required: true,
         },
 
         customerPhone: {
           type: String,
-          required: true,
+          // required: true,
         },
 
         communication: {
           type: Number,
           min: 0,
           max: 5,
-          required: true,
+          // required: true,
         },
 
         knowledge: {
           type: Number,
           min: 0,
           max: 5,
-          required: true,
+          // required: true,
         },
 
         behaviour: {
           type: Number,
           min: 0,
           max: 5,
-          required: true,
+          // required: true,
         },
 
         comment: {

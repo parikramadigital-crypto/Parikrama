@@ -16,6 +16,7 @@ import {
   RejectDocumentVerification,
   verifyOTP,
   deleteFacilitator,
+  completeFacilitatorProfileByHimself,
 } from "../controllers/facilitator.controllers.js";
 
 import { VerifyFacilitator } from "../middlewares/facilitatorAuth.middleware.js";
@@ -28,14 +29,23 @@ const router = Router();
 /* ================= AUTH ================= */
 
 // Register facilitator
-router.route("/register").post(
+router.route("/register").post(registerFacilitator);
+// router.route("/register").post(
+//   upload.fields([
+//     { name: "profileImage", maxCount: 1 },
+//     { name: "documentImage", maxCount: 2 },
+//   ]),
+//   registerFacilitator,
+// );
+router.route("/verify-otp").post(verifyOTP);
+
+router.route("/facilitator/profile/update/:facilitatorId").post(
   upload.fields([
     { name: "profileImage", maxCount: 1 },
     { name: "documentImage", maxCount: 2 },
   ]),
-  registerFacilitator,
+  completeFacilitatorProfileByHimself,
 );
-router.route("/verify-otp").post(verifyOTP);
 
 // Login facilitator
 router.route("/login").post(loginFacilitator);
