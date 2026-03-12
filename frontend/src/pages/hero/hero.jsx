@@ -251,14 +251,14 @@ const Hero = ({ stopLoading, startLoading }) => {
         </div>
 
         {/* RIGHT SLIDER */}
-        <div className="w-96 h-fit bg-neutral-500 rounded-xl lg:block sticky top-24 left-0 flex justify-center items-center flex-col gap-10">
+        <div className="w-96 h-fit rounded-xl lg:block hidden sticky top-24 left-0 justify-center items-center flex-col">
           <div className="h-96">
             <RandomImageSlider images={right} />
           </div>
-          <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5">
-            View Live Telecast of places who offer{" "}
+          <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5 my-10">
+            Click Here for Live Darshan{" "}
             <Button
-              label={"View Live Telecast"}
+              label={"Live Darshan"}
               onClick={() => navigate("/live-telecasts")}
             />
           </div>
@@ -266,9 +266,9 @@ const Hero = ({ stopLoading, startLoading }) => {
       </div>
       <div className="flex justify-center items-center w-full">
         <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5">
-          View Live Telecast of places who offer{" "}
+          Click Here for Live Darshan{" "}
           <Button
-            label={"View Live Telecast"}
+            label={"Live Darshan"}
             onClick={() => navigate("/live-telecasts")}
           />
         </div>

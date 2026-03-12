@@ -58,7 +58,7 @@ const PackageCard = ({ data }) => {
         </div>
       </div>
       {model && (
-        <div className="bg-gray-300/90 h-screen w-full fixed top-0 left-0 z-50 flex md:justify-center items-center flex-col gap-5 overflow-scroll py-5">
+        <div className="bg-gray-300/95 h-screen w-full fixed top-0 left-0 z-50 flex md:justify-center items-center flex-col gap-5 overflow-scroll py-5">
           <h1 className="text-base md:text-2xl font-bold text-center">
             We are happy that showed interest in{" "}
             <span className="bg-[#FFC20E] py-1 px-3 rounded-full">
@@ -66,6 +66,8 @@ const PackageCard = ({ data }) => {
             </span>{" "}
             package.
           </h1>
+          Please fill out this form so we can get in touch with you regarding
+          your requirements.
           <form
             ref={formRef}
             onSubmit={handleSubmit}
@@ -79,8 +81,17 @@ const PackageCard = ({ data }) => {
                 Type={i.type}
               />
             ))}
-            <Button label={"Submit"} type={"submit"} />
-            <Button label={"Cancel"} onClick={() => setModel(false)} />
+            <InputBox
+              Placeholder={"Explain your all requirements"}
+              Name={"description"}
+              LabelName={"Enter your description"}
+              Type={"text"}
+              Required={false}
+            />
+            <div className="w-full h-full flex justify-evenly items-center">
+              <Button label={"Submit"} type={"submit"} />
+              <Button label={"Cancel"} onClick={() => setModel(false)} />
+            </div>
           </form>
         </div>
       )}
