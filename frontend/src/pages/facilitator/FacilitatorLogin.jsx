@@ -61,9 +61,9 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
         )}
 
         <InputBox
-          LabelName="Email or Phone"
-          Name="email"
-          Placeholder="Email or Phone"
+          LabelName="Contact number"
+          Name="phone"
+          Placeholder="Enter your contact number"
           required
         />
 
