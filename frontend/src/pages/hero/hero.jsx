@@ -8,6 +8,8 @@ import Card from "../../components/ui/card";
 import { motion } from "framer-motion";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import { TbLivePhotoFilled } from "react-icons/tb";
+import logo from "../../assets/Logo1.png";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
@@ -148,6 +150,13 @@ const Hero = ({ stopLoading, startLoading }) => {
       <div className="w-full md:hidden">
         <RandomImageSlider images={topMobile} className="h-[200px]" />
       </div>
+      {/* <div className="bg-neutral-200 p-2 rounded-md shadow hidden md:flex justify-center items-center md:gap-5 my-2 w-[98vw] border border-neutral-400/10">
+        Click Here for Live Darshan{" "}
+        <Button
+          label={"Live Darshan"}
+          onClick={() => navigate("/live-telecasts")}
+        />
+      </div> */}
 
       {/* CONTENT */}
       <div className="flex justify-center w-full py-10 md:px-0 px-2">
@@ -162,6 +171,7 @@ const Hero = ({ stopLoading, startLoading }) => {
         </div>
 
         {/* SEARCH + RESULTS */}
+
         <div className="md:p-4 w-fit overflow-hidden">
           {/* SEARCH BAR */}
           <div className="flex justify-center items-center w-full relative">
@@ -255,23 +265,28 @@ const Hero = ({ stopLoading, startLoading }) => {
           <div className="h-96">
             <RandomImageSlider images={right} />
           </div>
-          <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5 my-10">
+          {/* <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5 my-10">
             Click Here for Live Darshan{" "}
             <Button
               label={"Live Darshan"}
               onClick={() => navigate("/live-telecasts")}
             />
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className="flex justify-center items-center w-full">
-        <div className="bg-neutral-200 p-5 rounded-md shadow flex justify-center items-center flex-col gap-5">
-          Click Here for Live Darshan{" "}
-          <Button
-            label={"Live Darshan"}
-            onClick={() => navigate("/live-telecasts")}
-          />
-        </div>
+      <div className="sticky md:bottom-10 bottom-5 w-full flex justify-end items-end px-10">
+        <button
+          onClick={() => navigate("/live-telecasts")}
+          className="flex justify-center items-center flex-col gap-2 bg-[#FFC20E] md:bg-neutral-200 rounded-full md:rounded-md md:py-3 py-5 px-3 shadow-black shadow-2xl cursor-pointer hover:scale-105 duration-300 ease-in-out"
+        >
+          <img src={logo} className="w-14 h-14 md:block hidden" />
+          <h1 className="md:text-base text-xs flex justify-center items-center flex-col md:flex-row md:gap-1">
+            <span className="flex justify-center items-center md:flex-row-reverse ">
+              Live <TbLivePhotoFilled className="text-red-600" />
+            </span>
+            Darshan
+          </h1>
+        </button>
       </div>
     </div>
   );

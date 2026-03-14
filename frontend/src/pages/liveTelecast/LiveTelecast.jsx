@@ -53,7 +53,7 @@ const Card = ({
         <Button
           onClick={openMaps}
           label={
-            <h1 className="flex justify-center items-center gap-5 text-xs md:text-base">
+            <h1 className="flex justify-center items-center md:gap-5 text-xs md:text-base">
               Live Telecast
               <span>
                 <TbLivePhotoFilled className="text-red-700" />
@@ -92,7 +92,7 @@ const LiveTelecast = ({ stopLoading, startLoading }) => {
   }, []);
 
   return (
-    <div className="flex justify-start items-center flex-col w-full py-10">
+    <div className="flex justify-start items-center flex-col w-full md:py-10 py-2">
       <h1 className="text-2xl font-semibold ">Live Telecast</h1>
       <div className="flex justify-center items-center flex-col gap-5 md:w-[70vw] w-[95vw]">
         {data ? (
