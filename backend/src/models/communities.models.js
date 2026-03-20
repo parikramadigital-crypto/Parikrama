@@ -13,10 +13,15 @@ const communitySchema = new mongoose.Schema(
       password: { type: String, required: true, select: false }, // "select:false" is a condition which will not allow the controller to send password with the whole object
     },
     communityDetails: {
-      name: { type: String, required: true },
+      communityName: { type: String, required: true },
       gst: { type: String },
-      contactNumber: { type: String, required: true, unique: true },
-      email: { type: String, lowercase: true, trim: true, unique: true },
+      communityContactNumber: { type: String, required: true, unique: true },
+      communityEmail: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        unique: true,
+      },
       profession: { type: String, required: true, trim: true },
       bankDetails: {
         bankName: { type: String },
