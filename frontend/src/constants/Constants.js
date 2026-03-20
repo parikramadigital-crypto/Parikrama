@@ -288,3 +288,123 @@ export const packagesInputs = [
     type: "date",
   },
 ];
+
+export const personalInputs = [
+  {
+    label: "Name",
+    placeHolder: "Enter your full name",
+    name: "name",
+    type: "text",
+  },
+  {
+    label: "Email",
+    placeHolder: "Enter your email",
+    name: "email",
+    type: "email",
+    required: false,
+  },
+  {
+    label: "Contact Number",
+    placeHolder: "Enter your contact number",
+    name: "contactNumber",
+    type: "text",
+  },
+  {
+    label: "Pan Card",
+    placeHolder: "Enter your PAN number",
+    name: "pan",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Aadhar Card",
+    placeHolder: "Enter your aadhar number",
+    name: "aadhar",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Password",
+    placeHolder: "Password",
+    name: "password",
+    type: "password",
+    passwordTrue: true,
+  },
+];
+
+export const communityInputs = [
+  {
+    label: "Community Name",
+    placeHolder: "Enter your community name",
+    name: "communityName",
+    type: "text",
+  },
+  {
+    label: "GST",
+    placeHolder: "Enter your GST number",
+    name: "gst",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Community Contact Number",
+    placeHolder: "Enter your community contact number",
+    name: "communityContactNumber",
+    type: "text",
+  },
+  {
+    label: "Community email",
+    placeHolder: "Enter your community email",
+    name: "communityEmail",
+    type: "email",
+    required: false,
+  },
+  {
+    label: "Profession",
+    placeHolder: "Eg: Influencer, Blogger, Bike group, Solo Traveler etc.",
+    name: "profession",
+    type: "text",
+  },
+  {
+    label: "Bank Name",
+    placeHolder: "Enter bank name",
+    name: "bankName",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "IFSC code",
+    placeHolder: "Enter branch IFSC code",
+    name: "ifsc",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Account number",
+    placeHolder: "Enter your bank account number",
+    name: "accountNumber",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Account holder name",
+    placeHolder: "Account holder name",
+    name: "accountHolderName",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Community Creation",
+    placeHolder: "Year in which you started channel, blogging etc.",
+    name: "communityEstablishment",
+    type: "number",
+    required: false,
+  },
+  // {
+  //   label: "About",
+  //   placeHolder: "Write somethings about your works",
+  //   name: "about",
+  //   type: "text",
+  //   required: false,
+  // },
+];
