@@ -26,7 +26,6 @@ const registerCommunity = asyncHandler(async (req, res) => {
     bio,
   } = req.body;
 
-  // ✅ Required validation
   if (
     !name ||
     !contactNumber ||
@@ -38,7 +37,6 @@ const registerCommunity = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields are missing");
   }
 
-  // ✅ Check duplicates
   const existing = await Community.findOne({
     $or: [
       { "personalDetails.email": email },
@@ -52,7 +50,6 @@ const registerCommunity = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Community already exists with provided details");
   }
 
-  // ✅ Image Upload (optional)
   let profileImage = {};
   let companyLogo = {};
 
@@ -76,7 +73,6 @@ const registerCommunity = asyncHandler(async (req, res) => {
     };
   }
 
-  // ✅ Create community
   const community = await Community.create({
     personalDetails: {
       name,
@@ -107,7 +103,6 @@ const registerCommunity = asyncHandler(async (req, res) => {
     },
   });
 
-  // ✅ Tokens
   const { AccessToken, RefreshToken } = await generateAccessAndRefreshTokens(
     community._id,
     "Community",
@@ -199,7 +194,6 @@ const updateCommunity = asyncHandler(async (req, res) => {
   const { name, email, contactNumber, communityName, profession, bio } =
     req.body;
 
-  // ✅ Update fields safely
   if (name) community.personalDetails.name = name;
   if (email) community.personalDetails.email = email;
   if (contactNumber) community.personalDetails.contactNumber = contactNumber;
@@ -209,7 +203,6 @@ const updateCommunity = asyncHandler(async (req, res) => {
 
   if (bio) community.about = bio;
 
-  // ✅ Image update
   if (req.files?.profileImage?.[0]) {
     if (community.images?.profileImage?.fileId) {
       await DeleteImage(community.images.profileImage.fileId);
@@ -241,7 +234,6 @@ const deleteCommunity = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Community not found");
   }
 
-  // ✅ Delete images
   if (community.images?.profileImage?.fileId) {
     await DeleteImage(community.images.profileImage.fileId);
   }
