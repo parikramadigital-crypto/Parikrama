@@ -82,6 +82,16 @@ const Header = () => {
       ),
       url: "/login/facilitator",
     },
+    {
+      className: "w-full",
+      label: (
+        <h1 className="flex justify-between items-center">
+          <FaUserTie className="text-2xl" />
+          Community Login
+        </h1>
+      ),
+      url: "/community/form",
+    },
   ];
 
   return (
