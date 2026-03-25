@@ -9,6 +9,10 @@ import YoutubePlayer from "../../utils/YoutubePlayer";
 import { useNavigate } from "react-router-dom";
 import InputBox from "../../components/InputBox";
 import { formatProdErrorMessage } from "@reduxjs/toolkit";
+import { FaArrowRight } from "react-icons/fa6";
+import { addUser, clearUser } from "../../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const Card = ({
   name,
@@ -21,7 +25,9 @@ const Card = ({
   telecastLink,
 }) => {
   const formRef = useRef();
+  const dispatch = useDispatch();
   const [modelTelecast, openModelTelecast] = useState(false);
+  const [newUser, setNewUser] = useState();
   const [modelOTP, openModelOTP] = useState(false);
   const [otp, setOtp] = useState();
   const openTelecast = () => {
@@ -30,27 +36,66 @@ const Card = ({
   };
   const navigate = useNavigate();
 
+  const validatePhone = (phone) => {
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(phone);
+  };
+
   const handleUser = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData(formRef.current);
-      const response = await FetchData("", "post", formData);
+      const contactNumber = formData.get("contactNumber");
+
+      if (!validatePhone(contactNumber)) {
+        alert("Please enter a valid contact number");
+        formRef.current.reset();
+        return;
+      }
+      const response = await FetchData("users/create-user", "post", formData);
       console.log(response);
-      setOtp(response.data.otp);
+      setOtp(response.data.data.otp);
+      setNewUser(response.data.data.newUser);
     } catch (err) {
-      console.log(err);
+      alert(parseErrorMessage(err.response.data));
     }
   };
 
   const handleOtp = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
       const formData = new FormData(formRef.current);
-      const response = await FetchData("", "post", formData);
+      const response = await FetchData("users/verify-user", "post", formData);
+
       console.log(response);
-      openModelTelecast(true);
+
+      if (response.data.success) {
+        const { user, tokens } = response.data.data;
+        console.log(user);
+
+        localStorage.setItem("AccessToken", tokens.accessToken);
+        localStorage.setItem("RefreshToken", tokens.refreshToken);
+        localStorage.setItem("role", "User");
+
+        dispatch(clearUser());
+        dispatch(addUser(user));
+        openModelTelecast(true);
+        openModelOTP(false);
+        formRef.current.reset();
+      }
+      alert(response.data.message);
+      alert("You can now watch telecast");
     } catch (err) {
-      console.log(err);
+      alert(parseErrorMessage(err.response.data));
+    }
+  };
+
+  const handleTelecast = () => {
+    if (localStorage.role === "User") {
+      openModelTelecast(true);
+      openModelOTP(false);
+    } else {
+      openModelOTP(true);
     }
   };
 
@@ -87,7 +132,7 @@ const Card = ({
           />
         </div>
         <Button
-          onClick={() => openModelOTP(true)}
+          onClick={() => handleTelecast()}
           label={
             <h1 className="flex justify-center items-center md:gap-5 text-xs md:text-base">
               Live Telecast
@@ -107,24 +152,41 @@ const Card = ({
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
-            <div className="bg-white rounded-xl flex justify-center items-center flex-col md:p-10 gap-5">
-              <h1>Login first for viewing the live telecast</h1>
-              <form ref={formRef} onSubmit={handleUser}>
+            <div className="bg-white rounded-xl flex justify-center items-center flex-col md:p-10 gap-5 lg:w-1/2 w-full p-5">
+              <h1 className="text-lg font-semibold">
+                Register with us first for viewing live telecasts {otp}
+              </h1>
+              <form ref={formRef} className="w-full">
                 <InputBox
                   LabelName="Enter your mobile number"
                   Name="contactNumber"
                   Placeholder="Enter contact number"
-                  Type="number"
+                  Type="text"
                 />
                 {otp ? (
                   <div>
-                    <InputBox LabelName="Enter OTP" />
-                    <Button label={"Confirm"} onClick={() => handleOtp()} />
+                    <InputBox LabelName="Enter OTP" Name="otp" />
+                    <InputBox
+                      Value={newUser._id}
+                      className="hidden"
+                      Name="userId"
+                    />
+                    <Button label={"Confirm"} onClick={handleOtp} />
                   </div>
                 ) : (
-                  <Button label={"Submit"} />
+                  <Button
+                    label={"Submit"}
+                    className={"w-full"}
+                    onClick={handleUser}
+                  />
                 )}
               </form>
+              <button
+                onClick={() => navigate("/login-register/user")}
+                className="flex justify-center items-center gap-5"
+              >
+                Already a user Login here <FaArrowRight />
+              </button>
             </div>
           </motion.div>
         )}
@@ -141,7 +203,7 @@ const Card = ({
               <div className="flex justify-center items-center w-full gap-10">
                 <Button
                   label={"Close"}
-                  onClick={() => openModel(false)}
+                  onClick={() => openModelTelecast(false)}
                   className={"text-xs md:text-base"}
                 />
                 <Button
