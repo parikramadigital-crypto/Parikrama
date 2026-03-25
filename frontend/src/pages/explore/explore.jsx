@@ -7,7 +7,7 @@ import { truncateString } from "../../utils/Utility-functions";
 import Button from "../../components/Button";
 import { useMemo } from "react";
 
-const Explore = ({ startLoading, stopLoading }) => {
+const Explore = ({ startLoading, stopLoading, userProfile = false }) => {
   const [popularData, setPopularData] = useState([]);
   const [enrichedPlaces, setEnrichedPlaces] = useState([]);
 
@@ -124,10 +124,16 @@ const Explore = ({ startLoading, stopLoading }) => {
   return (
     <div>
       <Card data={popularData} text="Browse most Rated places" />
-      <Card data={templePlaces} text="Browse Temples" minLimit={4} />
-      <Card data={heritagePlaces} text="Browse Heritages" minLimit={4} />
-      <Card data={trendingPlaces} text="Trending Places" minLimit={4} />
-      <Card data={popularPlaces} text="Popular Places" minLimit={4} />
+      {userProfile === false ? (
+        <div>
+          <Card data={templePlaces} text="Browse Temples" minLimit={4} />
+          <Card data={heritagePlaces} text="Browse Heritages" minLimit={4} />
+          <Card data={trendingPlaces} text="Trending Places" minLimit={4} />
+          <Card data={popularPlaces} text="Popular Places" minLimit={4} />
+        </div>
+      ) : (
+        ""
+      )}
       {/* <Card data={risingPlaces} text="Rising PLace" minLimit={4} /> */}
       {/* <Card data={naturePlaces} text="Browse Temples" minLimit={4} /> */}
       {/* {popularData?.slice(0, 10).map((p) => (

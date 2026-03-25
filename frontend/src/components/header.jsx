@@ -15,6 +15,7 @@ import {
   MdOutlineFlight,
 } from "react-icons/md";
 import { FaBusSimple, FaUserTie } from "react-icons/fa6";
+import { FaUserCircle, FaUserCog, FaUsersCog } from "react-icons/fa";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -28,10 +29,43 @@ const Header = () => {
 
   const buttons = [
     {
+      className: "w-full",
+      label: (
+        <h1 className="flex justify-between items-center">
+          <FaUserCog className="text-2xl" />
+          Facilitator Login
+        </h1>
+      ),
+      url: "/login/facilitator",
+    },
+    {
+      className: "w-full",
+      label: (
+        <h1 className="flex justify-between items-center">
+          <FaUsersCog className="text-2xl" />
+          Community Login
+        </h1>
+      ),
+      url: "/community/form",
+    },
+    {
+      className: "w-full",
+      label: (
+        <h1 className="flex justify-between items-center">
+          <FaUserCircle className="text-2xl" />
+          User Login
+        </h1>
+      ),
+      url: "/login-register/user",
+    },
+    {
       className: "w-full md:hidden block",
       label: "Add your near by popular place",
       url: "/guest/register-new-place",
     },
+  ];
+
+  const facilityButtons = [
     {
       className: "w-full",
       label: (
@@ -71,26 +105,6 @@ const Header = () => {
         </h1>
       ),
       url: "/flights-busses",
-    },
-    {
-      className: "w-full",
-      label: (
-        <h1 className="flex justify-between items-center">
-          <FaUserTie className="text-2xl" />
-          Facilitator Login
-        </h1>
-      ),
-      url: "/login/facilitator",
-    },
-    {
-      className: "w-full",
-      label: (
-        <h1 className="flex justify-between items-center">
-          <FaUserTie className="text-2xl" />
-          Community Login
-        </h1>
-      ),
-      url: "/community/form",
     },
   ];
 
@@ -164,6 +178,31 @@ const Header = () => {
             <div className="md:w-1/2 w-[90%] bg-white flex md:justify-between justify-evenly items-start flex-col h-full py-5 px-5">
               <div className="flex justify-between items-center gap-5 p-5 w-full">
                 <Button label={<IoMdClose />} onClick={() => setPopup(false)} />
+              </div>
+              {/* logo  */}
+              <div className="flex items-center justify-center flex-col w-full">
+                <img src={logo} className="w-20 md:w-40" />
+                <img src={logo2} className="w-20 md:w-40" />
+              </div>
+              {/* parikrama facility buttons  */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-3">
+                {facilityButtons.map((b) => (
+                  <Button
+                    className={b.className}
+                    onClick={() => LinkNavigate(b.url)}
+                    label={b.label}
+                  />
+                ))}
+              </div>
+              {/* parikrama logins buttons  */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-3">
+                {buttons.map((b) => (
+                  <Button
+                    className={b.className}
+                    onClick={() => LinkNavigate(b.url)}
+                    label={b.label}
+                  />
+                ))}
                 <div className="hidden md:flex items-center gap-4">
                   {user?.role === "Admin" ? (
                     <Link
@@ -178,26 +217,16 @@ const Header = () => {
                   ) : (
                     <Button
                       className={"w-full bg-gray-400 text-white"}
-                      label="Admin Login"
+                      label={
+                        <h1 className="flex justify-between items-center">
+                          <FaUserTie className="text-2xl text-black" />
+                          Admin Login
+                        </h1>
+                      }
                       onClick={() => LinkNavigate("/login")}
                     />
                   )}
                 </div>
-              </div>
-              {/* logo  */}
-              <div className="flex items-center justify-center flex-col w-full">
-                <img src={logo} className="w-20 md:w-40" />
-                <img src={logo2} className="w-20 md:w-40" />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-3">
-                {buttons.map((b) => (
-                  <Button
-                    className={b.className}
-                    onClick={() => LinkNavigate(b.url)}
-                    label={b.label}
-                  />
-                ))}
-                {/* Desktop Buttons */}
               </div>
             </div>
           </motion.div>
