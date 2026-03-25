@@ -32,10 +32,12 @@ import FlightBus from "./pages/flightBus/FlightBus";
 import LiveTelecast from "./pages/liveTelecast/LiveTelecast";
 import CommunityRegForm from "./pages/community/communityRegForm";
 import PackagesListing from "./pages/travelPackagesForm/PackageListing";
+import UserDashboard from "./pages/user/User";
+import UserRegisterLogin from "./pages/user/RegisterLogin";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
-  // console.log(user);
+  console.log(user);
   const dispatch = useDispatch();
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -60,6 +62,18 @@ function App() {
           const { user, tokens } = res.data.data;
 
           // Store new tokens
+          localStorage.setItem("AccessToken", tokens.AccessToken);
+          localStorage.setItem("RefreshToken", tokens.RefreshToken);
+
+          // Update redux
+          dispatch(addUser(user));
+        }
+        if (localStorage?.role === "User") {
+          const res = await FetchData("users/auth/refresh-tokens", "post", {
+            refreshToken,
+          });
+          const { user, tokens } = res.data.data;
+
           localStorage.setItem("AccessToken", tokens.AccessToken);
           localStorage.setItem("RefreshToken", tokens.RefreshToken);
 
@@ -142,6 +156,12 @@ function App() {
             path="/facilitator/review/:facilitatorId"
             element={<FacilitatorReview />}
           />
+
+          <Route
+            path="/login-register/user"
+            element={<UserRegisterLogin />}
+          />
+          <Route path="/user/dashboard" element={<UserDashboard />} />
 
           <Route path="/flights-busses" element={<FlightBus />} />
           <Route path="/travel-packages" element={<PackagesListing />} />
