@@ -113,6 +113,9 @@ const FacilitatorRegister = ({
     setError("");
 
     const formData = new FormData(formRef.current);
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0] + ": " + pair[1]);
+    // }
 
     try {
       startLoading();
@@ -121,7 +124,7 @@ const FacilitatorRegister = ({
         "facilitator/register",
         "post",
         formData,
-        true,
+        // true,
       );
 
       setOtp(res.data.data.otp);
@@ -246,7 +249,12 @@ const FacilitatorRegister = ({
                   required
                   Placeholder="Enter your contact number"
                 />
-
+                <InputBox
+                  LabelName="Email"
+                  Name="email"
+                  Placeholder="Enter your email id"
+                  required
+                />
                 <InputBox
                   LabelName="Role"
                   Name="role"
@@ -273,7 +281,6 @@ const FacilitatorRegister = ({
 
             {completeProfile === true ? (
               <div>
-                <InputBox LabelName="Email" Name="email" required />
                 <InputBox
                   LabelName="Pan / Aadhar Number"
                   Name="documentNumber"

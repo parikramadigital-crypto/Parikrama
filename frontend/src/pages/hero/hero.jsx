@@ -228,6 +228,7 @@ const Hero = ({ stopLoading, startLoading }) => {
                       duration: 0.5,
                       ease: "easeInOut",
                     }}
+                    key={place._id}
                     className="w-full"
                   >
                     <Card

@@ -85,6 +85,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
 
           {recommendations?.slice(0, count).map((place) => (
             <motion.div
+              key={place?._id}
               className="w-full"
               whileInView={{ opacity: 1, x: 0 }}
               initial={{ opacity: 0, x: -100 }}
