@@ -89,6 +89,7 @@ const Explore = ({ startLoading, stopLoading, userProfile = false }) => {
         <div className="md:w-fit w-full h-fit grid lg:grid-cols-4 md:grid-cols-3 p-1 gap-4">
           {data?.slice(0, count).map((p) => (
             <Link
+              key={p?._id}
               to={`/current/place/${p?._id}`}
               className="bg-gray-300 rounded-md shadow p-2 flex flex-col gap-2 justify-center items-center object-contain md:w-72 h-60"
             >

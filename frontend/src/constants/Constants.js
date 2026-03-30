@@ -408,3 +408,24 @@ export const communityInputs = [
   //   required: false,
   // },
 ];
+
+export const userFormInputs = [
+  {
+    label: "Name",
+    placeHolder: "Enter your full name",
+    name: "name",
+    type: "text",
+  },
+  {
+    label: "Email",
+    placeHolder: "Enter your email",
+    name: "email",
+    type: "email",
+  },
+  {
+    label: "Address",
+    placeHolder: "Corresponding address",
+    name: "address",
+    type: "text",
+  },
+];

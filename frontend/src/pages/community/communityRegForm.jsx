@@ -69,8 +69,9 @@ const CommunityRegForm = ({ startLoading, stopLoading }) => {
               Personal Details
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {personalInputs.map((i) => (
+              {personalInputs.map((i, index) => (
                 <InputBox
+                  key={index}
                   LabelName={i.label}
                   Placeholder={i.placeHolder}
                   Name={i.name}
@@ -86,8 +87,9 @@ const CommunityRegForm = ({ startLoading, stopLoading }) => {
               Community Details
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {communityInputs.map((i) => (
+              {communityInputs.map((i,index) => (
                 <InputBox
+                  key={index}
                   LabelName={i.label}
                   Placeholder={i.placeHolder}
                   Name={i.name}

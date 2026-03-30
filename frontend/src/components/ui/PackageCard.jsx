@@ -90,8 +90,9 @@ const PackageCard = ({ data }) => {
               onSubmit={handleSubmit}
               className="bg-white w-[90vw] md:w-[70vw] p-5 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-5"
             >
-              {packagesInputs.map((i) => (
+              {packagesInputs.map((i, index) => (
                 <InputBox
+                  key={index}
                   Placeholder={i.placeHolder}
                   Name={i.name}
                   LabelName={i.label}
@@ -107,7 +108,13 @@ const PackageCard = ({ data }) => {
               />
               <div className="w-full h-full flex justify-evenly items-center">
                 <Button label={"Submit"} type={"submit"} />
-                <Button label={"Cancel"} onClick={() => setModel(false)} />
+                <Button
+                  label={"Cancel"}
+                  onClick={() => {
+                    setModel(false);
+                    formRef.current.reset();
+                  }}
+                />
               </div>
             </form>
           </motion.div>
