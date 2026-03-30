@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function SendMail(
   receivers,
@@ -31,20 +35,33 @@ function SendMail(
       emailHtml = emailHtml.replace(regex, replacements[key]);
     });
 
+    //*****************the below transporter is for using in gmail******************//
     // send mail with defined transport object
+    // const transporter = nodemailer.createTransport({
+    //   //  host: "smtp.ethereal.email",
+    //   service: process.env.EMAIL_SERVICE,
+    //   port: 465,
+    //   secure: true, // true for port 465, false for other ports
+    //   auth: {
+    //     user: process.env.SENDER_EMAIL, // generated ethereal user
+    //     pass: process.env.SENDER_APP_PASSWORD, // generated ethereal password
+    //   },
+    // });
+    //*****************the above transporter is for using in gmail******************//
+
+    //for hostinger
     const transporter = nodemailer.createTransport({
-      //  host: "smtp.ethereal.email",
-      service: process.env.EMAIL_SERVICE,
+      host: process.env.SMTP_HOST, // smtp.hostinger.com
       port: 465,
-      secure: true, // true for port 465, false for other ports
+      secure: true,
       auth: {
-        user: process.env.SENDER_EMAIL, // generated ethereal user
-        pass: process.env.SENDER_APP_PASSWORD, // generated ethereal password
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASSWORD,
       },
     });
 
     const info = await transporter.sendMail({
-      from: process.env.SENDER_EMAIL, // sender address
+      from: `"Parikrama" <${process.env.SENDER_EMAIL}>`, // sender address
       to: receivers, // list of receivers
       subject: subject, // Subject line
       text: text, // plain text body
