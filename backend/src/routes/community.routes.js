@@ -8,6 +8,7 @@ import {
   deleteCommunity,
   verifyCommunity,
   toggleCommunityStatus,
+  refreshCommunityToken,
 } from "../controllers/community.controllers.js";
 import { VerifyAdmin } from "../middlewares/adminAuth.middleware.js";
 import { upload } from "../middlewares/multer.middlewares.js";
@@ -37,6 +38,8 @@ router.route("/community/profile/update/:communityId").patch(
   ]),
   updateCommunity,
 );
+
+router.route("/community/auth/refresh-token").post(refreshCommunityToken);
 
 router
   .route("/community/admin/toggle-active-status/:adminId/:communityId")
