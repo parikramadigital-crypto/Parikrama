@@ -34,6 +34,9 @@ import CommunityRegForm from "./pages/community/communityRegForm";
 import PackagesListing from "./pages/travelPackagesForm/PackageListing";
 import UserDashboard from "./pages/user/User";
 import UserRegisterLogin from "./pages/user/RegisterLogin";
+import CommunityLogin from "./pages/community/communityLogin";
+import CommunityDashboard from "./pages/community/communityDashboard";
+import CurrentFoodKiosk from "./pages/kiosks/CurrentFoodKiosk";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -119,7 +122,7 @@ function App() {
           Admin: "admin/auth/refresh-tokens",
           User: "users/auth/refresh-tokens",
           Facilitator: "facilitator/auth/refresh-token",
-          Community: "community/auth/refresh-token", // future ready
+          Community: "communities/community/auth/refresh-token", // future ready
         };
 
         const endpoint = endpointMap[role];
@@ -192,6 +195,10 @@ function App() {
             element={<CurrentFacilitator />}
           />
           <Route
+            path="/current/food-court/:foodCourtId"
+            element={<CurrentFoodKiosk />}
+          />
+          <Route
             path="/facilitator/dashboard"
             element={<FacilitatorDashboard />}
           />
@@ -206,6 +213,8 @@ function App() {
           <Route path="/flights-busses" element={<FlightBus />} />
           <Route path="/travel-packages" element={<PackagesListing />} />
           <Route path="/community/form" element={<CommunityRegForm />} />
+          <Route path="/login/community" element={<CommunityLogin />} />
+          <Route path="/dashboard/community" element={<CommunityDashboard />} />
 
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
