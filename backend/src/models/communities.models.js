@@ -6,7 +6,13 @@ const communitySchema = new mongoose.Schema(
   {
     personalDetails: {
       name: { type: String, required: true },
-      email: { type: String, lowercase: true, trim: true, unique: true },
+      email: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        unique: true,
+        required: true,
+      },
       contactNumber: { type: String, required: true, unique: true },
       pan: { type: String },
       aadhar: { type: String },
@@ -59,7 +65,7 @@ communitySchema.pre("save", async function () {
 });
 
 communitySchema.methods.comparePassword = function (password) {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, this.personalDetails.password);
 };
 
 communitySchema.methods.generateAccessToken = function () {
