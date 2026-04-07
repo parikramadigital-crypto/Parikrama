@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { DeleteBulkImage, UploadImages } from "../utils/imageKit.io.js";
+import { isValidUrl } from "../utils/urlChecker.js";
 
 const makePromotion = asyncHandler(async (req, res) => {
   const { name, priority, placeId, isMobile } = req.body;
@@ -159,16 +160,26 @@ const getAllPromotions = asyncHandler(async (req, res) => {
     priority: "Max",
     isMobile: false,
   }).select("images.url place");
+
   const promotionsMaxMobile = await Promotion.find({
     priority: "Max",
     isMobile: true,
   }).select("images.url place");
+
   if (!promotionsMax) throw new ApiError(404, "No promotions found");
-  const telecastPlace = await Place.find({
+
+  // 🔥 Fetch telecast places
+  let telecastPlace = await Place.find({
     telecastLink: { $exists: true, $ne: "" },
-    // isLiveTelecast: true,
   }).populate("city state");
-  if (!telecastPlace) throw new ApiError(404, "No Telecast found");
+
+  // ✅ Filter only valid URLs
+  telecastPlace = telecastPlace.filter((place) =>
+    isValidUrl(place.telecastLink),
+  );
+
+  if (!telecastPlace.length)
+    throw new ApiError(404, "No valid Telecast links found");
 
   res.status(201).json(
     new ApiResponse(
