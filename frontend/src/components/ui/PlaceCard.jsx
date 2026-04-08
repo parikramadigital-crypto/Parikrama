@@ -86,21 +86,6 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
 
   // this below configuration is for sharing the place with a thumbnail image
   // if the copy function is not working then remove the below helmet tag
-  <Helmet>
-    <title>{place?.name}</title>
-
-    <meta property="og:title" content={place?.name} />
-    {/* <meta property="og:description" content={place?.description} /> */}
-    <meta property="og:image" content={place?.images?.[0]?.url} />
-    <meta property="og:url" content={window.location.href} />
-
-    {/* for whatsapp and twitter  */}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="IMAGE_URL" />
-
-    {/* Optional but useful */}
-    <meta property="og:type" content="website" />
-  </Helmet>;
 
   const images = useMemo(() => {
     return place?.images?.length ? place.images.map((img) => img.url) : [];
@@ -144,6 +129,21 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
 
   return (
     <div>
+      <Helmet>
+        <title>{place?.name}</title>
+
+        <meta property="og:title" content={place?.name} />
+        {/* <meta property="og:description" content={place?.description} /> */}
+        <meta property="og:image" content={place?.images?.[0]?.url} />
+        <meta property="og:url" content={window.location.href} />
+
+        {/* for whatsapp and twitter  */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="IMAGE_URL" />
+
+        {/* Optional but useful */}
+        <meta property="og:type" content="website" />
+      </Helmet>
       <div className="w-full bg-white border border-gray-200 rounded-t-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col pb-2">
         {/* Image / Placeholder */}
         <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
@@ -459,7 +459,8 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
         className="w-full h-fit bg-[#FFC20E] text-xs md:text-sm px-5 flex justify-between items-center py-1 rounded-b-xl shadow-sm"
       >
         <h1>
-          You can register yourself as a Facilitator (Travel Guide, Photographer, Pandit, Temple Guide, Tour Operator etc.)
+          You can register yourself as a Facilitator (Travel Guide,
+          Photographer, Pandit, Temple Guide, Tour Operator etc.)
         </h1>
         <span className="flex justify-center items-center gap-2 ">
           Register / Login <BiArrowFromLeft />

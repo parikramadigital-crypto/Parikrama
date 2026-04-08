@@ -2,6 +2,13 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+});
 
 const allowedOrigins = [process.env.ORIGIN_1, process.env.ORIGIN_2];
 
@@ -23,6 +30,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(trackVisitor);
+app.use(compression());
+app.use(limiter);
 
 //print function to ensure every step is executed
 app.use((req, res, next) => {
