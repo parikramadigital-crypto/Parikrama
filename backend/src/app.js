@@ -56,6 +56,8 @@ import packageRoutes from "./routes/package.routes.js";
 import communityRoutes from "./routes/community.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import foodCourtRoutes from "./routes/foodCourt.routes.js";
+import hotelRoutes from "./routes/hotel.routes.js";
+import clubRoutes from "./routes/club.routes.js";
 
 app.use("/api/v1/states", stateRoutes);
 app.use("/api/v1/cities", cityRoutes);
@@ -70,5 +72,7 @@ app.use("/api/v1/packages", packageRoutes);
 app.use("/api/v1/communities", communityRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/foodCourt", foodCourtRoutes);
+app.use("/api/v1/hotels", hotelRoutes);
+app.use("/api/v1/clubs", clubRoutes);
 
 export { app };
