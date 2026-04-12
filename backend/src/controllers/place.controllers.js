@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { UploadImages, DeleteBulkImage } from "../utils/imageKit.io.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Facilitator } from "../models/facilitator.models.js";
+import { generateMetaTagsHTML } from "../utils/metaTagGenerator.js";
 
 const createPlace = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
@@ -602,6 +603,21 @@ const explorePlaces = asyncHandler(async (req, res) => {
     );
 });
 
+const getPlaceMetaTags = asyncHandler(async (req, res) => {
+  const { placeId } = req.params;
+
+  const place = await Place.findById(placeId).populate("city state");
+  if (!place) {
+    throw new ApiError(404, "Place not found");
+  }
+
+  const frontendUrl = process.env.ORIGIN_1 || "https://parikrama.example.com";
+  const htmlContent = generateMetaTagsHTML(place, frontendUrl);
+
+  res.set("Content-Type", "text/html; charset=utf-8");
+  res.send(htmlContent);
+});
+
 export {
   createPlace,
   getAllPlaces,
@@ -613,4 +629,5 @@ export {
   makePlaceActive,
   uploaderPlace,
   explorePlaces,
+  getPlaceMetaTags,
 };

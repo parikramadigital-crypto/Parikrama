@@ -1,4 +1,5 @@
 load-testing/
+server.drawio
 
 # Logs
 logs
@@ -25,3 +26,4 @@ dist-ssr
 *.sln
 *.sw?
 .env
+Place-Share.md
