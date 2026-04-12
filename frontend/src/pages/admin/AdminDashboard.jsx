@@ -15,6 +15,8 @@ import {
   Promotions,
   TravelPackages,
   FoodKiosks,
+  Hotels,
+  Clubs,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -30,6 +32,8 @@ import AdminRegistrationForm from "./AdminRegistrationForm";
 import AdminCMS from "./AdminCMS";
 import PackageRegisteration from "./PackageRegisteration";
 import FoodKiosk from "../kiosks/FoodKiosk";
+import AddNewHotel from "./AddNewHotel";
+import AddNewClub from "./AddNewClub";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [placeData, setPlaceData] = useState([]);
@@ -41,11 +45,15 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [promotionData, setPromotionData] = useState([]);
   const [packageData, setPackageData] = useState([]);
   const [foodKioskData, setFoodKioskData] = useState([]);
+  const [hotelData, setHotelData] = useState([]);
+  const [clubData, setClubData] = useState([]);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [popup3, setPopup3] = useState(false);
   const [popup4, setPopup4] = useState(false);
   const [popup5, setPopup5] = useState(false);
+  const [popup6, setPopup6] = useState(false);
+  const [popup7, setPopup7] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -72,15 +80,23 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const res = await FetchData("admin/dashboard/data", "get");
-      setPlaceData(res.data.data.place); // done
-      setCityData(res.data.data.city); // done
-      setStateData(res.data.data.state); // done
-      setFacilitator(res.data.data.activeFacilitator); //done
-      setInactivePlaceData(res.data.data.inactivePlace); // done
-      setInactiveFacilitator(res.data.data.inactiveFacilitator); //done
-      setPromotionData(res.data.data.promotions); //done
-      setPackageData(res.data.data.packages); //done
-      setFoodKioskData(res.data.data.foodCourts); //done
+      setPlaceData(res.data.data.place);
+      setCityData(res.data.data.city);
+      setStateData(res.data.data.state);
+      setFacilitator(res.data.data.activeFacilitator);
+      setInactivePlaceData(res.data.data.inactivePlace);
+      setInactiveFacilitator(res.data.data.inactiveFacilitator);
+      setPromotionData(res.data.data.promotions);
+      setPackageData(res.data.data.packages);
+      setFoodKioskData(res.data.data.foodCourts);
+
+      // Fetch hotels separately
+      const hotelRes = await FetchData("hotels", "get");
+      setHotelData(hotelRes?.data?.data || []);
+
+      // Fetch clubs separately
+      const clubRes = await FetchData("clubs", "get");
+      setClubData(clubRes?.data?.data || []);
     } catch (err) {
       // console.log(err);
     } finally {
@@ -200,6 +216,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     "Overview",
     "Promotions",
     "Packages",
+    "Hotels",
+    "Clubs",
     "Active Places",
     "Cities",
     "States",
@@ -210,7 +228,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   ];
 
   return user ? (
-    <div className="flex flex-col h-screen gap-5 justify-between items-start">
+    <div className="flex flex-col h-fit gap-5 justify-between items-start">
       {/* <h2 className="text-2xl font-bold mb-2 px-20">Admin Dashboard</h2> */}
       {/* ADMIN DETAILS  */}
       <div className="w-full px-20">
@@ -401,6 +419,21 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 Text="Travel Packages"
                 user={user?._id}
               />
+            </div>
+          )}
+          {activeSection === "Hotels" && (
+            <div className="w-full h-full flex flex-col justify-start items-start">
+              <Button
+                label={"List new hotel"}
+                onClick={() => setPopup6(true)}
+              />
+              <Hotels TableData={hotelData} Text="Listed Hotels" />
+            </div>
+          )}
+          {activeSection === "Clubs" && (
+            <div className="w-full h-full flex flex-col justify-start items-start">
+              <Button label={"List new club"} onClick={() => setPopup7(true)} />
+              <Clubs TableData={clubData} Text="Listed Clubs" />
             </div>
           )}
           {activeSection === "Active Places" && (
@@ -636,6 +669,31 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <FoodKiosk onCancel={() => setPopup5(false)} user={user?._id} />
+          </motion.div>
+        )}
+        {popup6 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <AddNewHotel
+              onCancel={() => setPopup6(false)}
+              adminId={user?._id}
+            />
+          </motion.div>
+        )}
+        {popup7 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <AddNewClub onCancel={() => setPopup7(false)} adminId={user?._id} />
           </motion.div>
         )}
       </AnimatePresence>

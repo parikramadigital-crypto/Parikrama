@@ -114,10 +114,11 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
     const [copied, setCopied] = useState(false);
 
     const copyUrl = async () => {
-      await navigator.clipboard.writeText(window.location.href);
-      //  await navigator.clipboard.writeText(
-      //    window.location.href && place?.images[0]?.url,
-      //  );
+      // Generate the backend share URL with proper meta tags
+      const apiBaseUrl = `${process.env.DomainUrl}/api/v1`;
+      const shareUrl = `${apiBaseUrl}/places/share/${place?._id}`;
+
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     };
