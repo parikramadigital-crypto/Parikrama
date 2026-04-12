@@ -16,6 +16,7 @@ import {
 } from "react-icons/md";
 import { FaBusSimple, FaUserTie } from "react-icons/fa6";
 import { FaUserCircle, FaUserCog, FaUsersCog } from "react-icons/fa";
+import { GiClubs } from "react-icons/gi";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ const Header = () => {
           Hotel Booking
         </h1>
       ),
-      url: "/flights-busses",
+      url: "/hotels",
     },
     {
       className: "w-full",
@@ -105,6 +106,16 @@ const Header = () => {
         </h1>
       ),
       url: "/flights-busses",
+    },
+    {
+      className: "w-full",
+      label: (
+        <h1 className="flex justify-between items-center">
+          <GiClubs className="text-2xl" />
+          Club Memberships
+        </h1>
+      ),
+      url: "/clubs/register",
     },
   ];
 
@@ -197,7 +208,7 @@ const Header = () => {
               </div>
               {/* parikrama logins buttons  */}
               <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-3">
-                {buttons.map((b,index) => (
+                {buttons.map((b, index) => (
                   <Button
                     key={index}
                     className={b.className}

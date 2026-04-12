@@ -897,6 +897,251 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
   );
 };
 
+const Hotels = ({ Text = "", TableData = [] }) => {
+  const [search, setSearch] = useState("");
+
+  const TableHeaders = [
+    "Hotel Name",
+    "Property Type",
+    "City",
+    "Rating",
+    "Price Range",
+    "Rooms",
+    "Actions",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((h) =>
+      `
+        ${h?.name}
+        ${h?.propertyType}
+        ${h?.address?.city?.name}
+        ${h?.address?.state?.name}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  const deleteHotel = async ({ hotelId, adminId }) => {
+    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+    try {
+      const response = await FetchData(
+        `hotels/delete/${adminId}/${hotelId}`,
+        "delete",
+      );
+      alert(response.data.message);
+      alert("Kindly reload the dashboard");
+    } catch (err) {
+      alert("Failed to delete hotel");
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold text-nowrap">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search hotels..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                  <td>
+                    <Link
+                      to={`/hotels/${data?._id}`}
+                      className="px-5 py-3 block hover:text-blue-500 hover:underline"
+                    >
+                      {data?.name}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3">{data?.propertyType || "N/A"}</td>
+                  <td className="px-5 py-3">{data?.address?.city?.name}</td>
+                  <td className="px-5 py-3">{data?.ratings?.average || 0}/5</td>
+                  <td className="px-5 py-3">
+                    ₹{data?.pricing?.minPrice || "N/A"} - ₹
+                    {data?.pricing?.maxPrice || "N/A"}
+                  </td>
+                  <td className="px-5 py-3">{data?.totalRooms || 0}</td>
+                  <td className="px-5 py-3 flex gap-2">
+                    <Button
+                      label="Delete"
+                      onClick={() =>
+                        deleteHotel({
+                          hotelId: data._id,
+                          adminId: data?.createdBy?._id,
+                        })
+                      }
+                      className="bg-red-300 text-red-900"
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-6 text-gray-500">
+                  No hotels found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const Clubs = ({ Text = "", TableData = [] }) => {
+  const [search, setSearch] = useState("");
+
+  const TableHeaders = [
+    "Club Name",
+    "Category",
+    "City",
+    "Rating",
+    "Members",
+    "Verified",
+    "Actions",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((c) =>
+      `
+        ${c?.clubName}
+        ${c?.category}
+        ${c?.location?.city}
+        ${c?.location?.state}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  const deleteClub = async ({ clubId, adminId }) => {
+    if (!window.confirm("Are you sure you want to delete this club?")) return;
+    try {
+      const response = await FetchData(
+        `clubs/delete/${adminId}/${clubId}`,
+        "delete",
+      );
+      alert(response.data.message);
+      alert("Kindly reload the dashboard");
+    } catch (err) {
+      alert("Failed to delete club");
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold text-nowrap">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search clubs..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                  <td>
+                    <Link
+                      to={`/clubs/${data?._id}`}
+                      className="px-5 py-3 block hover:text-blue-500 hover:underline"
+                    >
+                      {data?.clubName}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3">{data?.category || "N/A"}</td>
+                  <td className="px-5 py-3">{data?.location?.city || "N/A"}</td>
+                  <td className="px-5 py-3">{data?.ratings?.average || 0}/5</td>
+                  <td className="px-5 py-3">{data?.members?.length || 0}</td>
+                  <td className="px-5 py-3">
+                    {data?.adminVerified ? (
+                      <span className="text-green-600 font-semibold">✓ Yes</span>
+                    ) : (
+                      <span className="text-red-600">✗ No</span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 flex gap-2">
+                    <Button
+                      label="Delete"
+                      onClick={() =>
+                        deleteClub({
+                          clubId: data._id,
+                          adminId: data?.createdBy?._id,
+                        })
+                      }
+                      className="bg-red-300 text-red-900"
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7} className="text-center py-6 text-gray-500">
+                  No clubs found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 export {
   City,
   State,
@@ -907,4 +1152,6 @@ export {
   Promotions,
   TravelPackages,
   FoodKiosks,
+  Hotels,
+  Clubs,
 };
