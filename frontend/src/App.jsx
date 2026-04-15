@@ -8,7 +8,7 @@ import { addUser, clearUser, stopAuthLoading } from "./redux/slices/authSlice";
 import { FetchData } from "./utils/FetchFromApi";
 import { useEffect } from "react";
 import AdminRegistrationForm from "./pages/admin/AdminRegistrationForm";
-import SearchResult from "./pages/searchResult/SearchResult";
+import SearchPage from "./pages/searchResult/SearchResult";
 import CurrentPlace from "./pages/place/currentPlace";
 import AddNewPlace from "./pages/place/addNewPlace";
 import AddNewStateCity from "./pages/state-city/addNewState-City";
@@ -166,11 +166,12 @@ function App() {
       {/* Top padding because header is fixed */}
       <div className="pt-24">
         <ScrollToTop />
-
+        {/* <SearchPage /> */}
         <Routes>
           {/* ================= PUBLIC ================= */}
           <Route path="/" element={<Hero />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/search-feed/places" element={<SearchPage />} />
           <Route path="/live-telecasts" element={<LiveTelecast />} />
           <Route path="/login/admin" element={<Login />} />
           <Route path="/login/facilitator" element={<FacilitatorAuth />} />

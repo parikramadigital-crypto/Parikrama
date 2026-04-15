@@ -22,7 +22,10 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   const currentPlace = async () => {
     try {
       startLoading();
-      const response = await FetchData(`places/${placeId}`, "get");
+      const response = await FetchData(
+        `places/current-place/${placeId}`,
+        "get",
+      );
       setData(response.data.data.place);
       setFacilitator(response.data.data.facilitators);
     } catch (err) {

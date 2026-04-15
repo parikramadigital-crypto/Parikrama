@@ -13,6 +13,7 @@ const InputBox = ({
   Disabled = false,
   LabelClassname = "",
   PasswordIndication = false,
+  onClick,
 }) => {
   return (
     <div className="flex justify-center items-center w-full">
@@ -27,6 +28,7 @@ const InputBox = ({
           </label>
         )}
         <input
+          onClick={onClick}
           disabled={Disabled}
           id={Name}
           name={Name}

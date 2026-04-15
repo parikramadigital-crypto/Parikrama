@@ -1,36 +1,34 @@
-import React from "react";
-import { useState } from "react";
-import { FetchData } from "../../utils/FetchFromApi";
+import React, { useState } from "react";
+import PlaceSearch from "./PlaceSearch";
+import InputBox from "../../components/InputBox";
 import Button from "../../components/Button";
 
-const SearchResult = () => {
-  const [data, setData] = useState([]);
-  const getData = async () => {
-    try {
-      //   const response = await FetchData("admin/states", "get");
-      const response = await FetchData("admin/cities", "get");
-      //   const response = await FetchData("admin/places", "get");
-      console.log(response);
-      setData(response.data.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+const SearchPage = () => {
+  const [query, setQuery] = useState("");
+
   return (
-    <div>
-      <Button label={"GetData"} onClick={() => getData()} />
-      <h1>
-        {data?.map((value) => {
-          return (
-            <div className="flex justify-start items-center gap-10">
-              <span>{value.name}</span>
-              <span>{value._id}</span>
-            </div>
-          );
-        })}
-      </h1>
+    <div className="p-6 flex justify-center items-center flex-col">
+      <div className="flex justify-center items-center w-full md:w-[80vw] gap-5">
+        <InputBox
+          Type="text"
+          Placeholder="Search by place, city, state, category..."
+          className="w-full md:w-[80vw]"
+          Value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <Button label={"Search"} className={"w-full"} />
+      </div>
+      {/* <input
+        type="text"
+        placeholder="Search places..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full p-3 border rounded-lg mb-4"
+      /> */}
+
+      <PlaceSearch query={query} />
     </div>
   );
 };
 
-export default SearchResult;
+export default SearchPage;

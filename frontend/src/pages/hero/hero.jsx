@@ -46,10 +46,10 @@ const Hero = ({ stopLoading, startLoading }) => {
   const getData = async () => {
     try {
       startLoading();
-      const response = await FetchData("places/", "get");
+      const response = await FetchData("places/get-hero-places", "get");
       setData(response?.data?.data || []);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       stopLoading();
     }
@@ -176,11 +176,18 @@ const Hero = ({ stopLoading, startLoading }) => {
           {/* SEARCH BAR */}
           <div className="flex justify-center items-center w-full relative">
             <InputBox
+              onClick={() => navigate("/search-feed/places")}
+              // Value={searchInput}
+              // onChange={(e) => setSearchInput(e.target.value)}
+              Placeholder="Search by place, city, state, category..."
+              className="w-full pr-10"
+            />
+            {/* <InputBox
               Value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               Placeholder="Search by place, city, state, category..."
               className="w-full pr-10"
-            />
+            /> */}
             <CiSearch className="absolute right-3 text-gray-500" />
           </div>
 
