@@ -119,94 +119,95 @@ const buildLocation = (lat, lng) => ({
 
 const createHotel = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
-  const admin = await Admin.findById(adminId);
 
+  const admin = await Admin.findById(adminId);
   if (!admin) {
     throw new ApiError(403, "Only admins can create hotels");
   }
 
-  const {
-    name,
-    description,
-    shortDescription,
-    propertyType,
-    starRating,
-    cityId,
-    stateId,
-    countryId,
-    line1,
-    line2,
-    locality,
-    landmark,
-    pincode,
-    phone,
-    email,
-    website,
-    bookingUrl,
-    partnerClubId,
-    listedBy,
-    isVerified,
-    isFeatured,
-    popularityScore,
-    awards,
-    certifications,
-    externalReferences,
-    removeCover,
-    rooms,
-    pricing,
-    policies,
-    nearbyAttractions,
-    nearestTransport,
-  } = req.body;
-
+  // 🔥 Normalize numbers
   const lat = normalizeNumber(req.body.lat);
   const lng = normalizeNumber(req.body.lng);
+  let starRating = normalizeNumber(req.body.starRating);
 
-  if (!name || !cityId || !stateId || lat == null || lng == null) {
+  if (
+    !req.body.name ||
+    !req.body.cityId ||
+    !req.body.stateId ||
+    lat == null ||
+    lng == null
+  ) {
     throw new ApiError(400, "Required hotel fields are missing");
   }
 
-  const city = await City.findById(cityId);
-  const state = await State.findById(stateId);
-  const country = countryId
-    ? await Country.findById(countryId)
+  // 🔥 Clamp star rating
+  if (starRating > 5) starRating = 5;
+  if (starRating < 0) starRating = 0;
+
+  const city = await City.findById(req.body.cityId);
+  const state = await State.findById(req.body.stateId);
+  const country = req.body.countryId
+    ? await Country.findById(req.body.countryId)
     : await loadCountry();
 
   if (!city) throw new ApiError(404, "City not found");
   if (!state) throw new ApiError(404, "State not found");
 
   let partnerClub;
-  if (partnerClubId) {
-    partnerClub = await Club.findById(partnerClubId);
+  if (req.body.partnerClubId) {
+    partnerClub = await Club.findById(req.body.partnerClubId);
     if (!partnerClub) throw new ApiError(404, "Partner club not found");
   }
 
-  const parsedRooms = parseJsonField(rooms) || [];
-  const parsedPricing = parseJsonField(pricing) || {};
-  const parsedPolicies = parseJsonField(policies) || {};
-  const parsedNearbyAttractions = parseJsonField(nearbyAttractions) || [];
-  const parsedNearestTransport = parseJsonField(nearestTransport) || [];
+  // 🔥 Parse arrays safely
+  const parseCommaArray = (field) => {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    return field
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  };
 
-  const category = parseArrayField(req.body.category);
-  const tags = parseArrayField(req.body.tags);
-  const amenities = parseArrayField(req.body.amenities);
-  const services = parseArrayField(req.body.services);
-  const featuredFacilities = parseArrayField(req.body.featuredFacilities);
-  const awardsList = parseArrayField(awards);
-  const certificationsList = parseArrayField(certifications);
+  const amenities = parseCommaArray(req.body.amenities);
+  const services = parseCommaArray(req.body.services);
+  const category = parseCommaArray(req.body.category);
+  const tags = parseCommaArray(req.body.tags);
+  const featuredFacilities = parseCommaArray(req.body.featuredFacilities);
 
+  // 🔥 Parse nested objects (FormData safe)
+  const parsedPricing = parseJsonField(req.body.pricing) || {};
+
+  let parsedPolicies = parseJsonField(req.body.policies) || {};
+
+  // ✅ FIX CHECKBOXES
+  parsedPolicies = {
+    ...parsedPolicies,
+    petsAllowed: req.body["policies[petsAllowed]"] === "on",
+    childrenAllowed: req.body["policies[childrenAllowed]"] === "on",
+    smokingAllowed: req.body["policies[smokingAllowed]"] === "on",
+  };
+
+  const parsedRooms = parseJsonField(req.body.rooms) || [];
+  const parsedNearbyAttractions =
+    parseJsonField(req.body.nearbyAttractions) || [];
+  const parsedNearestTransport =
+    parseJsonField(req.body.nearestTransport) || [];
+
+  // 🔥 Upload images
   const coverFile = req.files?.cover?.[0];
   const galleryFiles = req.files?.gallery || [];
+
   const uploadedCover = coverFile
     ? await UploadImages(coverFile.filename, {
-        folderStructure: `hotels/${generateSlug(name)}/cover`,
+        folderStructure: `hotels/${generateSlug(req.body.name)}/cover`,
       })
     : null;
 
   const uploadedGallery = [];
   for (const file of galleryFiles) {
     const uploaded = await UploadImages(file.filename, {
-      folderStructure: `hotels/${generateSlug(name)}/gallery`,
+      folderStructure: `hotels/${generateSlug(req.body.name)}/gallery`,
     });
     uploadedGallery.push({
       url: uploaded.url,
@@ -218,57 +219,70 @@ const createHotel = asyncHandler(async (req, res) => {
   const roomTotals = computeRoomTotals(parsedRooms);
 
   const hotel = await Hotels.create({
-    name: name.trim(),
-    slug: generateSlug(name),
-    description,
-    shortDescription,
-    propertyType,
-    starRating: normalizeNumber(starRating),
+    name: req.body.name.trim(),
+    slug: generateSlug(req.body.name),
+    description: req.body.description,
+    shortDescription: req.body.shortDescription,
+    propertyType: req.body.propertyType,
+    starRating,
+
     category,
     tags,
+
     address: {
-      line1,
-      line2,
-      locality,
-      landmark,
-      pincode,
+      line1: req.body.line1,
+      line2: req.body.line2,
+      locality: req.body.locality,
+      landmark: req.body.landmark,
+      pincode: req.body.pincode,
       city: city._id,
       state: state._id,
-      // country: country._id,
     },
+
     location: buildLocation(lat, lng),
+
     contact: {
-      phone,
-      email,
-      website,
-      bookingUrl,
+      phone: req.body.phone,
+      email: req.body.email,
+      website: req.body.website,
+      bookingUrl: req.body.bookingUrl,
     },
+
     images: {
       cover: uploadedCover
         ? { url: uploadedCover.url, fileId: uploadedCover.fileId }
         : undefined,
       gallery: uploadedGallery,
     },
+
     amenities,
     services,
     featuredFacilities,
+
     rooms: parsedRooms,
     pricing: parsedPricing,
     policies: parsedPolicies,
+
     nearbyAttractions: parsedNearbyAttractions,
     nearestTransport: parsedNearestTransport,
-    partnerClub: partnerClub?.id,
-    listedBy,
+
+    partnerClub: partnerClub?._id,
+    listedBy: req.body.listedBy,
     createdBy: admin._id,
+
     isActive: true,
-    isVerified: isVerified === "true" || isVerified === true,
-    isFeatured: isFeatured === "true" || isFeatured === true,
-    popularityScore: normalizeNumber(popularityScore) || 0,
+    isVerified: req.body.isVerified === "true" || req.body.isVerified === true,
+    isFeatured: req.body.isFeatured === "true" || req.body.isFeatured === true,
+
+    popularityScore: normalizeNumber(req.body.popularityScore) || 0,
+
     totalRooms: roomTotals.totalRooms,
     availableRooms: roomTotals.availableRooms,
-    awards: awardsList,
-    certifications: certificationsList,
-    externalReferences: parseJsonField(externalReferences) || {},
+
+    awards: parseCommaArray(req.body.awards),
+    certifications: parseCommaArray(req.body.certifications),
+
+    externalReferences: parseJsonField(req.body.externalReferences) || {},
   });
 
   res
