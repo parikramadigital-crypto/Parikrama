@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       "process.env.DomainUrl": JSON.stringify(env.DomainUrl),
+      "process.env.PlaceDomainUrl": JSON.stringify(env.PlaceDomainUrl),
     },
     plugins: [react(), tailwindcss()],
   };

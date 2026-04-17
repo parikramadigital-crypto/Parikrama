@@ -191,7 +191,7 @@ const Header = () => {
                 <Button label={<IoMdClose />} onClick={() => setPopup(false)} />
               </div>
               {/* logo  */}
-              <div className="flex items-center justify-center flex-col w-full">
+              <div className="hidden md:flex items-center justify-center flex-col w-full">
                 <img src={logo} className="w-20 md:w-40" />
                 <img src={logo2} className="w-20 md:w-40" />
               </div>

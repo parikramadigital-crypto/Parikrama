@@ -16,19 +16,20 @@ const communitySchema = new mongoose.Schema(
       contactNumber: { type: String, required: true, unique: true },
       pan: { type: String },
       aadhar: { type: String },
+      soloTraveler: { type: String, default: "No" },
       password: { type: String, required: true, select: false }, // "select:false" is a condition which will not allow the controller to send password with the whole object
     },
     communityDetails: {
-      communityName: { type: String, required: true },
+      communityName: { type: String },
       gst: { type: String },
-      communityContactNumber: { type: String, required: true, unique: true },
+      communityContactNumber: { type: String, unique: true },
       communityEmail: {
         type: String,
         lowercase: true,
         trim: true,
         unique: true,
       },
-      profession: { type: String, required: true, trim: true },
+      profession: { type: String, trim: true },
       bankDetails: {
         bankName: { type: String },
         ifsc: { type: String },

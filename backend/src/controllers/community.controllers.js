@@ -25,15 +25,17 @@ const registerCommunity = asyncHandler(async (req, res) => {
     accountHolderName,
     communityEstablishment,
     bio,
+    soloTraveler,
   } = req.body;
 
   if (
     !name ||
     !contactNumber ||
     !password ||
-    !communityName ||
-    !communityContactNumber ||
-    !profession
+    !email
+    // !communityName ||
+    // !communityContactNumber ||
+    // !profession
   ) {
     throw new ApiError(400, "Required fields are missing");
   }
@@ -82,6 +84,7 @@ const registerCommunity = asyncHandler(async (req, res) => {
       pan,
       aadhar,
       password,
+      soloTraveler,
     },
     communityDetails: {
       communityName,

@@ -308,26 +308,33 @@ export const personalInputs = [
     name: "contactNumber",
     type: "text",
   },
-  {
-    label: "Pan Card",
-    placeHolder: "Enter your PAN number",
-    name: "pan",
-    type: "text",
-    required: false,
-  },
-  {
-    label: "Aadhar Card",
-    placeHolder: "Enter your aadhar number",
-    name: "aadhar",
-    type: "text",
-    required: false,
-  },
+  // {
+  //   label: "Pan Card",
+  //   placeHolder: "Enter your PAN number",
+  //   name: "pan",
+  //   type: "text",
+  //   required: false,
+  // },
+  // {
+  //   label: "Aadhar Card",
+  //   placeHolder: "Enter your aadhar number",
+  //   name: "aadhar",
+  //   type: "text",
+  //   required: false,
+  // },
   {
     label: "Password",
     placeHolder: "Password",
     name: "password",
     type: "password",
     passwordTrue: true,
+  },
+  {
+    label: "Are you a Solo Traveler",
+    placeHolder: "Yes or No",
+    name: "soloTraveler",
+    type: "text",
+    required: false,
   },
 ];
 

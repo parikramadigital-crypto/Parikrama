@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FetchData } from "../../utils/FetchFromApi";
 import { truncateString } from "../../utils/Utility-functions";
 import { Helmet } from "react-helmet-async";
+import { MdFoodBank } from "react-icons/md";
 
 const PlaceCard = ({ place }) => {
   return (
@@ -115,8 +116,9 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
 
     const copyUrl = async () => {
       // Generate a clean public share URL without exposing API structure
-      const domainUrl = process.env.DomainUrl;
+      const domainUrl = process.env.PlaceDomainUrl;
       const shareUrl = `${domainUrl}/p/${place?._id}`;
+      // const shareUrl = `${window.location.origin}/p/${place?._id}`;
 
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
@@ -179,15 +181,23 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
             </p>
 
             {/* Category */}
-            <div className="flex flex-col justify-start items-start gap-2">
+            <div className="flex flex-col md:flex-row justify-start items-start md:items-center gap-2">
               <p className="inline-block w-fit text-xs px-3 py-1 rounded-full bg-[#FFC20E]">
                 {place?.category}
               </p>
+              {/* <Button
+                onClick={() => setPopup4(true)}
+                label={
+                  <h1 className=" flex justify-center items-center text-xs">
+                    <MdFoodBank className="text-2xl" /> Famous Food
+                  </h1>
+                }
+              /> */}
               <button
                 onClick={() => setPopup4(true)}
-                className="inline-block w-fit text-xs px-3 py-1 rounded-full bg-[#FFC20E]"
+                className=" w-fit px-1 py-1 rounded-full bg-[#FFC20E] flex justify-center items-center"
               >
-                Checkout famous foods of {place?.name}
+                <MdFoodBank className="text-2xl" />
               </button>
             </div>
 
@@ -242,7 +252,9 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
               onClick={() => setPopup3(true)}
               className={"w-full md:block hidden"}
             />
-            {place?.telecastLink ? (
+            {place?.telecastLink === "undefined" ? (
+              ""
+            ) : place?.telecastLink ? (
               <Link
                 to={place.telecastLink}
                 target="blank"
@@ -445,6 +457,7 @@ const ExpandedPlaceCard = ({ place, facilitator }) => {
             >
               <div className="bg-white md:w-3/4 w-full h-full flex flex-col justify-start items-center py-10 overflow-scroll">
                 {/* place.map  */}
+                No data available
               </div>
               <div
                 onClick={() => setPopup4(false)}
