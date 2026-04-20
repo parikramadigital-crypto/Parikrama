@@ -18,7 +18,6 @@ const CommunityDashboard = ({
   const [personalData, setPersonalData] = useState();
   const [communityData, setCommunityData] = useState();
   const [bankData, setBankData] = useState();
-  const [imageData, setImageData] = useState();
 
   const CSSClassName =
     "w-full flex flex-col justify-center items-center shadow p-5 bg-neutral-200 gap-4 rounded-xl ";
@@ -32,11 +31,10 @@ const CommunityDashboard = ({
         `communities/community/details/${user?._id}`,
         "get",
       );
-      setData(response.data.data);
-      setPersonalData(response.data.data.personalDetails);
-      setCommunityData(response.data.data.communityDetails);
-      setBankData(response.data.data.communityDetails.bankDetails);
-      setImageData(response.data.data.images);
+      setData(response.data.data || []);
+      setPersonalData(response.data.data.personalDetails || []);
+      setCommunityData(response.data.data.communityDetails || []);
+      setBankData(response.data.data.communityDetails.bankDetails || []);
     } catch (err) {
     } finally {
       stopLoading();
@@ -70,7 +68,11 @@ const CommunityDashboard = ({
       <div className={`${CSSClassName}`}>
         <h1 className="font-semibold text-xl">Personal details</h1>
         <div className="w-28 lg:w-60 h-28 lg:h-60 bg-neutral-400 rounded-full overflow-hidden shadow-2xl">
-          <img src={imageData?.profileImage?.url} className="w-full h-full" />
+          <img
+            src={data?.images?.profileImage?.url}
+            className="w-full h-full"
+          />
+          {/* <img src={imageData?.profileImage?.url} className="w-full h-full" /> */}
         </div>
         <p className={`${CSSClassNameP}`}>
           <strong>Name: </strong>
@@ -104,11 +106,11 @@ const CommunityDashboard = ({
       <div className={`${CSSClassName}`}>
         <h1 className="font-semibold text-xl">Community details</h1>
         <div className="w-28 lg:w-60 h-28 lg:h-60 bg-neutral-400 rounded-full overflow-hidden shadow-2xl">
-          <img src={imageData?.companyLogo?.url} className="w-full h-full" />
+          <img src={data?.images?.companyLogo?.url} className="w-full h-full" />
         </div>
         <p className={`${CSSClassNameP}`}>
           <strong>Name: </strong>
-          {communityData?.communityName}
+          {communityData?.communityName || "Kindly update your profile"}
         </p>
         {data?.communityEstablishment ? (
           <p className={`${CSSClassNameP}`}>

@@ -5,13 +5,17 @@ import ClubCard from "../../components/ui/ClubCard";
 import InputBox from "../../components/InputBox";
 import Button from "../../components/Button";
 import { useDebounce } from "../../utils/Utility-functions";
+import { useNavigate } from "react-router-dom";
+import CommunityCard from "../../components/ui/CommunityCard";
 
 const ClubListing = ({ startLoading, stopLoading }) => {
   const [clubs, setClubs] = useState([]);
+  const [communities, setCommunities] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredClubs, setFilteredClubs] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const clubCategories = [
     "Travel Club",
@@ -28,6 +32,17 @@ const ClubListing = ({ startLoading, stopLoading }) => {
       const response = await FetchData("clubs", "get");
       setClubs(response?.data?.data || []);
       setFilteredClubs(response?.data?.data || []);
+    } catch (err) {
+      setError("Unable to load clubs. Please try again.");
+    } finally {
+      stopLoading();
+    }
+  };
+  const loadCommunities = async () => {
+    try {
+      startLoading();
+      const response = await FetchData("communities/community/all/list", "get");
+      setCommunities(response?.data?.data || []);
     } catch (err) {
       setError("Unable to load clubs. Please try again.");
     } finally {
@@ -73,6 +88,7 @@ const ClubListing = ({ startLoading, stopLoading }) => {
 
   useEffect(() => {
     loadClubs();
+    loadCommunities();
   }, []);
 
   return (
@@ -85,21 +101,25 @@ const ClubListing = ({ startLoading, stopLoading }) => {
           Browse verified club listings with membership options, events, and
           community details.
         </p>
+        <Button
+          label={"Register new Club"}
+          onClick={() => navigate("/clubs/register")}
+        />
       </div>
 
       <div className="mb-8 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
           <InputBox
             type="text"
-            placeholder="Search clubs by name, location, or category..."
-            value={search}
+            Placeholder="Search clubs by name, location, or category..."
+            Value={search}
             onChange={onSearchChange}
             className="flex-1"
           />
           <select
             value={categoryFilter}
             onChange={onCategoryChange}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Categories</option>
             {clubCategories.map((cat) => (
@@ -117,19 +137,45 @@ const ClubListing = ({ startLoading, stopLoading }) => {
         )}
       </div>
 
-      {filteredClubs.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">
-            No clubs found matching your search.
-          </p>
-        </div>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredClubs.map((club) => (
-            <ClubCard key={club._id} club={club} />
-          ))}
-        </div>
-      )}
+      <div className="flex justify-center items-center flex-col w-full gap-20">
+        {filteredClubs.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No clubs found matching your search.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Clubs
+            </h1>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredClubs.map((club) => (
+                <ClubCard key={club._id} club={club} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {communities.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              No communities found matching your search.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Communities
+            </h1>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {communities.map((community) => (
+                <CommunityCard key={community._id} community={community} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -22,13 +22,11 @@ const CommunityLogin = () => {
         formData,
       );
 
-      console.log(response);
       formRef.current.reset();
       navigate("/dashboard/community");
       alert(response.data.message);
       if (response.data.success) {
         const { community, tokens } = response.data.data;
-        console.log(community);
 
         localStorage.setItem("AccessToken", tokens.AccessToken);
         localStorage.setItem("RefreshToken", tokens.RefreshToken);
@@ -38,7 +36,7 @@ const CommunityLogin = () => {
         dispatch(addUser(community));
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       parseErrorMessage(err.response.data);
     }
   };

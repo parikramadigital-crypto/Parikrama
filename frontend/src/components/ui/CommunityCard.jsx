@@ -3,20 +3,22 @@ import { BiMap, BiSolidStar, BiUser, BiCalendar } from "react-icons/bi";
 import { FaTag } from "react-icons/fa";
 import { truncateString } from "../../utils/Utility-functions";
 
-const ClubCard = ({ club }) => {
+const CommunityCard = ({ community }) => {
   const imageUrl =
-    club?.images?.coverImage?.url || club?.images?.gallery?.[0]?.url || "";
+    community?.images?.profileImage?.url ||
+    community?.images?.gallery?.[0]?.url ||
+    "";
 
   return (
     <Link
-      to={`/clubs/${club?._id}`}
+      to={`/community/${community?._id}`}
       className="group block bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden"
     >
       <div className="relative h-72 bg-gray-100 overflow-hidden">
         {imageUrl ? (
           <img
             src={imageUrl}
-            alt={club?.clubName}
+            // alt={community?.clubName}
             className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
           />
         ) : (
@@ -24,9 +26,9 @@ const ClubCard = ({ club }) => {
             No image available
           </div>
         )}
-        {club?.adminVerified && (
+        {community?.personalDetails?.soloTraveler && (
           <div className="absolute top-3 right-3 bg-green-500 text-white rounded-full px-3 py-1 text-xs font-medium">
-            ✓ Verified
+            Solo Traveler: {community?.personalDetails?.soloTraveler}
           </div>
         )}
       </div>
@@ -34,30 +36,31 @@ const ClubCard = ({ club }) => {
         <div className="flex items-start justify-between gap-3">
           <div>
             {/* <p className="text-sm text-gray-500 flex items-center gap-2">
-              <BiMap /> {club?.location?.city}, {club?.location?.state}
+              <BiMap /> {community?.location?.city},{" "}
+              {community?.location?.state}
             </p> */}
             <h3 className="text-xl font-semibold text-gray-900 mt-2">
-              {club?.clubName}
+              {community?.personalDetails?.name}
             </h3>
           </div>
-          <div className="text-right">
+          {/* <div className="text-right">
             <div className="inline-flex items-center gap-1 rounded-full bg-[#FFC20E]/20 px-3 py-1 text-sm font-medium text-[#6B4A00]">
-              <BiSolidStar /> {club?.ratings?.average || 0}
+              <BiSolidStar /> {community?.ratings?.average || 0}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-          {truncateString(club?.description, 110)}
+          {truncateString(community?.about, 110)}
         </p>
 
-        <div className="flex flex-wrap gap-2">
-          {club?.category && (
+        {/* <div className="flex flex-wrap gap-2">
+          {community?.category && (
             <span className="text-xs uppercase px-3 py-1 rounded-full bg-slate-100 text-slate-700">
-              {club.category}
+              {community.category}
             </span>
           )}
-          {club?.amenities?.slice(0, 2).map((amenity) => (
+          {community?.amenities?.slice(0, 2).map((amenity) => (
             <span
               key={amenity}
               className="text-xs px-3 py-1 rounded-full bg-[#FFC20E]/20 text-[#6B4A00]"
@@ -66,19 +69,19 @@ const ClubCard = ({ club }) => {
               {amenity}
             </span>
           ))}
-        </div>
+        </div> */}
 
-        <div className="flex items-center justify-between text-sm text-gray-500 pt-3">
+        {/* <div className="flex items-center justify-between text-sm text-gray-500 pt-3">
           <span className="flex items-center gap-1">
-            <BiUser /> {club?.members?.length || 0} members
+            <BiUser /> {community?.members?.length || 0} members
           </span>
           <span className="flex items-center gap-1">
-            <BiCalendar /> {club?.events?.length || 0} events
+            <BiCalendar /> {community?.events?.length || 0} events
           </span>
-        </div>
+        </div> */}
       </div>
     </Link>
   );
 };
 
-export default ClubCard;
+export default CommunityCard;

@@ -5,6 +5,7 @@ import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const AddNewPlace = ({ startLoading, stopLoading }) => {
   const formRef = useRef();
@@ -81,8 +82,6 @@ const AddNewPlace = ({ startLoading, stopLoading }) => {
         formData,
         true,
       );
-      console.log(res);
-
       setSuccess("Place added successfully");
       formRef.current.reset();
       setImagePreviews([]);
@@ -91,8 +90,13 @@ const AddNewPlace = ({ startLoading, stopLoading }) => {
       alert("Place added successfully");
       navigate("/admin/dashboard");
     } catch (err) {
-      console.error(err);
-      setError("Failed to add place. Please check details.");
+      formRef.current.reset();
+      setImagePreviews([]);
+      setCities([]);
+      setSelectedState("");
+      alert(parseErrorMessage(err.res.data));
+      setError(parseErrorMessage(err.res.data));
+      alert("Please fill the form again..");
     } finally {
       stopLoading();
     }

@@ -40,14 +40,15 @@ const registerCommunity = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Required fields are missing");
   }
 
-  const existing = await Community.findOne({
-    $or: [
-      { "personalDetails.email": email },
-      { "personalDetails.contactNumber": contactNumber },
-      { "communityDetails.communityContactNumber": communityContactNumber },
-      { "communityDetails.communityEmail": communityEmail },
-    ],
-  });
+  const existing = await Community.findOne({ email });
+  // const existing = await Community.findOne({
+  //   $or: [
+  //     { "personalDetails.email": email },
+  //     { "personalDetails.contactNumber": contactNumber },
+  //     { "communityDetails.communityContactNumber": communityContactNumber },
+  //     { "communityDetails.communityEmail": communityEmail },
+  //   ],
+  // });
 
   if (existing) {
     throw new ApiError(409, "Community already exists with provided details");

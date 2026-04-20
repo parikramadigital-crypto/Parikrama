@@ -115,7 +115,7 @@ const Header = () => {
           Club Memberships
         </h1>
       ),
-      url: "/clubs/register",
+      url: "/clubs",
     },
   ];
 

@@ -33,7 +33,7 @@ const social_links = [
         Instagram
       </h1>
     ),
-    path: "https://www.facebook.com/ParikramaGlobal",
+    path: "https://www.instagram.com/parikramaglobal/",
   },
   {
     label: (

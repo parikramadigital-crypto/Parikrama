@@ -10,6 +10,7 @@ import { formatProdErrorMessage } from "@reduxjs/toolkit";
 import logo from "../../assets/Logo1.png";
 import logo2 from "../../assets/Logo3.png";
 import { BiChevronRight } from "react-icons/bi";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const CommunityRegForm = ({ startLoading, stopLoading }) => {
   const [rightBanner, setRightBanner] = useState([]);
@@ -59,6 +60,9 @@ const CommunityRegForm = ({ startLoading, stopLoading }) => {
       navigate("/login/community");
     } catch (err) {
       console.log(err);
+      alert(parseErrorMessage(err.response.data));
+      // formRef.current.reset();
+      // setProfilePreview([]);
     } finally {
       stopLoading();
     }

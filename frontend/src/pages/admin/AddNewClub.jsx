@@ -5,6 +5,7 @@ import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import SelectBox from "../../components/SelectionBox";
 
 const AddNewClub = ({ startLoading, stopLoading, onCancel, adminId }) => {
   const formRef = useRef();
@@ -132,19 +133,19 @@ const AddNewClub = ({ startLoading, stopLoading, onCancel, adminId }) => {
         <SectionTitle title="Basic Information" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputBox
-            type="text"
-            name="clubName"
+            Type="text"
+            Name="clubName"
             LabelName="Club Name"
             Placeholder="Enter club name"
             required
           />
-          <div>
+          <div className="flex justify-center items-start w-full py-4 flex-col">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Category *
             </label>
             <select
               name="category"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 outline-none transition duration-200 ease-in-out hover:shadow-md"
               defaultValue="Social Club"
               required
             >
@@ -171,8 +172,8 @@ const AddNewClub = ({ startLoading, stopLoading, onCancel, adminId }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <InputBox
-            type="number"
-            name="foundedYear"
+            Type="number"
+            Name="foundedYear"
             LabelName="Founded Year"
             Placeholder="e.g., 2020"
           />
@@ -182,23 +183,23 @@ const AddNewClub = ({ startLoading, stopLoading, onCancel, adminId }) => {
         <SectionTitle title="Location" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputBox
-            type="text"
-            name="address"
+            Type="text"
+            Name="address"
             LabelName="Address "
             Placeholder="Enter full address"
             required
           />
           <InputBox
-            type="number"
-            name="lat"
+            Type="number"
+            Name="lat"
             LabelName="Latitude "
             Placeholder="Latitude"
             step="0.000001"
             required
           />
           <InputBox
-            type="number"
-            name="lng"
+            Type="number"
+            Name="lng"
             LabelName="Longitude"
             Placeholder="Longitude"
             step="0.000001"
@@ -210,20 +211,20 @@ const AddNewClub = ({ startLoading, stopLoading, onCancel, adminId }) => {
         <SectionTitle title="Contact Details" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputBox
-            type="email"
-            name="email"
+            Type="email"
+            Name="email"
             LabelName="Email"
             Placeholder="club@example.com"
           />
           <InputBox
-            type="tel"
-            name="phone"
+            Type="tel"
+            Name="phone"
             LabelName="Phone"
             Placeholder="Enter contact number"
           />
           <InputBox
-            type="url"
-            name="website"
+            Type="url"
+            Name="website"
             LabelName="Website"
             Placeholder="https://example.com"
           />
