@@ -140,6 +140,136 @@ const createFoodCourtAdmin = asyncHandler(async (req, res) => {
     );
 });
 
+const createFoodCourt = asyncHandler(async (req, res) => {
+  const {
+    name,
+    contactNumber,
+    email,
+    specialFood,
+    category,
+    // lat,
+    // lng,
+    place,
+    city,
+    state,
+    establishment,
+  } = req.body;
+
+  if (
+    !name ||
+    !contactNumber ||
+    !email ||
+    !specialFood ||
+    !category ||
+    !place ||
+    !city ||
+    !state ||
+    !establishment
+  )
+    throw new ApiError(400, "Data are missing for registering new Food Court");
+
+  //checking for existing store
+  //in future we will add new branch option for registered food courts
+  const existing = await FoodCourt.findOne({
+    $or: [{ contactNumber }, ...(email ? [{ email }] : [])],
+  });
+  if (existing) {
+    throw new ApiError(
+      409,
+      "Food court already exists with this phone or email !",
+    );
+  }
+
+  const specialFoodList = specialFood
+    ? specialFood.split(",").map((s) => s.trim())
+    : [];
+
+  // this sanitize function is for only using in the folder structure we upload images in
+  const sanitize = (str = "") =>
+    str
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9-_]/g, "")
+      .replace(/\s+/g, "-");
+  const safeName = sanitize(name);
+  const safePhone = sanitize(contactNumber);
+
+  //   storing the images of store
+  let storeImages = [];
+  if (req.files?.storeImages?.length) {
+    for (const doc of req.files.storeImages) {
+      const uploaded = await UploadImages(doc.filename, {
+        folderStructure: `foodCourt/store-images/${safeName}-${safePhone}`,
+      });
+
+      storeImages.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+      });
+    }
+  }
+  //   storing the images of food items of that store
+  let foodImages = [];
+  if (req.files?.foodImages?.length) {
+    for (const doc of req.files.foodImages) {
+      const uploaded = await UploadImages(doc.filename, {
+        folderStructure: `foodCourt/food-images/${safeName}-${safePhone}`,
+      });
+
+      foodImages.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+      });
+    }
+  }
+  //   storing the images of menu of the store
+  let menuImages = [];
+  if (req.files?.menuImages?.length) {
+    for (const doc of req.files.menuImages) {
+      const uploaded = await UploadImages(doc.filename, {
+        folderStructure: `foodCourt/menu-images/${safeName}-${safePhone}`,
+      });
+
+      menuImages.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+      });
+    }
+  }
+
+  const newFoodCourt = await FoodCourt.create({
+    name,
+    contactNumber,
+    email,
+    specialFood: specialFoodList,
+    category,
+    // location: {
+    //   type: "Point",
+    //   coordinates: [lng, lat],
+    // },
+    place,
+    city,
+    state,
+    storeImages: storeImages,
+    foodImages: foodImages,
+    menuImages: menuImages,
+    establishment,
+    // active: true,
+    // verified: true,
+  });
+
+  res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        newFoodCourt,
+        "Food court registered successfully! Our team will review the details and get back to you.",
+      ),
+    );
+});
+
 const getAllFoodCourts = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
   const admin = await Admin.findById(adminId);
@@ -166,7 +296,9 @@ const getAllFoodCourts = asyncHandler(async (req, res) => {
 const getFoodCourtById = asyncHandler(async (req, res) => {
   const { foodCourtId } = req.params;
 
-  const foodCourt = await FoodCourt.findById(foodCourtId).populate("state city place admin");
+  const foodCourt = await FoodCourt.findById(foodCourtId).populate(
+    "state city place admin",
+  );
   if (!foodCourt) throw new ApiError(400, "Data not found");
 
   res
@@ -234,7 +366,7 @@ const updateFoodCourt = asyncHandler(async (req, res) => {
       try {
         await DeleteBulkImage(oldFileIds);
       } catch (err) {
-        console.error("Error deleting old images:", err);
+        // console.error("Error deleting old images:", err);
       }
     }
 
@@ -303,7 +435,7 @@ const deleteFoodCourt = asyncHandler(async (req, res) => {
     try {
       await DeleteBulkImage(allImageIds);
     } catch (error) {
-      console.error("Error deleting images:", error);
+      // console.error("Error deleting images:", error);
     }
   }
 
@@ -315,6 +447,7 @@ const deleteFoodCourt = asyncHandler(async (req, res) => {
 export {
   // create
   createFoodCourtAdmin,
+  createFoodCourt,
   // read
   getAllFoodCourts,
   getFoodCourtById,

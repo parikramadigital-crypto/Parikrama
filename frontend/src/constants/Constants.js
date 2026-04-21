@@ -466,12 +466,14 @@ export const foodKiosksFormInputs = [
     placeHolder: "Longitude of the place",
     name: "lng",
     type: "text",
+    required: false,
   },
   {
     label: "Latitude",
     placeHolder: "Latitude of the place",
     name: "lat",
     type: "text",
+    required: false,
   },
   {
     label: "Establishment",
