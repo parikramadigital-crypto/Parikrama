@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middlewares.js";
 import {
+  createFoodCourt,
   createFoodCourtAdmin,
   deleteFoodCourt,
   getFoodCourtById,
@@ -9,7 +10,16 @@ import {
 
 const router = Router();
 
-router.route("/create/new/food-court/:adminId").post(
+router.route("/create/new/food-court/public").post(
+  upload.fields([
+    { name: "storeImages", maxCount: 5 },
+    { name: "menuImages", maxCount: 5 },
+    { name: "foodImages", maxCount: 5 },
+  ]),
+  createFoodCourt,
+);
+
+router.route("/create/new/verified/food-court/:adminId").post(
   upload.fields([
     { name: "storeImages", maxCount: 5 },
     { name: "menuImages", maxCount: 5 },
@@ -17,6 +27,7 @@ router.route("/create/new/food-court/:adminId").post(
   ]),
   createFoodCourtAdmin,
 );
+
 router.route("/get/food-court/by-id/:foodCourtId").get(getFoodCourtById);
 router
   .route("/get/food-court/by-place-id/:foodCourtId")
