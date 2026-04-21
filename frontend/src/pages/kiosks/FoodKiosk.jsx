@@ -5,9 +5,11 @@ import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { foodKiosksFormInputs } from "../../constants/Constants";
+import { useNavigate } from "react-router-dom";
 
 const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
   const formRef = useRef();
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const [cities, setCities] = useState([]);
   const [places, setPlaces] = useState([]);
@@ -26,7 +28,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
         const res = await FetchData("cities", "get");
         setCities(res?.data?.data || []);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       } finally {
         stopLoading();
       }
@@ -42,7 +44,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
         const res = await FetchData("places", "get");
         setPlaces(res?.data?.data || []);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
@@ -102,18 +104,21 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
     try {
       startLoading();
       const formData = new FormData(formRef.current);
-      const response = await FetchData(
-        `foodCourt/create/new/food-court/${user}`,
-        "post",
-        formData,
-        true,
-      );
-      console.log(response);
+
+      const endPoint = user
+        ? `foodCourt/create/new/verified/food-court/${user}`
+        : `foodCourt/create/new/food-court/public`;
+
+      const response = await FetchData(endPoint, "post", formData, true);
       formRef.current.reset();
+      setSelectedCity([]);
+      setSelectedState([]);
+      setStoreImagePreview([]);
+      setMenuImagePreview([]);
+      setFoodImagePreview([]);
       alert(response.data.message);
-      
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       stopLoading();
     }
@@ -127,6 +132,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
         className="bg-white p-8 rounded-xl w-full "
       >
         <h1 className="font-semibold text-xl">Add new food place</h1>
+        <p className="font-semibold">Note: * marked fields are necessary.</p>
         <div className="grid grid-cols-2 gap-4">
           {foodKiosksFormInputs.map((i) => (
             <InputBox
@@ -138,7 +144,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
             />
           ))}
           <div className="py-8">
-            <label className="block text-sm font-medium mb-1">City</label>
+            <label className="block text-sm font-medium mb-1">City*</label>
             <select
               name="city"
               required
@@ -156,7 +162,9 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
 
           {/* PLACE */}
           <div>
-            <label className="block text-sm font-medium mb-1">Place</label>
+            <label className="block text-sm font-medium mb-1">
+              Nearest Tourist Place*
+            </label>
             <select
               name="place"
               required
@@ -173,7 +181,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">
-              Category ( Veg, Non-Veg, Both )
+              Category ( Veg, Non-Veg, Both )*
             </label>
             <select
               name="category"
@@ -255,7 +263,22 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           />
         </div>
         <div className="flex justify-center items-center gap-10 ">
-          <Button label="Cancel" onClick={onCancel} />
+          {user ? (
+            <Button label="Cancel" onClick={onCancel} />
+          ) : (
+            <Button
+              label={"Cancel"}
+              onClick={() => {
+                navigate("/");
+                formRef.current.reset();
+                setSelectedCity([]);
+                setSelectedState([]);
+                setStoreImagePreview([]);
+                setMenuImagePreview([]);
+                setFoodImagePreview([]);
+              }}
+            />
+          )}
           <Button label={"Submit"} type={"submit"} />
         </div>
       </form>

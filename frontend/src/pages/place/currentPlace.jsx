@@ -15,6 +15,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
   const [data, setData] = useState();
   const [facilitator, setFacilitator] = useState([]);
+  const [foodStore, setFoodStore] = useState([]);
   const [popup, setPopup] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [count, setCount] = useState(4);
@@ -28,6 +29,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       );
       setData(response.data.data.place);
       setFacilitator(response.data.data.facilitators);
+      setFoodStore(response.data.data.foodStore);
     } catch (err) {
       // console.log(err);
     } finally {
@@ -61,7 +63,11 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
     <div className="w-full">
       {/* Top section */}
       <div className="w-full md:px-20 px-2">
-        <ExpandedPlaceCard place={data} facilitator={facilitator} />
+        <ExpandedPlaceCard
+          place={data}
+          facilitator={facilitator}
+          foodStore={foodStore}
+        />
       </div>
 
       {/* Content + Sticky Circle */}
