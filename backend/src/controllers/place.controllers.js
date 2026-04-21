@@ -17,6 +17,7 @@ import {
   rankResults,
   sendResponse,
 } from "../utils/searchFeedHelpers.js";
+import { FoodCourt } from "../models/foodCourt.models.js";
 
 const createPlace = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
@@ -229,7 +230,6 @@ const getPlacesByCity = asyncHandler(async (req, res) => {
 
 const getPlaceById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log("console in getplaceId", id);
 
   /* -------- PLACE -------- */
   const place = await Place.findById(id).populate("city state");
@@ -244,10 +244,17 @@ const getPlaceById = asyncHandler(async (req, res) => {
     isVerified: true,
   }).populate("city state");
 
+  const foodStore = await FoodCourt.find({
+    city: place.city._id,
+    active: true,
+    verified: true,
+  }).populate("place", "name");
+
   res.status(200).json(
     new ApiResponse(200, {
       place,
       facilitators,
+      foodStore,
     }),
   );
 });
@@ -269,8 +276,6 @@ const updatePlace = asyncHandler(async (req, res) => {
     "entryFee",
     "telecastLink",
   ];
-
-  console.log("Line 237", req.body);
 
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
@@ -365,7 +370,6 @@ const getInactivePlaceById = asyncHandler(async (req, res) => {
 
 const makePlaceActive = asyncHandler(async (req, res) => {
   const { placeId } = req.params;
-  console.log("placeId", placeId);
 
   const place = await Place.findByIdAndUpdate(placeId, { isActive: true });
   if (!place) throw new ApiError(400, "Place not found");
@@ -640,7 +644,6 @@ const getPlaceMetaTags = asyncHandler(async (req, res) => {
 const searchPlaces = async (req, res) => {
   try {
     const { query, page = 1, limit = 20, lat, lng } = req.query;
-    console.log("Query:", query);
 
     // const skip = (page - 1) * limit;
     const pageNum = parseInt(page);
@@ -709,7 +712,6 @@ const searchPlaces = async (req, res) => {
       "search",
     );
   } catch (error) {
-    console.error("Search error:", error);
     res.status(500).json({
       message: "Search failed",
       error: error.message,

@@ -13,7 +13,8 @@ const foodCourtSchema = new mongoose.Schema(
     },
     location: {
       type: { type: String, enum: ["Point"], default: "Point" },
-      coordinates: { type: [Number], required: true },
+      coordinates: { type: [Number] },
+      // coordinates: { type: [Number], required: true },
     },
     place: {
       type: mongoose.Schema.Types.ObjectId,
