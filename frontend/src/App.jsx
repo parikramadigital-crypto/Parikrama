@@ -43,6 +43,7 @@ import ClubListing from "./pages/club/ClubListing";
 import CurrentClub from "./pages/club/CurrentClub";
 import AddNewClub from "./pages/admin/AddNewClub";
 import FoodKiosk from "./pages/kiosks/FoodKiosk";
+import CommunityFeed from "./pages/community/communityFeed";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -223,14 +224,19 @@ function App() {
 
           <Route path="/flights-busses" element={<FlightBus />} />
           <Route path="/travel-packages" element={<PackagesListing />} />
+
           <Route path="/hotels" element={<HotelListing />} />
           <Route path="/hotels/:hotelId" element={<CurrentHotel />} />
+
           <Route path="/clubs" element={<ClubListing />} />
           <Route path="/clubs/register" element={<AddNewClub />} />
           <Route path="/clubs/:clubId" element={<CurrentClub />} />
+
+          <Route path="/community/feed" element={<CommunityFeed />} />
           <Route path="/community/form" element={<CommunityRegForm />} />
           <Route path="/login/community" element={<CommunityLogin />} />
           <Route path="/dashboard/community" element={<CommunityDashboard />} />
+          
 
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

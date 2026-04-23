@@ -6,11 +6,13 @@ import { FetchData } from "../../utils/FetchFromApi";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { foodKiosksFormInputs } from "../../constants/Constants";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
   const formRef = useRef();
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [popup, setPopup] = useState(false);
   const [cities, setCities] = useState([]);
   const [places, setPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
@@ -126,14 +128,21 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
 
   return (
     <div>
+      <div className="w-full flex justify-end items-end md:px-10">
+        <Button
+          label={"Add Tourist Place"}
+          onClick={() => setPopup(true)}
+          className={"text-xs"}
+        />
+      </div>
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl w-full "
+        className="bg-white md:p-8 p-2 rounded-xl w-full flex justify-start items-center flex-col"
       >
         <h1 className="font-semibold text-xl">Add new food place</h1>
         <p className="font-semibold">Note: * marked fields are necessary.</p>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 md:gap-4 w-full md:w-[70vw]">
           {foodKiosksFormInputs.map((i) => (
             <InputBox
               LabelName={i.label}
@@ -161,7 +170,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           </div>
 
           {/* PLACE */}
-          <div>
+          <div className="py-8">
             <label className="block text-sm font-medium mb-1">
               Nearest Tourist Place*
             </label>
@@ -179,7 +188,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
               ))}
             </select>
           </div>
-          <div>
+          <div className="py-8">
             <label className="block text-sm font-medium mb-1">
               Category ( Veg, Non-Veg, Both )*
             </label>
@@ -282,6 +291,29 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           <Button label={"Submit"} type={"submit"} />
         </div>
       </form>
+
+      <AnimatePresence>
+        {popup && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 flex justify-center items-center z-50 h-full w-full bg-white"
+          >
+            <div className="flex flex-col justify-center items-center gap-5">
+              <h1 className="font-semibold">
+                If your nearest tourist place is not listed.
+              </h1>
+              <Button
+                label={"Click here to add"}
+                onClick={() => navigate("/guest/register-new-place")}
+              />
+              <Button label={"Cancel"} onClick={() => setPopup(false)} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

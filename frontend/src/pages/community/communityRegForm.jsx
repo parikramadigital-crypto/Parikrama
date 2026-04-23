@@ -125,7 +125,7 @@ const CommunityRegForm = ({ startLoading, stopLoading }) => {
               Let's collaborate! Fill out the form below to join us.
             </span>
             <br /> If you are an Influencer, Blogger, Solo-Traveler, Group
-            Travelers, Motor-Cycle Club, Cycling Club, Data Feeder etc.
+            Travelers, Bikers Club, Cycling Club etc.
           </h1>
           {/* personal details  */}
           <div className="w-full flex-col justify-start items-start">

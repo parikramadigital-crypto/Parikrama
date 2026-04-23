@@ -12,7 +12,7 @@ const CommunityCard = ({ community }) => {
   return (
     <Link
       to={`/community/${community?._id}`}
-      className="group block bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden"
+      className="group block bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden w-72"
     >
       <div className="relative h-72 bg-gray-100 overflow-hidden">
         {imageUrl ? (

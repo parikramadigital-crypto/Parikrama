@@ -438,8 +438,8 @@ export const userFormInputs = [
 
 export const foodKiosksFormInputs = [
   {
-    label: "Name",
-    placeHolder: "Enter place name",
+    label: "Food Place Name (Kiosk, Stall, Shop, Outlet etc.)",
+    placeHolder: "Enter food place name",
     name: "name",
     type: "text",
   },

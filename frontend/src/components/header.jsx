@@ -46,10 +46,10 @@ const Header = () => {
       label: (
         <h1 className="flex justify-between items-center">
           <FaUsersCog className="text-2xl" />
-          Community Login
+          Community
         </h1>
       ),
-      url: "/community/form",
+      url: "/community/feed",
     },
     {
       className: "w-full",
