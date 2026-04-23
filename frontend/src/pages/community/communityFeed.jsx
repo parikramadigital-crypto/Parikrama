@@ -32,7 +32,7 @@ const CommunityFeed = ({ startLoading, stopLoading }) => {
       <div className="flex justify-center items-start flex-col gap-5">
         <h1 className="font-medium text-left text-xs">
           <span className="md:border-b-2 border-[#FFC20E] text-3xl">
-            Let's collaborate! Fill out the form below to join us.
+            Let's collaborate!
           </span>
           <br /> If you are an Influencer, Blogger, Solo-Traveler, Group
           Travelers, Bikers Club, Cycling Club etc.

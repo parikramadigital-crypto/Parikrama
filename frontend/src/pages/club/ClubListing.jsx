@@ -95,11 +95,10 @@ const ClubListing = ({ startLoading, stopLoading }) => {
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="space-y-3 mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-          Discover clubs, communities and memberships
+          Discover Clubs
         </h1>
         <p className="text-gray-600 max-w-3xl">
-          Browse verified club listings with membership options, events, and
-          community details.
+          Browse verified club listings with membership options, events etc.
         </p>
         <Button
           label={"Register new Club"}
@@ -157,7 +156,7 @@ const ClubListing = ({ startLoading, stopLoading }) => {
           </div>
         )}
 
-        {communities.length === 0 ? (
+        {/* {communities.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">
               No communities found matching your search.
@@ -174,7 +173,7 @@ const ClubListing = ({ startLoading, stopLoading }) => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
