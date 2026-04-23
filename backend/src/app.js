@@ -17,7 +17,7 @@ const allowedOrigins = [
   process.env.ORIGIN_4,
   process.env.ORIGIN_5,
   process.env.ORIGIN_6,
-];
+].filter(Boolean);
 
 const app = express();
 
@@ -26,7 +26,7 @@ const app = express();
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
@@ -46,6 +46,7 @@ app.use((req, res, next) => {
   console.log(`Received:`, req.method);
   console.log(`at:`, req.url);
   console.log(`with body:`, req.body);
+  console.log("Origin:", req.headers.origin);
   next();
 });
 
