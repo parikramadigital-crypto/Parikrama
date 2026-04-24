@@ -52,8 +52,8 @@ app.use(cors(corsOptions));
 
 // the above line is added to handle preflight requests for all routes, ensuring that CORS headers are sent for OPTIONS requests as well.
 // app.use(cors(corsOptions));
-app.use(express.json({ limit: "32kb" })); // For JSON format
-app.use(express.text({ type: "text/*", limit: "32kb" })); // For plain text format
+app.use(express.json({ limit: "10mb" })); // For JSON format
+app.use(express.text({ type: "text/*", limit: "10mb" })); // For plain text format
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
