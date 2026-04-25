@@ -26,8 +26,9 @@ const EditPlace = ({ stopLoading, startLoading }) => {
   const loadPlace = async () => {
     try {
       startLoading();
-      const res = await FetchData(`places/${placeId}`, "get");
+      const res = await FetchData(`places/current-place/${placeId}`, "get");
       const p = res.data.data.place;
+      console.log(res);
 
       setPlace(p);
       setRemovedImages([]);
