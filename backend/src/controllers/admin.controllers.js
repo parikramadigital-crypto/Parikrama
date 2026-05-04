@@ -110,7 +110,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
 });
 
 const dashboardData = asyncHandler(async (req, res) => {
-  const state = await State.find();
+  const state = await State.find().populate("country");
   const city = await City.find().populate("state");
   const place = await Place.find({ isActive: true }).populate("city state");
   const inactivePlace = await Place.find({ isActive: false }).populate(
