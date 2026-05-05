@@ -254,19 +254,19 @@ export const packagesInputs = [
   {
     label: "Name",
     placeHolder: "Enter your full name",
-    name: "name",
+    name: "contactPersonName",
     type: "text",
   },
   {
     label: "Contact Number",
     placeHolder: "Enter your contact number",
-    name: "contactNumber",
+    name: "contactPersonPhone",
     type: "text",
   },
   {
     label: "Email",
     placeHolder: "Enter your email",
-    name: "email",
+    name: "contactPersonEmail",
     type: "email",
   },
   {
@@ -277,13 +277,13 @@ export const packagesInputs = [
   },
   {
     label: "From Date",
-    placeHolder: "Enter your full name",
+    placeHolder: "From date",
     name: "fromDate",
     type: "date",
   },
   {
     label: "To Date",
-    placeHolder: "Enter your full name",
+    placeHolder: "To date",
     name: "toDate",
     type: "date",
   },
@@ -482,5 +482,26 @@ export const foodKiosksFormInputs = [
     name: "establishment",
     type: "text",
     required: false,
+  },
+];
+
+export const contactUsFormInputs = [
+  {
+    label: "Name",
+    placeHolder: "Enter your full name",
+    name: "contactPersonName",
+    type: "text",
+  },
+  {
+    label: "Email",
+    placeHolder: "Enter your email",
+    name: "contactPersonEmail",
+    type: "email",
+  },
+  {
+    label: "Contact number",
+    placeHolder: "Contact number",
+    name: "contactPersonPhone",
+    type: "text",
   },
 ];
