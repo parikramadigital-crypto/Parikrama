@@ -18,6 +18,7 @@ import {
   Hotels,
   Clubs,
   Users,
+  Enquiry,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -54,6 +55,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [hotelData, setHotelData] = useState([]);
   const [clubData, setClubData] = useState([]);
   const [userData, setUserData] = useState([]);
+  const [enquiryData, setEnquiryData] = useState([]);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [popup3, setPopup3] = useState(false);
@@ -97,6 +99,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setPackageData(res.data.data.packages);
       setFoodKioskData(res.data.data.foodCourts);
       setUserData(res.data.data.users);
+      setEnquiryData(res.data.data.enquiry);
 
       // Fetch hotels separately
       const hotelRes = await FetchData("hotels", "get");
@@ -222,6 +225,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
 
   const sections = [
     "Overview",
+    "Enquiries",
     "Hotels",
     "Clubs",
     "Active Places",
@@ -383,6 +387,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   <p className="flex justify-between items-center">
                     {section}
                     {activeSection === section ? <FaChevronRight /> : ""}
+                    {/* {activeSection === "Enquiries" ? (
+                      <p>{enquiryData?.length}</p>
+                    ) : (
+                      ""
+                    )} */}
                   </p>
                 </li>
               ))}
@@ -490,6 +499,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
           {activeSection === "Users" && (
             <div className="w-full h-full flex flex-col justify-start items-start">
               <Users TableData={userData} Text="User details" />
+            </div>
+          )}
+          {activeSection === "Enquiries" && (
+            <div className="w-full h-full flex flex-col justify-start items-start">
+              <Enquiry TableData={enquiryData} Text="Enquiries" />
             </div>
           )}
         </main>

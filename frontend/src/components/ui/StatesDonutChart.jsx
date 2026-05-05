@@ -4,9 +4,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const TOTAL_STATES_IN_INDIA = 36;
-
 const StatesDonutChart = ({ states = [] }) => {
+  const TOTAL_STATES_IN_INDIA = states.length;
   const stats = useMemo(() => {
     const registered = states.length;
     const remaining = Math.max(TOTAL_STATES_IN_INDIA - registered, 0);
