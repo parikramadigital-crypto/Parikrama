@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import RandomImageSlider from "../../components/ui/RandomImageSlider";
 import { FetchData } from "../../utils/FetchFromApi";
 import LoadingUI from "../../components/LoadingUI";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const FlightBus = ({ stopLoading, startLoading }) => {
   const [rightBanner, setRightBanner] = useState([]);
@@ -28,11 +29,22 @@ const FlightBus = ({ stopLoading, startLoading }) => {
     banner();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    alert("We will reach you out");
-    formRef.current.reset();
+    try {
+      const formData = new FormData(formRef.current);
+      const response = await FetchData(
+        "enquiry/guest/create-enquiry",
+        "post",
+        formData,
+      );
+      console.log(response);
+      alert(response.data.message);
+      formRef.current.reset();
+    } catch (err) {
+      console.log(err);
+      alert(parseErrorMessage(err.response.data));
+    }
   };
 
   return (
@@ -54,13 +66,24 @@ const FlightBus = ({ stopLoading, startLoading }) => {
             Please fill out this form so we can get in touch with you and
             provide the best solution for your requirements..
           </h1>
-          <InputBox Placeholder="Name" Type="text" LabelName="Name" />
+          <InputBox
+            Placeholder="Name"
+            Type="text"
+            LabelName="Name"
+            Name="contactPersonName"
+          />
           <InputBox
             Placeholder="Contact number"
             Type="text"
             LabelName="Contact number"
+            Name="contactPersonPhone"
           />
-          <InputBox Placeholder="Email" Type="text" LabelName="Email" />
+          <InputBox
+            Placeholder="Email"
+            Type="text"
+            LabelName="Email"
+            Name="contactPersonEmail"
+          />
           <InputBox
             Name="fromCity"
             Placeholder="From which city"
@@ -79,6 +102,14 @@ const FlightBus = ({ stopLoading, startLoading }) => {
             Placeholder="Comments if any"
             Type="text"
             LabelName="Comments"
+            Name="comments"
+          />
+          <input
+            value="flightBusHotel"
+            name="enquiryType"
+            // disabled={true}
+            className="hidden"
+            type="text"
           />
           <Button label={"Submit"} />
         </form>
