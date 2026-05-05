@@ -18,6 +18,7 @@ import { truncateString } from "../../utils/Utility-functions";
 import { Helmet } from "react-helmet-async";
 import { MdFoodBank } from "react-icons/md";
 import FoodCard from "./FoodCard";
+import { IoFastFoodSharp } from "react-icons/io5";
 
 const PlaceCard = ({ place }) => {
   return (
@@ -193,12 +194,23 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                   </h1>
                 }
               /> */}
-              <button
+              <Button
+                normal={false}
+                onClick={() => setPopup4(true)}
+                className2={"text-white px-1 py-1"}
+                label={
+                  <h1>
+                    <IoFastFoodSharp className="text-2xl" />
+                  </h1>
+                }
+              />
+              {/* <button
                 onClick={() => setPopup4(true)}
                 className=" w-fit px-1 py-1 rounded-full bg-[#FFC20E] flex justify-center items-center"
+                normal={false}
               >
                 <MdFoodBank className="text-2xl" />
-              </button>
+              </button> */}
             </div>
 
             {/* Description */}

@@ -4,16 +4,31 @@ import Button from "../Button";
 import { packagesInputs } from "../../constants/Constants";
 import { FaInfoCircle } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import { FetchData } from "../../utils/FetchFromApi";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const PackageCard = ({ data }) => {
   const [model, setModel] = useState(false);
   const [model2, setModel2] = useState(false);
   const formRef = useRef();
 
-  const handleSubmit = () => {
-    alert("We will reach you out soon !");
-    formRef.current.reset();
-    setModel(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData(formRef.current);
+      const response = await FetchData(
+        "enquiry/guest/create-enquiry",
+        "post",
+        formData,
+      );
+      console.log(response);
+      alert(response.data.message);
+      formRef.current.reset();
+      setModel(false);
+    } catch (err) {
+      console.log(err);
+      alert(parseErrorMessage(err.response.data));
+    }
   };
 
   return (
@@ -101,10 +116,17 @@ const PackageCard = ({ data }) => {
               ))}
               <InputBox
                 Placeholder={"Explain your all requirements"}
-                Name={"description"}
+                Name={"comments"}
                 LabelName={"Enter your description"}
                 Type={"text"}
                 Required={false}
+              />
+              <input
+                value="PackageEnquiryForm"
+                name="enquiryType"
+                // disabled={true}
+                className="hidden"
+                type="text"
               />
               <div className="w-full h-full flex justify-evenly items-center">
                 <Button label={"Submit"} type={"submit"} />
