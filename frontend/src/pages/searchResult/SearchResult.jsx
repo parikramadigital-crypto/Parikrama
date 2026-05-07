@@ -6,8 +6,8 @@ import logo from "../../assets/Logo1.png";
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
-  const [activeSection, setActiveSection] = useState(
-    () => localStorage.getItem("activeSection") || "",
+  const [activeCategory, setActiveCategory] = useState(
+    () => localStorage.getItem("activeCategory") || "",
   );
   const category = [
     "Temple",
@@ -29,12 +29,12 @@ const SearchPage = () => {
           {category.map((c) => (
             <li
               onClick={() => {
-                localStorage.setItem("activeSection", c);
+                localStorage.setItem("activeCategory", c);
                 setQuery(c);
-                setActiveSection(c);
+                setActiveCategory(c);
               }}
               className={`cursor-pointer transition-all duration-300  w-fit p-3 list-none rounded-full ${
-                activeSection === c
+                activeCategory === c
                   ? "bg-[#FFC20E]"
                   : "bg-neutral-200 text-black"
               }`}

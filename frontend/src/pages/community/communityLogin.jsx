@@ -36,8 +36,8 @@ const CommunityLogin = () => {
         dispatch(addUser(community));
       }
     } catch (err) {
-      // console.log(err);
-      parseErrorMessage(err.response.data);
+      console.log(err);
+      alert(parseErrorMessage(err.response.data));
     }
   };
 
