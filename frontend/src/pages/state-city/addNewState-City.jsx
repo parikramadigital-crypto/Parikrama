@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 const AddNewStateCity = () => {
   const [isState, setIsState] = useState(true);
   const { user } = useSelector((state) => state.auth);
-  return user ? (
+  return localStorage.role === "Admin" ? (
     <div className="flex justify-center items-center w-full ">
       <div className="shadow-xl rounded-2xl w-1/2 p-6">
         {/* Toggle Buttons */}
