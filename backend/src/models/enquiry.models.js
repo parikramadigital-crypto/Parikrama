@@ -17,6 +17,7 @@ const enquirySchema = new mongoose.Schema(
     cityId: { type: mongoose.Schema.Types.ObjectId, ref: "City" },
     stateId: { type: mongoose.Schema.Types.ObjectId, ref: "State" },
     placeId: { type: mongoose.Schema.Types.ObjectId, ref: "Place" },
+    customerFeedBack: { type: String, trim: true },
     reviewedByAdmin: { type: Boolean, default: false },
   },
   { timestamps: true },

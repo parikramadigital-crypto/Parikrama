@@ -48,8 +48,8 @@ export const createState = asyncHandler(async (req, res) => {
           insertedCount: insertedStates.length,
           states: insertedStates,
         },
-        "States added successfully"
-      )
+        "States added successfully",
+      ),
     );
   }
 
@@ -61,7 +61,10 @@ export const createState = asyncHandler(async (req, res) => {
    *   "code": "MP"
    * }
    */
-  const { name, code } = req.body;
+  const { name, code, country } = req.body;
+  if (!name || !code || !country)
+    throw new ApiError(400, "All fields are required");
+
   const admin = await Admin.findById(adminId);
   if (!admin) {
     return new ApiError(403, "Only admins can create states");
@@ -74,6 +77,7 @@ export const createState = asyncHandler(async (req, res) => {
   const state = await State.create({
     name: name.trim(),
     code: code?.trim() || "",
+    country: country,
   });
 
   res.status(201).json(new ApiResponse(201, state, "State created"));
@@ -109,8 +113,8 @@ export const getStateById = asyncHandler(async (req, res) => {
         cities,
         places,
       },
-      "State with cities fetched successfully"
-    )
+      "State with cities fetched successfully",
+    ),
   );
 });
 

@@ -13,6 +13,7 @@ import { TravelPackages } from "../models/package.models.js";
 import { FoodCourt } from "../models/foodCourt.models.js";
 import { UserSchema } from "../models/user.models.js";
 import { EnquiryDetails } from "../models/enquiry.models.js";
+import { Country } from "../models/country.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -130,6 +131,7 @@ const dashboardData = asyncHandler(async (req, res) => {
   const enquiry = await EnquiryDetails.find({
     reviewedByAdmin: false,
   }).populate("stateId cityId placeId");
+  const country = await Country.find();
   // const packages = await TravelPackages.find().populate("place");
 
   return res.status(200).json(
@@ -145,6 +147,7 @@ const dashboardData = asyncHandler(async (req, res) => {
       foodCourts,
       users,
       enquiry,
+      country,
     }),
   );
 });
