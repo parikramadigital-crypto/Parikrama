@@ -10,6 +10,7 @@ import { IoMdClose } from "react-icons/io";
 import { BiArrowFromLeft } from "react-icons/bi";
 import { LiaHotelSolid } from "react-icons/lia";
 import {
+  MdAdd,
   MdLocalOffer,
   MdOutlineExplore,
   MdOutlineFlight,
@@ -104,7 +105,12 @@ const Header = () => {
               {/* buttons */}
               <div className="grid grid-cols-1 lg:grid-cols-2 w-full gap-3">
                 <Button
-                  label={"Add your near by place"}
+                  label={
+                    <h1 className="flex justify-between items-center">
+                      <MdAdd className="text-2xl" />
+                      Add Popular Place
+                    </h1>
+                  }
                   onClick={() => {
                     setPopup2(true);
                     setPopup(false);
@@ -112,12 +118,29 @@ const Header = () => {
                 />
                 <Button
                   label={
-                    <h1 className="flex justify-between items-center">
-                      <FaUserCircle className="text-2xl" />
-                      Login
-                    </h1>
+                    user ? (
+                      <h1 className="flex justify-between items-center">
+                        <FaUserCircle className="text-2xl" />
+                        Go to Dashboard
+                      </h1>
+                    ) : (
+                      <h1 className="flex justify-between items-center">
+                        <FaUserCircle className="text-2xl" />
+                        Login
+                      </h1>
+                    )
                   }
-                  onClick={() => LinkNavigate("/authentication")}
+                  onClick={() => {
+                    user
+                      ? localStorage.role === "user" ||
+                        localStorage.role === "User"
+                        ? LinkNavigate("/user/dashboard")
+                        : localStorage.role === "community" ||
+                            localStorage.role === "Community"
+                          ? LinkNavigate("/dashboard/community")
+                          : LinkNavigate("/facilitator/dashboard")
+                      : LinkNavigate("/authentication");
+                  }}
                   className={"w-full"}
                 />
               </div>

@@ -1238,11 +1238,11 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
   const formRef = useRef();
 
   const TableHeaders = [
+    "Action",
     "Enquiry Category",
     "Name",
     "Contact number",
     "Enquired on (DDMMYY)",
-    "Action",
   ];
 
   const filteredData = useMemo(() => {
@@ -1367,6 +1367,14 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
               filteredData.map((data) => (
                 <tr key={data._id} className="hover:bg-gray-50 border-b">
                   <td className="px-5 py-3">
+                    <button
+                      onClick={() => getRequest({ enquiryId: data?._id })}
+                      className="bg-green-300 text-green-700 text-xs font-semibold p-1 rounded-md cursor-pointer"
+                    >
+                      Open
+                    </button>
+                  </td>
+                  <td className="px-5 py-3">
                     {data?.enquiryType === "ContactUsForm"
                       ? "Contact Form"
                       : ""}
@@ -1385,13 +1393,6 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
                   </td>
                   <td className="px-5 py-3">
                     {formatDateTimeString(data?.createdAt)}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => getRequest({ enquiryId: data?._id })}
-                    >
-                      Open
-                    </button>
                   </td>
                 </tr>
               ))
