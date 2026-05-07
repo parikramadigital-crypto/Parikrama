@@ -10,6 +10,7 @@ import {
   toggleCommunityStatus,
   refreshCommunityToken,
   followRequest,
+  getCommunityDashboardData,
 } from "../controllers/community.controllers.js";
 import { VerifyAdmin } from "../middlewares/adminAuth.middleware.js";
 import { upload } from "../middlewares/multer.middlewares.js";
@@ -28,6 +29,9 @@ router.route("/community/auth/register").post(
 router.route("/community/auth/login").post(loginCommunity);
 
 router.route("/community/details/:communityId").get(getCommunityById);
+router
+  .route("/community/dashboard/:communityId")
+  .get(getCommunityDashboardData);
 
 router.route("/community/all/list").get(getAllCommunities);
 
