@@ -11,6 +11,8 @@ import {
   refreshCommunityToken,
   followRequest,
   getCommunityDashboardData,
+  acceptFollowRequest,
+  rejectFollowRequest,
 } from "../controllers/community.controllers.js";
 import { VerifyAdmin } from "../middlewares/adminAuth.middleware.js";
 import { upload } from "../middlewares/multer.middlewares.js";
@@ -59,6 +61,10 @@ router
   .delete(VerifyAdmin, deleteCommunity);
 
 router.route("/community/follow-request/:communityId").post(followRequest);
+router
+  .route("/community/accept-request/:communityId")
+  .post(acceptFollowRequest);
+router.route("/community/reject-request/:communityId").post(rejectFollowRequest);
 
 /* ================= FUTURE SAFE ROUTES ================= */
 

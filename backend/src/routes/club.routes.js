@@ -15,6 +15,9 @@ import {
   addClubMember,
   addClubEvent,
   addParikramaHotel,
+  followRequest,
+  acceptFollowRequest,
+  rejectFollowRequest,
 } from "../controllers/club.controllers.js";
 
 const router = Router();
@@ -63,5 +66,13 @@ router.route("/:clubId/event").post(addClubEvent);
 
 /* Partnership routes */
 router.route("/:clubId/hotel").post(addParikramaHotel);
+
+router.route("/club/follow-request/:clubId").post(followRequest);
+router
+  .route("/club/accept-request/:clubId")
+  .post(acceptFollowRequest);
+router
+  .route("/club/reject-request/:clubId")
+  .post(rejectFollowRequest);
 
 export default router;
