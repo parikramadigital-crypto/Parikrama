@@ -78,6 +78,13 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
     navigate("/");
   };
 
+  const isUserUpdate =
+    user?.name &&
+    user?.email &&
+    user?.contactNumber &&
+    user?.address &&
+    user?.city;
+
   const userData = [
     { label: "Name", value: user?.name },
     { label: "Email", value: user?.email },
@@ -125,7 +132,12 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
             </div>
           ))}
           <div className="flex justify-start items-center md:gap-10 gap-5 p-5">
-            <Button label={"Update Profile"} onClick={() => setModel(true)} />
+            {isUserUpdate ? (
+              <Button label={"Home"} onClick={() => navigate("/")} />
+            ) : (
+              <Button label={"Update Profile"} onClick={() => setModel(true)} />
+            )}
+            {/* <Button label={"Update Profile"} onClick={() => setModel(true)} /> */}
             <Button label={"Logout"} onClick={() => logout()} />
           </div>
         </div>
