@@ -36,7 +36,7 @@ const adminSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["Admin"],
+      enum: ["Admin", "SubAdmin"],
       default: "Admin",
     },
     isActive: {
@@ -44,7 +44,7 @@ const adminSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /* =========================
@@ -67,7 +67,7 @@ adminSchema.methods.generateAccessToken = function () {
   return Jwt.sign(
     { _id: this._id, role: this.role },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
   );
 };
 adminSchema.methods.generateRefreshToken = function () {
