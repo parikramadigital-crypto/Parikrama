@@ -185,6 +185,36 @@ const getCommunityById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, community, "Community fetched"));
 });
 
+const getCommunityDashboardData = asyncHandler(async (req, res) => {
+  const { communityId } = req.params;
+  const community = await Community.findById(communityId)
+    .populate({
+      path: "userFollowRequests",
+      select: "name contactNumber",
+    })
+    .populate({
+      path: "communityFollowRequests",
+      select: "personalDetails images",
+    })
+    .populate({
+      path: "acceptedRequestsCommunity",
+      select: "personalDetails images",
+    })
+    .populate({
+      path: "acceptedRequestsUser",
+      select: "name contactNumber",
+    })
+    .lean();
+
+  if (!community) {
+    throw new ApiError(404, "Community not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, community, "Community fetched"));
+});
+
 const updateCommunity = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -310,14 +340,128 @@ const refreshCommunityToken = asyncHandler(async (req, res) => {
   );
 });
 
+const followRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { communityId } = req.params;
+
+  if (!userId || !userType) throw new ApiError(400, "Invalid request");
+
+  const community = await Community.findById(communityId);
+  if (!community) throw new ApiError(404, "Community not found");
+
+  const isUser = userType.toLowerCase() === "user";
+
+  const requestArray = isUser
+    ? community.userFollowRequests
+    : community.communityFollowRequests;
+
+  // convert ObjectIds to string for safe comparison
+  const alreadyRequested = requestArray.some((id) => id.toString() === userId);
+
+  if (alreadyRequested) throw new ApiError(400, "Request already sent");
+
+  requestArray.push(userId);
+  await community.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Request sent successfully"));
+});
+
+const acceptFollowRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { communityId } = req.params;
+
+  const community = await Community.findById(communityId);
+  if (!community) throw new ApiError(404, "Community not found");
+
+  const isUser = userType.toLowerCase() === "user";
+
+  const requestArray = isUser
+    ? community.userFollowRequests
+    : community.communityFollowRequests;
+
+  const acceptedArray = isUser
+    ? community.acceptedRequestsUser
+    : community.acceptedRequestsCommunity;
+
+  const exists = requestArray.some((id) => id.toString() === userId);
+
+  if (!exists) throw new ApiError(400, "No such request found");
+
+  // remove from request array
+  if (isUser) {
+    community.userFollowRequests = community.userFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  } else {
+    community.communityFollowRequests =
+      community.communityFollowRequests.filter(
+        (id) => id.toString() !== userId,
+      );
+  }
+
+  // add to accepted
+  acceptedArray.push(userId);
+
+  await community.save();
+
+  return res.status(200).json(new ApiResponse(200, {}, "Request accepted"));
+});
+
+const rejectFollowRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { communityId } = req.params;
+
+  const community = await Community.findById(communityId);
+  if (!community) throw new ApiError(404, "Community not found");
+
+  const isUser = userType === "user";
+
+  const requestArray = isUser
+    ? community.userFollowRequests
+    : community.communityFollowRequests;
+
+  const rejectedArray = isUser
+    ? community.rejectedRequestsUser
+    : community.rejectedRequestsCommunity;
+
+  const exists = requestArray.some((id) => id.toString() === userId);
+
+  if (!exists) throw new ApiError(400, "No such request found");
+
+  // remove from request list
+  if (isUser) {
+    community.userFollowRequests = community.userFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  } else {
+    community.communityFollowRequests =
+      community.communityFollowRequests.filter(
+        (id) => id.toString() !== userId,
+      );
+  }
+
+  // add to rejected
+  rejectedArray.push(userId);
+
+  await community.save();
+
+  return res.status(200).json(new ApiResponse(200, {}, "Request rejected"));
+});
+
 export {
   registerCommunity,
   loginCommunity,
   getAllCommunities,
   getCommunityById,
+  getCommunityDashboardData,
   updateCommunity,
   deleteCommunity,
   verifyCommunity,
   toggleCommunityStatus,
   refreshCommunityToken,
+  followRequest,
+  acceptFollowRequest,
+  rejectFollowRequest,
 };

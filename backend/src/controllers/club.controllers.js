@@ -258,10 +258,22 @@ const getAllClubs = asyncHandler(async (req, res) => {
 
 const getClubById = asyncHandler(async (req, res) => {
   const club = await Club.findById(req.params.id)
-    .populate(
-      "createdBy parikramaMembers parikramaHotels members.city members.state",
-    )
-    .lean();
+    .populate({
+      path: "location.city",
+      select: "name",
+    })
+    .populate({
+      path: "location.state",
+      select: "name",
+    })
+    .populate({
+      path: "location.state",
+      select: "name",
+    })
+    .populate({
+      path: "location.country",
+      select: "name",
+    });
 
   if (!club || !club.isActive) {
     throw new ApiError(404, "Club not found");
@@ -592,6 +604,113 @@ const addParikramaHotel = asyncHandler(async (req, res) => {
     );
 });
 
+const followRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { clubId } = req.params;
+
+  if (!userId || !userType) throw new ApiError(400, "Invalid request");
+
+  const club = await Club.findById(clubId);
+  if (!club) throw new ApiError(404, "club not found");
+
+  const isUser = userType.toLowerCase() === "user";
+  const requestArray = isUser
+    ? club.userFollowRequests
+    : club.communityFollowRequests;
+
+  // convert ObjectIds to string for safe comparison
+  const alreadyRequested = requestArray.some((id) => id.toString() === userId);
+
+  if (alreadyRequested) throw new ApiError(400, "Request already sent");
+
+  requestArray.push(userId);
+  await club.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Request sent successfully"));
+});
+
+const acceptFollowRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { clubId } = req.params;
+
+  const club = await Club.findById(clubId);
+  if (!club) throw new ApiError(404, "club not found");
+
+  const isUser = userType.toLowerCase() === "user";
+
+  const requestArray = isUser
+    ? club.userFollowRequests
+    : club.communityFollowRequests;
+
+  const acceptedArray = isUser
+    ? club.acceptedRequestsUser
+    : club.acceptedRequestsCommunity;
+
+  const exists = requestArray.some((id) => id.toString() === userId);
+
+  if (!exists) throw new ApiError(400, "No such request found");
+
+  // remove from request array
+  if (isUser) {
+    club.userFollowRequests = club.userFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  } else {
+    club.communityFollowRequests = club.communityFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  }
+
+  // add to accepted
+  acceptedArray.push(userId);
+
+  await club.save();
+
+  return res.status(200).json(new ApiResponse(200, {}, "Request accepted"));
+});
+
+const rejectFollowRequest = asyncHandler(async (req, res) => {
+  const { userId, userType } = req.body;
+  const { clubId } = req.params;
+
+  const club = await Club.findById(clubId);
+  if (!club) throw new ApiError(404, "club not found");
+
+  const isUser = userType.toLowerCase() === "user";
+
+  const requestArray = isUser
+    ? club.userFollowRequests
+    : club.communityFollowRequests;
+
+  const rejectedArray = isUser
+    ? club.rejectedRequestsUser
+    : club.rejectedRequestsCommunity;
+
+  const exists = requestArray.some((id) => id.toString() === userId);
+
+  if (!exists) throw new ApiError(400, "No such request found");
+
+  // remove from request list
+  if (isUser) {
+    club.userFollowRequests = club.userFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  } else {
+    club.communityFollowRequests = club.communityFollowRequests.filter(
+      (id) => id.toString() !== userId,
+    );
+  }
+
+  // add to rejected
+  rejectedArray.push(userId);
+
+  await club.save();
+
+  return res.status(200).json(new ApiResponse(200, {}, "Request rejected"));
+});
+
 export {
   createClubPublic,
   createClub,
@@ -607,4 +726,7 @@ export {
   addClubMember,
   addClubEvent,
   addParikramaHotel,
+  followRequest,
+  acceptFollowRequest,
+  rejectFollowRequest,
 };
