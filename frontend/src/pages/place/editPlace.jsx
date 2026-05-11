@@ -17,9 +17,24 @@ const EditPlace = ({ stopLoading, startLoading }) => {
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState([]);
   const [telecast, setIsTelecast] = useState(null);
+  // const [selectedCategory, setSelectedCountry] = useState("");
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const sponsor = [
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "none",
+  ];
 
   /* ================= FETCH PLACE ================= */
 
@@ -28,7 +43,6 @@ const EditPlace = ({ stopLoading, startLoading }) => {
       startLoading();
       const res = await FetchData(`places/current-place/${placeId}`, "get");
       const p = res.data.data.place;
-      console.log(res);
 
       setPlace(p);
       setRemovedImages([]);
@@ -41,6 +55,7 @@ const EditPlace = ({ stopLoading, startLoading }) => {
         averageTimeSpent: p.averageTimeSpent,
         entryFee: p.entryFee,
         telecastLink: p.telecastLink,
+        sponsor: p.sponsor,
       });
     } catch {
       setError("Failed to load place");
@@ -209,11 +224,32 @@ const EditPlace = ({ stopLoading, startLoading }) => {
         <div>
           <label>Description</label>
           <textarea
+            rows="12"
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border p-2 rounded "
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Select sponsor
+          </label>
+          <select
+            value={formData.sponsor}
+            name="sponsor"
+            required
+            className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
+            onChange={handleChange}
+          >
+            <option value="">Select options</option>
+            {sponsor?.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex justify-start items-start gap-5 flex-col">
