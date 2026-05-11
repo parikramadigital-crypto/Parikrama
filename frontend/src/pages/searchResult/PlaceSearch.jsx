@@ -88,6 +88,8 @@ const PlaceSearch = ({ query, startLoading, stopLoading }) => {
     }
   };
 
+  console.log(results);
+
   // 🎯 UI
   return (
     <div className="w-full md:w-[80vw] flex justify-center items-center">

@@ -28,6 +28,7 @@ const Header = () => {
   const location = useLocation();
   const isHome =
     location.pathname === "/search-feed/places" ||
+    location.pathname === "/travel-packages" ||
     location.pathname === "/clubs/register";
 
   const LinkNavigate = (link) => {
