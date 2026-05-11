@@ -168,12 +168,48 @@ const getAllPromotions = asyncHandler(async (req, res) => {
 
   if (!promotionsMax) throw new ApiError(404, "No promotions found");
 
-  // 🔥 Fetch telecast places
-  let telecastPlace = await Place.find({
-    telecastLink: { $exists: true, $ne: "" },
-  }).populate("city state");
+  const sponsorOrder = [
+    "first",
+    "second",
+    "third",
+    "fourth",
+    "fifth",
+    "sixth",
+    "seventh",
+    "eighth",
+    "ninth",
+    "tenth",
+    "none",
+  ];
 
-  // ✅ Filter only valid URLs
+  let telecastPlace = await Place.aggregate([
+    {
+      $match: {
+        telecastLink: { $exists: true, $ne: "" },
+      },
+    },
+
+    {
+      $addFields: {
+        sponsorRank: {
+          $indexOfArray: [sponsorOrder, "$sponsor"],
+        },
+      },
+    },
+
+    {
+      $sort: {
+        sponsorRank: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  telecastPlace = await Place.populate(telecastPlace, [
+    { path: "city" },
+    { path: "state" },
+  ]);
+
   telecastPlace = telecastPlace.filter((place) =>
     isValidUrl(place.telecastLink),
   );

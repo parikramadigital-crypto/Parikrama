@@ -7,6 +7,7 @@ import {
   DeleteImage,
 } from "../utils/imageKit.io.js";
 import { TravelPackages } from "../models/package.models.js";
+import { Admin } from "../models/admin.models.js";
 
 const createTravelPackage = asyncHandler(async (req, res) => {
   const {
@@ -22,7 +23,7 @@ const createTravelPackage = asyncHandler(async (req, res) => {
     priority,
   } = req.body;
 
-  if (!name || !place) {
+  if (!name) {
     throw new ApiError(400, "Package name and place are required");
   }
 
@@ -43,7 +44,7 @@ const createTravelPackage = asyncHandler(async (req, res) => {
 
   const travelPackage = await TravelPackages.create({
     name,
-    // place,
+    place,
     city,
     state,
     description,
@@ -73,7 +74,7 @@ const getAllTravelPackages = asyncHandler(async (req, res) => {
 const getTravelPackageById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const travelPackage = await TravelPackages.findById(id)
+  const travelPackage = await TravelPackages.findById(id);
   // const travelPackage = await TravelPackages.findById(id).populate("place");
 
   if (!travelPackage) {
@@ -170,10 +171,125 @@ const deleteTravelPackage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Package deleted successfully"));
 });
 
+const lastMomentPackage = asyncHandler(async (req, res) => {
+  const { adminId } = req.params;
+  const {
+    name,
+    place,
+    description,
+    durationNight,
+    durationDay,
+    days,
+    price,
+    tags,
+    numberOfPerson,
+  } = req.body;
+  const admin = await Admin.findById(adminId);
+  if (!admin) throw new ApiError(400, "Invalid request");
+
+  let images = [];
+
+  if (req.files && req.files.length > 0) {
+    for (const file of req.files) {
+      const uploaded = await UploadImages(file.filename, {
+        folderStructure: "travelPackages-lastMoment",
+      });
+
+      images.push({
+        url: uploaded.url,
+        fileId: uploaded.fileId,
+      });
+    }
+  }
+  // admin checkup
+  const newPackage = await TravelPackages.create({
+    name: name,
+    place: place,
+    description: description,
+    durationNight: durationNight,
+    durationDay: durationDay,
+    days: days,
+    price: price,
+    tags: tags,
+    numberOfPerson: numberOfPerson,
+    image: images,
+  });
+
+  await TravelPackages.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, newPackage, "Package created"));
+});
+
+const approvePackage = asyncHandler(async (req, res) => {
+  const { adminId, packageId } = req.params;
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) throw new ApiError(400, "Invalid admin");
+
+  if (admin.role === "SubAdmin") {
+    throw new ApiError(
+      400,
+      "You cannot approve this package, only admins can!",
+    );
+  }
+
+  const verifyPackage = await TravelPackages.findByIdAndUpdate(packageId, {
+    isVerified: true,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Package verified successfully!"));
+});
+
+const editPackage = asyncHandler(async (req, res) => {
+  const { adminId, packageId } = req.params;
+  const {
+    name,
+    place,
+    description,
+    durationNight,
+    durationDay,
+    days,
+    price,
+    tags,
+    numberOfPerson,
+    priority,
+  } = req.body;
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) throw new ApiError(400, "Invalid admin");
+  const adminType = admin.role === "Admin";
+
+  const updatePackage = await TravelPackages.findByIdAndUpdate(packageId, {
+    name: name,
+    place: place,
+    description: description,
+    durationNight: durationNight,
+    durationDay: durationDay,
+    days: days,
+    price: price,
+    tags: tags,
+    numberOfPerson: numberOfPerson,
+    priority: priority,
+    isVerified: adminType ? true : false,
+  });
+
+  return (
+    res.status(200),
+    json(new ApiResponse(200, updatePackage, "Package updated successfully!"))
+  );
+});
+
 export {
   createTravelPackage,
   getAllTravelPackages,
   getTravelPackageById,
   updateTravelPackage,
   deleteTravelPackage,
+  lastMomentPackage,
+  approvePackage,
+  editPackage,
 };
