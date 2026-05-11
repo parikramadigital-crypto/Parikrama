@@ -11,6 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import InputBox from "../../components/InputBox";
 import { userFormInputs } from "../../constants/Constants";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
+import { TbLivePhotoFilled } from "react-icons/tb";
+import logo from "../../assets/Logo1.png";
 
 const UserDashboard = ({ startLoading, stopLoading }) => {
   const { user } = useSelector((state) => state.auth);
@@ -220,6 +222,20 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      <div className="sticky md:bottom-10 bottom-5 w-full flex justify-end items-end px-10">
+        <button
+          onClick={() => navigate("/live-telecasts")}
+          className="flex justify-center items-center flex-col gap-2 bg-[#FFC20E] md:bg-neutral-200 rounded-full md:rounded-md md:py-3 py-5 px-3 shadow-black shadow-2xl cursor-pointer hover:scale-105 duration-300 ease-in-out"
+        >
+          <img src={logo} className="w-14 h-14 md:block hidden" />
+          <h1 className="md:text-base text-xs flex justify-center items-center flex-col md:flex-row md:gap-1">
+            <span className="flex justify-center items-center md:flex-row-reverse ">
+              Live <TbLivePhotoFilled className="text-red-600" />
+            </span>
+            Connect
+          </h1>
+        </button>
+      </div>
     </div>
   ) : (
     <div className="flex justify-center items-center w-full">

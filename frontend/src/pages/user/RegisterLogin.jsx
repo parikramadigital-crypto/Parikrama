@@ -15,7 +15,7 @@ const UserRegisterLogin = () => {
   const [otp, setOtp] = useState();
   const [newUser, setNewUser] = useState();
   const [modelOTP, openModelOTP] = useState(false);
-  const [loginComp, setLoginComp] = useState(true);
+  const [loginComp, setLoginComp] = useState(false);
   const [error, setError] = useState();
 
   const showError = (message) => {
@@ -134,7 +134,9 @@ const UserRegisterLogin = () => {
             Login
           </button>
         </div>
-        {otp ? <p>Paste this OTP {otp}</p> : ""}
+        <span className="bg-red-300 text-red-600 font-semibold">
+          {otp ? <p>Paste this OTP {otp}</p> : ""}
+        </span>
 
         {/* Animated Form */}
         <AnimatePresence mode="wait">
