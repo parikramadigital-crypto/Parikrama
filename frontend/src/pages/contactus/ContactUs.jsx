@@ -36,7 +36,10 @@ const ContactUs = () => {
             Noida, Uttar Pradesh 201309
           </h1>
           <h1>
-            <strong>Contact: </strong>
+            <strong>Contact: </strong> +91 95993 50524
+          </h1>
+          <h1>
+            <strong>Mail Us: </strong>
             <Link
               to={
                 "https://mail.google.com/mail/?view=cm&fs=1&to=connect@parikramaglobal.com"
