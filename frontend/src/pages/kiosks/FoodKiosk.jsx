@@ -212,7 +212,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           </div>
           <div className="md:col-span-2 bg-gray-200 py-5 px-2 rounded-xl overflow-hidden">
             <label className="block text-sm font-medium mb-1">
-              Store Images
+              Store Images (You can select all 5 images at a time)
             </label>
             <input
               type="file"
@@ -231,7 +231,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           </div>
           <div className="md:col-span-2 bg-gray-200 py-5 px-2 rounded-xl overflow-hidden">
             <label className="block text-sm font-medium mb-1">
-              Menu Images
+              Menu Images (You can select all 5 images at a time)
             </label>
             <input
               type="file"
@@ -250,7 +250,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           </div>
           <div className="md:col-span-2 bg-gray-200 py-5 px-2 rounded-xl overflow-hidden">
             <label className="block text-sm font-medium mb-1">
-              Food Images
+              Food Images (You can select all 5 images at a time)
             </label>
             <input
               type="file"

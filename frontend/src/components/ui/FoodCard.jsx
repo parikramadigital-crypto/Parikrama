@@ -19,13 +19,14 @@ const FoodCard = ({ f }) => {
       </div>
       <div className="p-5 space-y-3">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-sm text-gray-500 flex items-start md:items-center gap-2 flex-col md:flex-row">
+          <div className="w-full">
+            <p className="text-xs text-gray-500 flex items-start md:items-center gap-2 flex-col md:flex-row">
               <BiMap /> Nearest tourist place{" "}
-              <span className="font-semibold">{data?.place?.name}</span>
+              <span className="font-semibold">
+                {truncateString(data?.place?.name, 10)}
+              </span>
             </p>
-            <h3 className="text-xl font-semibold text-gray-900 mt-2 flex justify-start items-center ">
-              {data?.name}
+            <h3 className="text-nowrap font-semibold text-gray-900 mt-2 flex justify-start items-center w-full gap-2">
               <span
                 className={`px-3 py-1 rounded-full text-xs w-fit ${
                   data.verified
@@ -35,12 +36,8 @@ const FoodCard = ({ f }) => {
               >
                 {data.verified ? <MdVerified /> : ""}
               </span>
+              <span> {data?.name}</span>
             </h3>
-          </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-1 rounded-full bg-[#FFC20E]/20 px-3 py-1 text-sm font-medium text-[#6B4A00]">
-              <BiSolidStar /> {data?.ratings?.average || 0}
-            </div>
           </div>
         </div>
 
@@ -48,12 +45,19 @@ const FoodCard = ({ f }) => {
           {truncateString(data?.description, 110)}
         </p>
 
-        <div className="flex flex-wrap gap-2">
-          {data?.category && (
-            <span className="text-xs uppercase px-3 py-1 rounded-full bg-slate-100 text-slate-700">
-              {data.category}
-            </span>
-          )}
+        <div className="flex w-full justify-between items-center">
+          <div className="flex flex-wrap gap-2">
+            {data?.category && (
+              <span className="text-xs uppercase px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                {data.category}
+              </span>
+            )}
+          </div>
+          <div className="text-right">
+            <div className="inline-flex items-center gap-1 rounded-full bg-[#FFC20E]/20 px-3 py-1 text-sm font-medium text-[#6B4A00]">
+              <BiSolidStar /> {data?.ratings?.average || 0}
+            </div>
+          </div>
         </div>
       </div>
     </Link>
