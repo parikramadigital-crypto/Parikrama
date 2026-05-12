@@ -293,6 +293,26 @@ const getAllFoodCourts = asyncHandler(async (req, res) => {
     );
 });
 
+const foodCourtFeed = asyncHandler(async (req, res) => {
+  const foodCourts = await FoodCourt.find({ active: true, verified: true })
+    .populate({
+      path: "place",
+      select: "name",
+    })
+    .populate({
+      path: "city",
+      select: "name",
+    })
+    .populate({
+      path: "state",
+      select: "name",
+    });
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, foodCourts, "Data fetched successfully !"));
+});
+
 const getFoodCourtById = asyncHandler(async (req, res) => {
   const { foodCourtId } = req.params;
 
@@ -452,6 +472,7 @@ export {
   getAllFoodCourts,
   getFoodCourtById,
   getFoodCourtByPlaceId,
+  foodCourtFeed,
   // update
   updateFoodCourt,
   // delete

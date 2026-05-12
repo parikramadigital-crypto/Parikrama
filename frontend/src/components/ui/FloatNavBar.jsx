@@ -61,7 +61,7 @@ const FloatNavBar = () => {
     {
       label: "Food",
       icon: <ImSpoonKnife />,
-      url: "",
+      url: "/food/courts/feed",
       color: "text-pink-700",
     },
   ];

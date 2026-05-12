@@ -47,6 +47,7 @@ import CommunityFeed from "./pages/community/communityFeed";
 import CurrentCommunity from "./pages/community/currentCommunity";
 import LoginRegister from "./pages/login-register/LoginRegister";
 import ContactUs from "./pages/contactus/ContactUs";
+import FoodCourtFeed from "./pages/kiosks/FoodCourtFeed";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -215,6 +216,7 @@ function App() {
             path="/current/food-court/:foodCourtId"
             element={<CurrentFoodKiosk />}
           />
+          <Route path="/food/courts/feed" element={<FoodCourtFeed />} />
           <Route
             path="/facilitator/dashboard"
             element={<FacilitatorDashboard />}

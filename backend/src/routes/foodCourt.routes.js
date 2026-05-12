@@ -4,6 +4,7 @@ import {
   createFoodCourt,
   createFoodCourtAdmin,
   deleteFoodCourt,
+  foodCourtFeed,
   getFoodCourtById,
   getFoodCourtByPlaceId,
 } from "../controllers/foodCourt.controllers.js";
@@ -29,6 +30,7 @@ router.route("/create/new/verified/food-court/:adminId").post(
 );
 
 router.route("/get/food-court/by-id/:foodCourtId").get(getFoodCourtById);
+router.route("/get/all/food-courts").get(foodCourtFeed);
 router
   .route("/get/food-court/by-place-id/:foodCourtId")
   .get(getFoodCourtByPlaceId);
