@@ -4,11 +4,16 @@ import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { MdVerified } from "react-icons/md";
 import { IoLocation } from "react-icons/io5";
+import Button from "../../components/Button";
+import { useSelector } from "react-redux";
+import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 
 const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
   const { foodCourtId } = useParams();
   const [data, setData] = useState();
   const [previewImage, setPreviewImage] = useState(null);
+  const { user } = useSelector((state) => state.auth);
+  const adminId = user?._id;
 
   const foodCourt = async () => {
     try {
@@ -29,12 +34,81 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
     foodCourt();
   }, [foodCourtId]);
 
+  const handleAdminControls = async ({ process = "", header = "" }) => {
+    try {
+      startLoading();
+      const response = await FetchData(
+        `foodCourt/${process}/food-court/by-id/${foodCourtId}/${adminId}`,
+        `${header}`,
+      );
+      console.log(response);
+      alert(response.data.message);
+      foodCourt();
+    } catch (err) {
+      console.log(err);
+      alert(parseErrorMessage(err.response.data));
+    } finally {
+      stopLoading();
+    }
+  };
+
   return (
     <div className="p-6">
       {!data ? (
         <p>Loading...</p>
       ) : (
         <div className="space-y-6">
+          {localStorage.role === "Admin" ? (
+            <div className="flex flex-col justify-center items-start gap-5 bg-neutral-200 w-fit p-5 rounded-xl">
+              {/* <h1>Actions to perform</h1> */}
+              {data?.active === false ? (
+                <Button
+                  label={"Mark as active"}
+                  onClick={() =>
+                    handleAdminControls({ header: "post", process: "active" })
+                  }
+                />
+              ) : (
+                ""
+              )}
+              {data?.verified === false ? (
+                <Button
+                  label={"Mark as Verified"}
+                  onClick={() =>
+                    handleAdminControls({ header: "post", process: "verify" })
+                  }
+                />
+              ) : (
+                ""
+              )}
+              {data?.active && data?.verified === true ? (
+                <div className="flex flex-col justify-center items-start gap-5 bg-neutral-200 w-fit p-5 rounded-xl">
+                  <Button
+                    label={"Mark Food place as inactive"}
+                    onClick={() =>
+                      handleAdminControls({
+                        header: "post",
+                        process: "deactivate",
+                      })
+                    }
+                  />
+                  <Button
+                    label={"Delete food place"}
+                    onClick={() =>
+                      handleAdminControls({
+                        header: "delete",
+                        process: "delete",
+                      })
+                    }
+                  />
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+          ) : (
+            ""
+          )}
           {/* 🔥 Header */}
           <div className="w-fit">
             <div className="flex justify-start items-start">
@@ -52,7 +126,6 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
             <h1 className="flex justify-start items-center">
               <IoLocation /> {data?.city?.name}, {data?.state?.name}
             </h1>
-
           </div>
 
           {/* 🍜 Special Food */}
