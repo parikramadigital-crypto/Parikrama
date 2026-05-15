@@ -57,7 +57,7 @@ const ClubCard = ({ club }) => {
               {club.category}
             </span>
           )}
-          {club?.amenities?.slice(0, 2).map((amenity) => (
+          {/* {club?.amenities?.slice(0, 2).map((amenity) => (
             <span
               key={amenity}
               className="text-xs px-3 py-1 rounded-full bg-[#FFC20E]/20 text-[#6B4A00]"
@@ -65,17 +65,17 @@ const ClubCard = ({ club }) => {
               <FaTag className="inline-block mr-1" />
               {amenity}
             </span>
-          ))}
+          ))} */}
         </div>
 
-        <div className="flex items-center justify-between text-sm text-gray-500 pt-3">
+        {/* <div className="flex items-center justify-between text-sm text-gray-500 pt-3">
           <span className="flex items-center gap-1">
             <BiUser /> {club?.members?.length || 0} members
           </span>
           <span className="flex items-center gap-1">
             <BiCalendar /> {club?.events?.length || 0} events
           </span>
-        </div>
+        </div> */}
       </div>
     </Link>
   );
