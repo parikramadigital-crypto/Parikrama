@@ -25,7 +25,6 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
   const [club, setClub] = useState(null);
   const [error, setError] = useState("");
   const userType = localStorage.getItem("role");
-  console.log(club);
 
   const loadClub = async () => {
     try {
@@ -84,7 +83,7 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 space-y-8 overflow-scroll">
       <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
         <div className="space-y-6">
           <div className="rounded-3xl overflow-hidden border border-gray-200 shadow-sm h-96">
@@ -144,7 +143,7 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
               </div>
             </div>
 
-            <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+            <p className="text-gray-600 leading-5 whitespace-pre-line text-justify ">
               {club.description || "No description available."}
             </p>
 
@@ -194,17 +193,19 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* {console.log(club)} */}
-          {club?.images?.gallery.map((i) => (
-            <div className="rounded-3xl border border-gray-200 bg-white p-2 shadow-sm grid grid-cols-1 md:grid-cols-4">
-              <img
-                src={i.url}
-                alt={club.clubName}
-                className="w-60 h-auto rounded-lg"
-              />
-            </div>
-          ))}
+        <div className="space-y-6 overflow-scroll">
+          {console.log(club)}
+          <div className="flex flex-col md:flex-row justify-start items-center h-fit md:h-64 overflow-hidden md:overflow-scroll">
+            {club?.images?.gallery.map((i) => (
+              <div className="rounded-xl border border-gray-200 bg-white p-2 shadow-sm w-96 h-full mx-2">
+                <img
+                  src={i.url}
+                  alt={club.clubName}
+                  className="rounded-lg w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
           {/* {club.images?.gallery && (
             <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
               <img

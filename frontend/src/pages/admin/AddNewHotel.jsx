@@ -18,6 +18,7 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
   const [selectedState, setSelectedState] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [preview, setPreview] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
   const currentAdminId = adminId || user?._id;
@@ -74,6 +75,16 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
     }
     const previews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews(previews);
+  };
+  const handleImageChange2 = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 1) {
+      setError("Maximum 1");
+      e.target.value = "";
+      return;
+    }
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreview(previews);
   };
 
   const handleSubmit = async (e) => {
@@ -367,7 +378,7 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
         <SectionTitle title="Images" />
         <div>
           <label className="block text-sm font-medium mb-3 text-gray-700">
-            Upload Images (max 10: 1 cover + 9 gallery)
+            Upload gallery images (max 10)
           </label>
           <input
             type="file"
@@ -380,6 +391,35 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
           {imagePreviews.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
               {imagePreviews.map((src, idx) => (
+                <div key={idx} className="relative">
+                  <img
+                    src={src}
+                    alt={`preview-${idx}`}
+                    className="h-24 w-full object-cover rounded-lg border-2 border-gray-200"
+                  />
+                  <span className="absolute -top-2 -right-2 bg-[#FFC20E] text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">
+                    {idx + 1}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-3 text-gray-700">
+            Upload cover image (max 1)
+          </label>
+          <input
+            type="file"
+            name="cover"
+            accept="image/*"
+            onChange={handleImageChange2}
+            className="block w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#FFC20E] transition"
+          />
+          {preview.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-6">
+              {preview.map((src, idx) => (
                 <div key={idx} className="relative">
                   <img
                     src={src}
