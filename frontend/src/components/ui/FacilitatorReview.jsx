@@ -115,7 +115,7 @@ const FacilitatorReview = ({ startLoading, stopLoading }) => {
     }
   };
 
-  return (
+  return data ? (
     <div className="flex flex-col justify-start items-center gap-5 py-10 px-5">
       {/* FacilitatorReview <h1>{facilitatorId}:id</h1> */}
       <div className="flex flex-col md:flex-row justify-center items-center gap-10 bg-gray-200 lg:w-3/4 w-full rounded-xl py-5">
@@ -217,6 +217,13 @@ const FacilitatorReview = ({ startLoading, stopLoading }) => {
           className="w-full"
         />
       </form>
+    </div>
+  ) : (
+    <div className="flex justify-center items-center w-full">
+      <h2 className="text-2xl font-bold text-center">
+        <p className="text-5xl ">⚠️</p>
+        This facilitator is no longer active.
+      </h2>
     </div>
   );
 };

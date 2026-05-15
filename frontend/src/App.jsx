@@ -48,6 +48,7 @@ import CurrentCommunity from "./pages/community/currentCommunity";
 import LoginRegister from "./pages/login-register/LoginRegister";
 import ContactUs from "./pages/contactus/ContactUs";
 import FoodCourtFeed from "./pages/kiosks/FoodCourtFeed";
+import FoodPlaceReview from "./components/ui/FoodPlaceReview";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -225,20 +226,19 @@ function App() {
             path="/facilitator/review/:facilitatorId"
             element={<FacilitatorReview />}
           />
-
+          <Route
+            path="/foodPlace/review/:foodPlaceId"
+            element={<FoodPlaceReview />}
+          />
           <Route path="/login-register/user" element={<UserRegisterLogin />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
-
           <Route path="/flights-busses" element={<FlightBus />} />
           <Route path="/travel-packages" element={<PackagesListing />} />
-
           <Route path="/hotels" element={<HotelListing />} />
           <Route path="/hotels/:hotelId" element={<CurrentHotel />} />
-
           <Route path="/clubs" element={<ClubListing />} />
           <Route path="/clubs/register" element={<AddNewClub />} />
           <Route path="/clubs/:clubId" element={<CurrentClub />} />
-
           <Route path="/community/feed" element={<CommunityFeed />} />
           <Route path="/community/form" element={<CommunityRegForm />} />
           <Route path="/login/community" element={<CommunityLogin />} />
@@ -247,7 +247,6 @@ function App() {
             path="/current/community/:communityId"
             element={<CurrentCommunity />}
           />
-
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/how-this-site-works" element={<HowThisSiteWorks />} />
