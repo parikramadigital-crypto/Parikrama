@@ -50,6 +50,7 @@ const NewCity = ({ startLoading, stopLoading }) => {
       setError(err.response.data.message || "Something went wrong");
     }
   };
+
   return (
     <div className="w-full ">
       <form ref={formRef} onSubmit={addNewCity}>
@@ -67,7 +68,8 @@ const NewCity = ({ startLoading, stopLoading }) => {
               <option value="">Select State</option>
               {states?.map((state) => (
                 <option key={state._id} value={state._id}>
-                  {state.name}
+                  {state.name},{" "}
+                  <span>{state?.country?.name}</span>
                 </option>
               ))}
             </select>

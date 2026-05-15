@@ -14,7 +14,9 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
   const [success, setSuccess] = useState("");
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [country, setCountry] = useState([]);
   const [selectedState, setSelectedState] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const { user } = useSelector((state) => state.auth);
@@ -43,6 +45,24 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
       }
     };
     fetchCities();
+  }, [selectedState]);
+
+  useEffect(() => {
+    if (!selectedState) return;
+
+    const fetchCountry = async () => {
+      try {
+        const res = await FetchData(
+          `country/get/country/by-stateId/${selectedState}`,
+          "get",
+        );
+        setCountry(res?.data?.data || []);
+      } catch (err) {
+        // console.error(err);
+      }
+    };
+
+    fetchCountry();
   }, [selectedState]);
 
   const handleImageChange = (e) => {
@@ -119,14 +139,24 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
         {/* BASIC INFORMATION */}
         <SectionTitle title="Basic Information" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputBox LabelName="Hotel Name *" Name="name" required />
-          <InputBox LabelName="Property Type" Name="propertyType" />
+          <InputBox
+            LabelName="Hotel Name"
+            Name="name"
+            required
+            Placeholder="Name of your property"
+          />
+          <InputBox
+            LabelName="Property Type"
+            Name="propertyType"
+            Placeholder="Eg: Resort, B&B, Hotel etc."
+          />
           <InputBox
             LabelName="Short Description"
             Name="shortDescription"
             Placeholder="2-3 line summary"
           />
           <InputBox
+            Placeholder="Max: 5"
             LabelName="Star Rating"
             Name="starRating"
             Type="number"
@@ -176,7 +206,7 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
               <option value="">Select State</option>
               {states.map((state) => (
                 <option key={state._id} value={state._id}>
-                  {state.name}
+                  {state.name}, {state?.country?.name}
                 </option>
               ))}
             </select>
@@ -200,6 +230,28 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
             </select>
           </div>
 
+          {country ? (
+            <input
+              className="hidden"
+              value={country?.id || ""}
+              name="country"
+              onChange={(e) => setSelectedCountry(e.target.value)}
+            />
+          ) : (
+            ""
+          )}
+          {/* <input
+            className="hidden"
+            value={country?.id}
+            name="country"
+            onChange={(e) => setSelectedCountry(e.target.value)}
+          /> */}
+          <InputBox
+            LabelName="Country"
+            Placeholder={country?.name}
+            Value={country?.name}
+          />
+
           <InputBox
             LabelName="Address Line 1 *"
             Name="line1"
@@ -207,32 +259,61 @@ const AddNewHotel = ({ startLoading, stopLoading, onCancel, adminId }) => {
             required
           />
           <InputBox LabelName="Address Line 2" Name="line2" />
-          <InputBox LabelName="Locality" Name="locality" />
-          <InputBox LabelName="Landmark" Name="landmark" />
           <InputBox
-            LabelName="Latitude *"
+            LabelName="Locality"
+            Name="locality"
+            Placeholder="Locality near you"
+          />
+          <InputBox
+            LabelName="Landmark"
+            Name="landmark"
+            Placeholder="Nearest famous landmarks"
+          />
+          <InputBox
+            LabelName="Latitude"
             Name="lat"
-            Type="number"
-            step="0.0001"
+            Type="text"
+            // step="0.0001"
             required
           />
           <InputBox
-            LabelName="Longitude *"
+            LabelName="Longitude"
             Name="lng"
-            Type="number"
-            step="0.0001"
+            Type="text"
+            // step="0.0001"
             required
           />
-          <InputBox LabelName="Pincode" Name="pincode" />
+          <InputBox
+            LabelName="Pincode"
+            Name="pincode"
+            Placeholder="Enter your area's Pincode"
+          />
         </div>
 
         {/* CONTACT DETAILS */}
         <SectionTitle title="Contact Details" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputBox LabelName="Phone" Name="phone" />
-          <InputBox LabelName="Email" Name="email" Type="email" />
-          <InputBox LabelName="Website" Name="website" />
-          <InputBox LabelName="Booking URL" Name="bookingUrl" />
+          <InputBox
+            LabelName="Phone"
+            Name="phone"
+            Placeholder="Contact number"
+          />
+          <InputBox
+            LabelName="Email"
+            Name="email"
+            Type="email"
+            Placeholder="Contact email"
+          />
+          <InputBox
+            LabelName="Website"
+            Name="website"
+            Placeholder="https://yourwebsite.com"
+          />
+          <InputBox
+            LabelName="Booking URL"
+            Name="bookingUrl"
+            Required={false}
+          />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div>
