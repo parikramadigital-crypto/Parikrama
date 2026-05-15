@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Country } from "../models/country.models.js";
+import { State } from "../models/state.models.js";
 
 const createCountry = asyncHandler(async (req, res) => {
   const { name, code, totalStates } = req.body;
@@ -55,4 +56,19 @@ const deleteCountry = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, country, "Country deleted successfully !"));
 });
 
-export { createCountry, getAllCountry };
+const getCountryByStateId = asyncHandler(async (req, res) => {
+  const { stateId } = req.params;
+
+  const state = await State.findById(stateId).populate({
+    path: "country",
+    select: "name",
+  });
+  if (!state) throw new ApiError(400, "State not found");
+
+  const country = { name: state.country.name, id: state.country._id };
+  console.log(country);
+
+  res.status(201).json(new ApiResponse(201, country, ""));
+});
+
+export { createCountry, getAllCountry, getCountryByStateId };

@@ -55,11 +55,11 @@ const loadCountry = async () => {
   return india ? india._id : undefined;
 };
 
-const buildLocation = (lat, lng, address) => ({
+const buildLocation = (lat, lng, address, city, state, country) => ({
   address,
-  city: "",
-  state: "",
-  country: "India",
+  city,
+  state,
+  country,
   coordinates: {
     lat: Number(lat),
     lng: Number(lng),
@@ -84,6 +84,24 @@ const createClubPublic = asyncHandler(async (req, res) => {
     membershipPlans,
     foundedYear,
   } = req.body;
+
+  console.log(
+    clubName,
+    description,
+    category,
+    email,
+    phone,
+    website,
+    address,
+    city,
+    state,
+    country,
+    lat,
+    lng,
+    amenities,
+    membershipPlans,
+    foundedYear,
+  );
 
   if (!clubName) {
     throw new ApiError(400, "Club name is required");
@@ -132,7 +150,7 @@ const createClubPublic = asyncHandler(async (req, res) => {
       phone,
       website,
     },
-    location: buildLocation(lat, lng, address),
+    location: buildLocation(lat, lng, address, city, state, country),
     images: {
       logo: uploadedLogo
         ? { url: uploadedLogo.url, fileId: uploadedLogo.fileId }
@@ -226,7 +244,7 @@ const createClub = asyncHandler(async (req, res) => {
       phone,
       website,
     },
-    location: buildLocation(lat, lng, address),
+    location: buildLocation(lat, lng, address, city, state, country),
     images: {
       logo: uploadedLogo
         ? { url: uploadedLogo.url, fileId: uploadedLogo.fileId }

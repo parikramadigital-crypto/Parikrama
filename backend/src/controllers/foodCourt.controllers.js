@@ -525,6 +525,107 @@ const markAsInactiveAndNonVerified = asyncHandler(async (req, res) => {
     );
 });
 
+const addFoodPlaceReview = asyncHandler(async (req, res) => {
+  const { foodPlaceId } = req.params;
+
+  const { customerName, customerPhone, hygiene, food, behaviour, comment } =
+    req.body;
+
+  /* ---------- VALIDATION ---------- */
+
+  if (
+    !customerName ||
+    !customerPhone ||
+    hygiene == null ||
+    food == null ||
+    behaviour == null
+  ) {
+    throw new ApiError(400, "All rating fields are required");
+  }
+
+  if (
+    hygiene < 0 ||
+    hygiene > 5 ||
+    food < 0 ||
+    food > 5 ||
+    behaviour < 0 ||
+    behaviour > 5
+  ) {
+    throw new ApiError(400, "Ratings must be between 0 and 5");
+  }
+
+  const foodPlace = await FoodCourt.findById(foodPlaceId);
+
+  if (!foodPlace) {
+    throw new ApiError(404, "Facilitator not found");
+  }
+
+  /* ---------- DUPLICATE CHECK ---------- */
+
+  const alreadyReviewed = foodPlace.reviews.find(
+    (r) => r.customerPhone === customerPhone,
+  );
+
+  if (alreadyReviewed) {
+    throw new ApiError(409, "You already reviewed this facilitator");
+  }
+
+  /* ---------- PUSH REVIEW ---------- */
+
+  foodPlace.reviews.push({
+    customerName,
+    customerPhone,
+    hygiene,
+    food,
+    behaviour,
+    comment,
+  });
+
+  /* ---------- RECALCULATE AVERAGES ---------- */
+
+  const total = foodPlace.reviews.length;
+
+  let hygSum = 0;
+  let foodSum = 0;
+  let behSum = 0;
+
+  foodPlace.reviews.forEach((r) => {
+    hygSum += r.hygiene;
+    foodSum += r.food;
+    behSum += r.behaviour;
+  });
+
+  foodPlace.ratings.hygieneAvg = Number((hygSum / total).toFixed(1));
+
+  foodPlace.ratings.foodAvg = Number((foodSum / total).toFixed(1));
+
+  foodPlace.ratings.behaviourAvg = Number((behSum / total).toFixed(1));
+
+  foodPlace.ratings.overallAvg = Number(
+    (
+      (foodPlace.ratings.hygieneAvg +
+        foodPlace.ratings.foodAvg +
+        foodPlace.ratings.behaviourAvg) /
+      3
+    ).toFixed(1),
+  );
+
+  foodPlace.ratings.totalReviews = total;
+
+  await foodPlace.save();
+
+  res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        ratings: foodPlace.ratings,
+        latestReview: foodPlace.reviews[foodPlace.reviews.length - 1],
+      },
+      "Review added successfully",
+    ),
+  );
+});
+
 export {
   // create
   createFoodCourtAdmin,
@@ -542,4 +643,5 @@ export {
   verifyByAdmin,
   markAsActive,
   markAsInactiveAndNonVerified,
+  addFoodPlaceReview,
 };
