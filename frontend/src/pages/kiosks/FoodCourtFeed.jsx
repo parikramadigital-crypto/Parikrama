@@ -14,10 +14,8 @@ const FoodCourtFeed = ({ startLoading, stopLoading }) => {
           "foodCourt/get/all/food-courts",
           "get",
         );
-        console.log(response);
         setData(response.data.data);
       } catch (err) {
-        console.log(err);
       } finally {
         stopLoading();
       }

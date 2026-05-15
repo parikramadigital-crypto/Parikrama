@@ -85,10 +85,10 @@ const CurrentCommunity = ({ startLoading, stopLoading }) => {
   return (
     <div className="px-5 md:px-20 ">
       <div className="bg-neutral-200 shadow rounded-xl p-5 flex flex-col md:flex-row justify-between items-center gap-5">
-        <div className=" rounded-full w-72 h-7w-72  relative">
+        <div className=" rounded-full w-72 h-72  relative">
           <img
             src={community?.images.profileImage.url}
-            className="w-full h-full rounded-full shadow-2xl"
+            className="w-full h-full rounded-full shadow-2xl object-cover"
           />
           <h1 className="absolute top-0 right-0">
             {community?.personalDetails?.soloTraveler === "Yes" ? (
