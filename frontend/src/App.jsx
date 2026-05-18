@@ -49,6 +49,7 @@ import LoginRegister from "./pages/login-register/LoginRegister";
 import ContactUs from "./pages/contactus/ContactUs";
 import FoodCourtFeed from "./pages/kiosks/FoodCourtFeed";
 import FoodPlaceReview from "./components/ui/FoodPlaceReview";
+import CorporatePlan from "./pages/corporate/CorporatePlan";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -59,67 +60,10 @@ function App() {
 
   useEffect(() => {
     const refreshToken = localStorage.getItem("RefreshToken");
-
-    // No refresh token → user is logged out
     if (!refreshToken) {
       dispatch(stopAuthLoading());
       return;
     }
-
-    // const reLogin = async () => {
-    //   try {
-    //     if (localStorage?.role === "Admin") {
-    //       const res = await FetchData(
-    //         "admin/auth/refresh-tokens", // ✅ SINGLE endpoint
-    //         "post",
-    //         { refreshToken },
-    //       );
-    //       const { user, tokens } = res.data.data;
-    //       console.log(user);
-    //       // Store new tokens
-    //       localStorage.setItem("AccessToken", tokens.AccessToken);
-    //       localStorage.setItem("RefreshToken", tokens.RefreshToken);
-
-    //       // Update redux
-    //       dispatch(addUser(user));
-    //     }
-    //     if (localStorage?.role === "User") {
-    //       const res = await FetchData("users/auth/refresh-tokens", "post", {
-    //         refreshToken,
-    //       });
-    //       const { user, tokens } = res.data.data;
-
-    //       localStorage.setItem("AccessToken", tokens.AccessToken);
-    //       localStorage.setItem("RefreshToken", tokens.RefreshToken);
-
-    //       // Update redux
-    //       dispatch(addUser(user));
-    //     }
-    //     if (localStorage?.role === "Facilitator") {
-    //       const res = await FetchData(
-    //         "facilitator/auth/refresh-token", // ✅ SINGLE endpoint
-    //         "post",
-    //         { refreshToken },
-    //       );
-    //       // console.log(res);
-
-    //       const { user, tokens } = res.data.data;
-
-    //       // Store new tokens
-    //       localStorage.setItem("AccessToken", tokens.AccessToken);
-    //       localStorage.setItem("RefreshToken", tokens.RefreshToken);
-
-    //       // Update redux
-    //       dispatch(addUser(user));
-    //     }
-    //   } catch (error) {
-    //     // console.log(error);
-    //     localStorage.clear();
-    //     dispatch(clearUser());
-    //   } finally {
-    //     dispatch(stopAuthLoading());
-    //   }
-    // };
     const reLogin = async () => {
       try {
         const role = localStorage.getItem("role");
@@ -128,34 +72,23 @@ function App() {
         if (!role || !refreshToken) {
           throw new Error("Missing auth data");
         }
-
-        // ✅ Centralized endpoint mapping
         const endpointMap = {
           Admin: "admin/auth/refresh-tokens",
           User: "users/auth/refresh-tokens",
           Facilitator: "facilitator/auth/refresh-token",
-          Community: "communities/community/auth/refresh-token", // future ready
+          Community: "communities/community/auth/refresh-token",
         };
-
         const endpoint = endpointMap[role];
-
         if (!endpoint) {
           throw new Error("Invalid role");
         }
-
         const res = await FetchData(endpoint, "post", { refreshToken });
-
         const { user, tokens } = res.data.data;
-
-        // ✅ Store tokens
         localStorage.setItem("AccessToken", tokens.AccessToken);
         localStorage.setItem("RefreshToken", tokens.RefreshToken);
-
-        // ✅ Update redux
         dispatch(addUser(user));
       } catch (error) {
         console.log("Re-login failed:", error?.message);
-
         localStorage.clear();
         dispatch(clearUser());
       } finally {
@@ -249,6 +182,7 @@ function App() {
           />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/corporate/plans" element={<CorporatePlan />} />
           <Route path="/how-this-site-works" element={<HowThisSiteWorks />} />
           {/* ================= FALLBACK ================= */}
         </Routes>
