@@ -16,6 +16,7 @@ const links = [
   { label: "Contact us", path: "/contact-us/parikrama-global" },
   { label: "About us", path: "/" },
   { label: "How this site works", path: "/how-this-site-works" },
+  { label: "Corporate", path: "/corporate/plans" },
 ];
 
 const social_links = [

@@ -507,6 +507,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deleteFacilitator = async ({ facilitatorId }) => {
+    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
     try {
       const response = await FetchData(
         `facilitator/delete-facilitator/${user}/${facilitatorId}`,
@@ -521,11 +522,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
     <div className="">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold text-nowrap">
-          {Text} (<span className="text-sm">{filteredData.length}</span>){" "}
-          <span className="text-xs text-red-600">
-            ** The delete button will immediately delete the data, be careful
-            using it.
-          </span>
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
         </h2>
         <div className="w-96">
           <InputBox
@@ -623,6 +620,7 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePromotion = async ({ promotionId }) => {
+    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
     try {
       const response = await FetchData(
         `promotions/delete-promotion/${user}/${promotionId}`,
@@ -730,6 +728,7 @@ const TravelPackages = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePackage = async ({ packageId }) => {
+    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
     try {
       const response = await FetchData(
         `promotions/delete-promotion/${user}/${packageId}`,
@@ -833,6 +832,7 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePlaceKiosk = async ({ placeKioskId }) => {
+    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
     try {
       const response = await FetchData(
         `foodCourt/delete/food-court/by-id/${user}/${placeKioskId}`,
@@ -1264,7 +1264,7 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
       setRequest(response.data.data || []);
       setPopup(true);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
   const data = [
@@ -1279,19 +1279,34 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
           {request?.enquiryType === "PackageEnquiryForm"
             ? "Travel Packages"
             : ""}
+          {request?.enquiryType === "CorporateEnquiry"
+            ? "Corporate Enquiry"
+            : ""}
         </span>
       ),
     },
-    { label: "Customer Name", value: request?.formDetails?.contactPersonName },
+    {
+      label: "Customer Name",
+      value:
+        request?.formDetails?.contactPersonName ||
+        request?.corporate?.contactPersonName,
+    },
     {
       label: "Contact Number",
-      value: request?.formDetails?.contactPersonPhone,
+      value:
+        request?.formDetails?.contactPersonPhone ||
+        request?.corporate?.contactNumber,
       className: "font-semibold",
     },
-    { label: "Email", value: request?.formDetails?.contactPersonEmail },
     {
-      label: "Comments",
-      value: request?.formDetails?.comments,
+      label: "Email",
+      value:
+        request?.formDetails?.contactPersonEmail ||
+        request?.corporate?.companyEmail,
+    },
+    {
+      label: "Comment",
+      value: request?.formDetails?.comments || request?.corporate?.comments,
       className: "font-semibold",
     },
     {
@@ -1322,7 +1337,7 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
         "post",
         formData,
       );
-      console.log(response);
+      // console.log(response);
       formRef.current.reset();
       setPopup(false);
       alert(response.data.message);
@@ -1385,12 +1400,19 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
                     {data?.enquiryType === "PackageEnquiryForm"
                       ? "Travel Packages"
                       : ""}
+                    {data?.enquiryType === "CorporateEnquiry"
+                      ? "Corporate Enquiry"
+                      : ""}
                   </td>
                   <td className="px-5 py-3">
-                    {data?.formDetails?.contactPersonName || "Na"}
+                    {data?.formDetails?.contactPersonName ||
+                      data?.corporate?.contactPersonName ||
+                      "Na"}
                   </td>
                   <td className="px-5 py-3">
-                    {data?.formDetails?.contactPersonPhone}
+                    {data?.formDetails?.contactPersonPhone ||
+                      data?.corporate?.contactNumber ||
+                      "Na"}
                   </td>
                   <td className="px-5 py-3">
                     {formatDateTimeString(data?.createdAt)}
@@ -1439,7 +1461,7 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
                 <form ref={formRef} onSubmit={handleSubmit}>
                   <InputBox
                     Name="customerFeedBack"
-                    Placeholder="Customer feedback"
+                    Placeholder="Feedback"
                     LabelName="What did the customer said ?"
                     Type="text"
                   />

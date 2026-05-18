@@ -5,6 +5,7 @@ import {
   FaPersonWalkingLuggage,
   FaTrainTram,
 } from "react-icons/fa6";
+import { RiBuilding2Fill } from "react-icons/ri";
 import { GiClubs } from "react-icons/gi";
 import { IoFastFoodSharp } from "react-icons/io5";
 import { MdOutlineFlight } from "react-icons/md";
@@ -21,6 +22,12 @@ const FloatNavBar = () => {
       icon: <MdOutlineFlight />,
       url: "/flights-busses",
       color: "text-blue-700",
+    },
+    {
+      label: "Corporate",
+      icon: <RiBuilding2Fill />,
+      url: "/corporate/plans",
+      color: "text-red-700",
     },
     {
       label: "Packages",
