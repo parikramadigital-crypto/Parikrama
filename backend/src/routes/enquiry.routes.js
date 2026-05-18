@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createCorporateEnquiry,
   createEnquiry,
   deleteEnquiry,
   getEnquiriesById,
@@ -9,6 +10,7 @@ import {
 const router = Router();
 
 router.route("/guest/create-enquiry").post(createEnquiry);
+router.route("/guest/corporate/create-enquiry").post(createCorporateEnquiry);
 router
   .route("/admin/get/enquiry-by-id/:adminId/:enquiryId")
   .get(getEnquiriesById);
