@@ -489,6 +489,20 @@ export const communityInputs = [
     type: "number",
     required: false,
   },
+  {
+    label: "Pan Card",
+    placeHolder: "Enter your PAN number",
+    name: "pan",
+    type: "text",
+    required: false,
+  },
+  {
+    label: "Aadhar Card",
+    placeHolder: "Enter your aadhar number",
+    name: "aadhar",
+    type: "text",
+    required: false,
+  },
   // {
   //   label: "About",
   //   placeHolder: "Write somethings about your works",
@@ -652,6 +666,33 @@ export const corporateEnquiryForm = [
     label: "Contact Number",
     placeHolder: "Contact number",
     name: "contactNumber",
+    type: "text",
+  },
+];
+
+export const communityMembersInputs = [
+  {
+    label: "Full name",
+    placeHolder: "Enter new members name",
+    name: "name",
+    type: "text",
+  },
+  {
+    label: "Email",
+    placeHolder: "Mail ID",
+    name: "email",
+    type: "email",
+  },
+  {
+    label: "Contact number",
+    placeHolder: "Enter contact number",
+    name: "phone",
+    type: "text",
+  },
+  {
+    label: "Address",
+    placeHolder: "Enter the address",
+    name: "address",
     type: "text",
   },
 ];
