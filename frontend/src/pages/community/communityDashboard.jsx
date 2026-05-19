@@ -5,6 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { clearUser } from "../../redux/slices/authSlice";
+import { IoIosAdd } from "react-icons/io";
+import { communityMembersInputs } from "../../constants/Constants";
+import InputBox from "../../components/InputBox";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRef } from "react";
+import CommunityRegForm from "./communityRegForm";
 
 const CommunityDashboard = ({
   startLoading,
@@ -14,10 +20,17 @@ const CommunityDashboard = ({
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const formRef = useRef();
   const [data, setData] = useState();
+  const [popup, setPopup] = useState(false);
+  const [popup2, setPopup2] = useState(false);
   const [personalData, setPersonalData] = useState();
   const [communityData, setCommunityData] = useState();
   const [bankData, setBankData] = useState();
+  const [members, setMembers] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedState, setSelectedState] = useState("");
   const [userRequests, setUserRequests] = useState([]);
   const [communityRequests, setCommunityRequests] = useState([]);
   const [userFollowers, setUserFollowers] = useState([]);
@@ -38,11 +51,11 @@ const CommunityDashboard = ({
         `communities/community/dashboard/${user?._id}`,
         "get",
       );
-      console.log(response);
       setUserRequests(response.data.data.userFollowRequests);
       setCommunityRequests(response.data.data.communityFollowRequests);
       setUserFollowers(response.data.data.acceptedRequestsUser);
       setCommunityFollowers(response.data.data.acceptedRequestsCommunity);
+      setMembers(response.data.data.members);
       setData(response.data.data || []);
       setPersonalData(response.data.data.personalDetails || []);
       setCommunityData(response.data.data.communityDetails || []);
@@ -52,6 +65,36 @@ const CommunityDashboard = ({
       stopLoading();
     }
   };
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      try {
+        startLoading();
+        const res = await FetchData("states", "get");
+        setStates(res?.data?.data || []);
+      } catch (err) {
+        // console.error(err);
+      } finally {
+        stopLoading();
+      }
+    };
+    fetchStates();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedState) return;
+
+    const fetchCities = async () => {
+      try {
+        const res = await FetchData(`cities/state/${selectedState}`, "get");
+        setCities(res?.data?.data || []);
+      } catch (err) {
+        // console.error(err);
+      }
+    };
+
+    fetchCities();
+  }, [selectedState]);
 
   useEffect(() => {
     DashboardData();
@@ -76,11 +119,10 @@ const CommunityDashboard = ({
             userType: userType,
           },
         );
-        console.log(response);
         alert(response.data.message);
         DashboardData();
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
@@ -95,11 +137,10 @@ const CommunityDashboard = ({
             userType: userType,
           },
         );
-        console.log(response);
         alert(response.data.message);
         DashboardData();
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
 
@@ -143,9 +184,29 @@ const CommunityDashboard = ({
 
   const sections = ["Followers", "Follow Requests"];
 
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    try {
+      startLoading();
+      const formData = new FormData(formRef.current);
+      const response = await FetchData(
+        `communities/add-new/${user?._id}/member`,
+        "post",
+        formData,
+      );
+      alert(response.data.message);
+      formRef.current.reset();
+      setPopup(false);
+    } catch (err) {
+      // console.log(err);
+    } finally {
+      stopLoading();
+    }
+  };
+
   return (
-    <div className="flex justify-between items-start p-10">
-      <div className="flex flex-col justify-center items-center gap-10">
+    <div className="flex justify-center items-start p-5 md:p-10 flex-col lg:flex-row gap-5">
+      <div className="flex flex-col justify-center items-center gap-10 w-full lg:w-auto">
         {/* personal details  */}
         <div className={`${CSSClassName}`}>
           <h1 className="font-semibold text-xl">Personal details</h1>
@@ -190,9 +251,24 @@ const CommunityDashboard = ({
               {showQuickActions === true ? (
                 <div>
                   <div className="flex justify-center items-center gap-10">
-                    {/* <Button label={"Add new member"} /> */}
                     <Button label={"Logout"} onClick={() => logout()} />
-                    <Button label={"Update Profile"} onClick={() => logout()} />
+                    <Button
+                      onClick={() => setPopup(true)}
+                      label={
+                        <p className="flex justify-center items-center ">
+                          <IoIosAdd />
+                          Members
+                        </p>
+                      }
+                    />
+                    <Button
+                      label={"Update Profile"}
+                      className={"text-xs"}
+                      onClick={() => {
+                        setPopup2(true);
+                        console.log("Button clicked");
+                      }}
+                    />
                   </div>
                 </div>
               ) : (
@@ -247,6 +323,30 @@ const CommunityDashboard = ({
             {communityData?.profession}
           </p>
         </div>
+        {/* members */}
+        <div className={`${CSSClassName}`}>
+          <h1 className="font-semibold text-xl">
+            Added Members (<span>{members?.length}</span>)
+          </h1>
+          <div className="flex flex-col gap-4">
+            {members?.map((m, index) => (
+              <div className="bg-neutral-100 p-4 rounded-md shadow-2xl grid grid-cols-1 md:grid-cols-2">
+                <h1>
+                  <strong>Name:</strong> {m.name || "Na"}
+                </h1>
+                <h1>
+                  <strong>Email:</strong> {m.email || "Na"}
+                </h1>
+                <h1>
+                  <strong>Address:</strong> {m.address || "Na"}
+                </h1>
+                <h1>
+                  <strong>Contact No:</strong> {m.contactNumber || "Na"}
+                </h1>
+              </div>
+            ))}
+          </div>
+        </div>
         {/* banking details  */}
         <div>
           {bankData?.bankName &&
@@ -289,7 +389,7 @@ const CommunityDashboard = ({
         </div>
         {/* requests */}
       </div>
-      <div className="flex flex-col justify-center items-center w-1/2 bg-neutral-200 rounded-xl py-5">
+      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-neutral-200 rounded-xl py-5">
         <div className="flex justify-center items-center w-full">
           <nav>
             <ul className="flex md:gap-20 gap-5 items-center justify-center">
@@ -370,6 +470,109 @@ const CommunityDashboard = ({
           )}
         </div>
       </div>
+      <AnimatePresence>
+        {popup && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-center items-start md:items-center bg-black/70 z-50 overflow-scroll"
+          >
+            <div className="bg-white p-5 rounded-xl">
+              <h1 className="text-xl font-semibold ">Add new member</h1>
+              <form
+                ref={formRef}
+                onSubmit={handleAddMember}
+                className="flex flex-col md:grid grid-cols-2 gap-2"
+              >
+                {communityMembersInputs.map((i) => (
+                  <InputBox
+                    LabelName={i.label}
+                    Placeholder={i.placeHolder}
+                    Name={i.name}
+                    Type={i.type}
+                  />
+                ))}
+                {/* state  */}
+                <div className="flex justify-center items-center w-full">
+                  <div className="py-4 w-full">
+                    <label className="block text-sm font-medium mb-1">
+                      State*
+                    </label>
+                    <select
+                      name="state"
+                      required
+                      className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
+                      onChange={(e) => setSelectedState(e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {states?.map((state) => (
+                        <option key={state._id} value={state._id}>
+                          {state.name}, {state?.country?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                {/* city  */}
+                <div className="flex justify-center items-center w-full">
+                  <div className="py-4 w-full">
+                    <label className="block text-sm font-medium mb-1">
+                      City*
+                    </label>
+                    <select
+                      name="city"
+                      required
+                      className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
+                      // onChange={(e) => setSelectedState(e.target.value)}
+                    >
+                      <option value="">Select City</option>
+                      {cities?.map((city) => (
+                        <option key={city._id} value={city._id}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-center items-center w-full gap-5 col-span-2">
+                  <Button label={"Submit"} type={"submit"} />
+                  <Button
+                    label={"Cancel"}
+                    onClick={() => {
+                      setPopup(false);
+                      formRef.current.reset();
+                      setCities([]);
+                      setStates([]);
+                      setSelectedState([]);
+                    }}
+                  />
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        )}
+        {popup2 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-center items-start bg-black/70 z-50 overflow-scroll"
+          >
+            <div className="bg-white p-5 rounded-xl w-3/4">
+              <h1 className="text-xl font-semibold ">Update profile</h1>
+              <CommunityRegForm
+                updateProfile={true}
+                onCancel={() => {
+                  setPopup2(false);
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
