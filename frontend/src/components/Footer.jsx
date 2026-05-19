@@ -111,14 +111,15 @@ const Footer = () => {
             ))}
           </div>
         </div>
-        <div className="flex flex-col justify-center items-center gap-2">
-          <Link to={"/"} className="flex items-end">
+        <div className="flex flex-col justify-center items-center">
+          <Link to={"/"} className="flex items-end m-2">
             <img src={logo} className="w-20" />
             <img src={logo2} className="w-28" />
           </Link>
           <p className="text-xs border-t pt-2">
             © 2026 Parikrama Global All rights reserved.
           </p>
+          <p className="text-xs">Brand Unit by ANONZ GLOBAL LLP</p>
         </div>
       </div>
       <AnimatePresence>
