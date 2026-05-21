@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
+import { initializeSocket } from "../../utils/socket.js";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
@@ -45,6 +46,11 @@ import AddNewClub from "./AddNewClub";
 import AddCountry from "./AddCountry";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
+  // hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const formRef = useRef();
+  // All the data which are getting displayed
   const [placeData, setPlaceData] = useState([]);
   const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState([]);
@@ -54,11 +60,18 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [promotionData, setPromotionData] = useState([]);
   const [packageData, setPackageData] = useState([]);
   const [foodKioskData, setFoodKioskData] = useState([]);
+  const [pendingFoodCount, setPendingFoodCount] = useState([]);
   const [hotelData, setHotelData] = useState([]);
   const [clubData, setClubData] = useState([]);
   const [userData, setUserData] = useState([]);
   const [enquiryData, setEnquiryData] = useState([]);
   const [countryData, setCountryData] = useState([]);
+  const [socketNotifications, setSocketNotifications] = useState([]);
+  // preview
+  const [imagePreviews, setImagePreviews] = useState([]);
+  // redux subscription
+  const { user, role, isAuthenticated } = useSelector((state) => state.auth);
+  // popups
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [popup3, setPopup3] = useState(false);
@@ -68,26 +81,18 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [popup7, setPopup7] = useState(false);
   const [popup8, setPopup8] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [imagePreviews, setImagePreviews] = useState([]);
-  const { user, role, isAuthenticated } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const formRef = useRef();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // quick options drop down
+  // extras
   const [activeSection, setActiveSection] = useState(
     () => localStorage.getItem("activeSection") || "Overview",
   );
   const [stats, setStats] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      const res = await FetchData("analytics/visitors", "get");
-      setStats(res.data.data);
-    };
-
-    fetchStats();
-  }, []);
+  const fetchStats = async () => {
+    const res = await FetchData("analytics/visitors", "get");
+    setStats(res.data.data);
+  };
 
   const fetchDashboard = async () => {
     try {
@@ -105,6 +110,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setUserData(res.data.data.users);
       setEnquiryData(res.data.data.enquiry);
       setCountryData(res.data.data.country);
+      setPendingFoodCount(res.data.data.underReviewCount);
 
       // Fetch hotels separately
       const hotelRes = await FetchData("hotels", "get");
@@ -123,6 +129,32 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   useEffect(() => {
     fetchDashboard();
   }, [user]);
+
+  useEffect(() => {
+    if (localStorage.role !== "Admin") return;
+
+    const socket = initializeSocket();
+
+    const handleNewFoodPlace = (payload) => {
+      setSocketNotifications((prev) => [payload, ...prev]);
+      fetchDashboard();
+    };
+
+    socket.on("connect", () => {
+      socket.emit("join-admin-room");
+    });
+    socket.on("new-food-place", handleNewFoodPlace);
+
+    return () => {
+      socket.off("connect");
+      socket.off("new-food-place", handleNewFoodPlace);
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   const logout = () => {
     localStorage.clear();
@@ -229,21 +261,24 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   };
 
   const sections = [
-    "Overview",
-    "Enquiries",
-    "Hotels",
-    "Clubs",
-    "Active Places",
-    "Inactive Places",
-    "Food Place",
-    "Users",
-    "Verified Facilitator",
-    "Non-Verified Facilitator",
-    "Cities",
-    "States",
-    "Countries",
-    "Packages",
-    "Promotions",
+    { label: "Overview", count: 0 },
+    { label: "Enquiries", count: enquiryData.length || 0 },
+    { label: "Hotels", count: 0 },
+    { label: "Clubs", count: 0 },
+    { label: "Active Places", count: 0 },
+    { label: "Inactive Places", count: inactivePlaceData.length || 0 },
+    { label: "Food Place", count: pendingFoodCount.length || 0 },
+    { label: "Users", count: 0 },
+    { label: "Verified Facilitator", count: 0 },
+    {
+      label: "Non-Verified Facilitator",
+      count: inactiveFacilitator.length || 0,
+    },
+    { label: "Cities", count: 0 },
+    { label: "States", count: 0 },
+    { label: "Countries", count: 0 },
+    { label: "Packages", count: 0 },
+    { label: "Promotions", count: 0 },
   ];
 
   return localStorage.role === "Admin" ? (
@@ -380,19 +415,24 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <li
                   key={idx}
                   className={`cursor-pointer transition-all duration-300 rounded-xl w-full px-4 py-2 ${
-                    activeSection === section
+                    activeSection === section.label
                       ? "bg-[#FFC20E]"
                       : "bg-white text-black"
                   }`}
                   onClick={() => {
-                    localStorage.setItem("activeSection", section);
-                    setActiveSection(section);
+                    localStorage.setItem("activeSection", section.label);
+                    setActiveSection(section.label);
                     // setMenuOpen(false); // close menu on click (mobile)
                   }}
                 >
-                  <p className="flex justify-between items-center">
-                    {section}
-                    {activeSection === section ? <FaChevronRight /> : ""}
+                  <p className="flex justify-between items-center w-full">
+                    {section.label}
+                    <span
+                      className={`${section?.count != 0 ? "bg-[#DF3F33] text-white rounded-full p-2 h-8 w-8 flex justify-center items-center" : ""}`}
+                    >
+                      {section.count != 0 ? section?.count : ""}
+                    </span>
+                    {activeSection === section.label ? <FaChevronRight /> : ""}
                     {/* {activeSection === "Enquiries" ? (
                       <p>{enquiryData?.length}</p>
                     ) : (
@@ -752,6 +792,36 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <AddCountry onCancel={() => setPopup8(false)} adminId={user?._id} />
+          </motion.div>
+        )}
+        {socketNotifications.length > 0 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-20 right-10 z-50 mb-6 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-900 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-semibold">New food place registered</p>
+                <p>
+                  {socketNotifications[0]?.message ||
+                    "A new food place has been registered."}
+                </p>
+                {socketNotifications.length > 1 && (
+                  <p className="mt-1 text-xs text-green-700">
+                    +{socketNotifications.length - 1} more notification(s)
+                  </p>
+                )}
+              </div>
+              <button
+                className="rounded-lg bg-green-100 px-3 py-1 text-xs font-semibold text-green-900 hover:bg-green-200"
+                onClick={() => setSocketNotifications([])}
+              >
+                Dismiss
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

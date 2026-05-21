@@ -876,7 +876,10 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
           <tbody>
             {filteredData.length > 0 ? (
               filteredData.map((data) => (
-                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                <tr
+                  key={data._id}
+                  className={`hover:bg-gray-50 border-b ${data?.verified === false && data?.active === false ? "bg-gray-200" : ""}`}
+                >
                   <td className="px-5 py-3">
                     <Link to={`/current/food-court/${data?._id}`}>
                       {data?.name}
@@ -887,12 +890,16 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
                   <td className="px-5 py-3">{data?.place?.name}</td>
                   <td className="px-5 py-3">{data?.category}</td>
                   <td className="px-5 py-3">
-                    <Button
-                      label={"Delete"}
-                      onClick={() =>
-                        deletePlaceKiosk({ placeKioskId: data._id })
-                      }
-                    />
+                    {data?.verified === false && data?.active === false ? (
+                      <Button
+                        label={"Delete"}
+                        onClick={() =>
+                          deletePlaceKiosk({ placeKioskId: data._id })
+                        }
+                      />
+                    ) : (
+                      <span className="bg-green-300 text-green-800 font-semibold p-2 rounded-md">Verified</span>
+                    )}
                   </td>
                 </tr>
               ))
