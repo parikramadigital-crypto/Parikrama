@@ -10,15 +10,23 @@ import RandomImageSlider from "./RandomImageSlider";
 import { useMemo } from "react";
 import Button from "../Button";
 import InputBox from "../InputBox";
-import { FaCopy, FaEdit, FaRegCopy, FaShareAlt, FaTrash } from "react-icons/fa";
+import {
+  FaCopy,
+  FaEdit,
+  FaRegCalendarAlt,
+  FaRegCopy,
+  FaShareAlt,
+  FaTrash,
+} from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { FetchData } from "../../utils/FetchFromApi";
 import { truncateString } from "../../utils/Utility-functions";
 import { Helmet } from "react-helmet-async";
-import { MdFoodBank } from "react-icons/md";
+import { MdAccessTime, MdFoodBank, MdOutlineLocationOn } from "react-icons/md";
 import FoodCard from "./FoodCard";
-import { IoFastFoodSharp } from "react-icons/io5";
+import { IoFastFoodSharp, IoLocationOutline } from "react-icons/io5";
+import { FaArrowRightLong, FaArrowUpLong } from "react-icons/fa6";
 
 const PlaceCard = ({ place }) => {
   return (
@@ -150,12 +158,28 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
       </Helmet>
       <div className="w-full bg-white border border-gray-200 rounded-t-xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col pb-2">
         {/* Image / Placeholder */}
-        <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center">
-          {images.length > 0 ? (
-            <RandomImageSlider images={images} />
-          ) : (
-            <span className="text-gray-400">No images available</span>
-          )}
+        <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center relative">
+          <div className="h-[400px] w-full bg-gray-100 flex items-center justify-center ">
+            {images.length > 0 ? (
+              <RandomImageSlider images={images} />
+            ) : (
+              <span className="text-gray-400">No images available</span>
+            )}
+          </div>
+          <div className="absolute top-0 right-0 w-full flex flex-col md:flex-row justify-between items-end md:items-start p-5 text-xs md:text-base gap-1 h-full md:h-fit">
+            <p className="inline-block w-fit md:px-3 md:py-4 p-1 rounded-md bg-black/60 backdrop-blur-3xl text-white select-none">
+              {place?.category}
+            </p>
+            <button
+              onClick={openMaps}
+              className={`px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] flex md:flex-col justify-center items-center text-neutral-500 bg-white`}
+            >
+              <span>
+                <BiSolidNavigation className="md:text-3xl" />
+              </span>
+              <span className="text-black">Get Directions</span>
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -177,41 +201,10 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
             </h3>
 
             {/* Location */}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 flex justify-start items-center gap-2 font-semibold">
+              <MdOutlineLocationOn className="font-semibold" />{" "}
               {place?.city?.name}, {place?.state?.name}
             </p>
-
-            {/* Category */}
-            <div className="flex flex-col md:flex-row justify-start items-start md:items-center gap-2">
-              <p className="inline-block w-fit text-xs px-3 py-1 rounded-full bg-[#FFC20E]">
-                {place?.category}
-              </p>
-              {/* <Button
-                onClick={() => setPopup4(true)}
-                label={
-                  <h1 className=" flex justify-center items-center text-xs">
-                    <MdFoodBank className="text-2xl" /> Famous Food
-                  </h1>
-                }
-              /> */}
-              <Button
-                normal={false}
-                onClick={() => setPopup4(true)}
-                className2={"text-white px-1 py-1"}
-                label={
-                  <h1>
-                    <IoFastFoodSharp className="text-2xl" />
-                  </h1>
-                }
-              />
-              {/* <button
-                onClick={() => setPopup4(true)}
-                className=" w-fit px-1 py-1 rounded-full bg-[#FFC20E] flex justify-center items-center"
-                normal={false}
-              >
-                <MdFoodBank className="text-2xl" />
-              </button> */}
-            </div>
 
             {/* Description */}
             <p className="text-sm text-gray-600 whitespace-pre-line text-justify flex flex-col justify-start items-start">
@@ -219,38 +212,45 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
               {DesCriptionLimit ? (
                 <Button
                   onClick={() => setDesCriptionLimit()}
-                  label={"Read More"}
-                  className={"text-xs text-black"}
+                  label={
+                    <h1 className="flex items-center gap-2">
+                      Read More
+                      <FaArrowRightLong />
+                    </h1>
+                  }
+                  className={"text-blue-600 bg-white"}
                 />
               ) : (
                 <Button
                   onClick={() => setDesCriptionLimit(300)}
-                  label={"Read less"}
-                  className={"text-xs text-black"}
+                  label={
+                    <h1 className="flex items-center gap-2">
+                      Read less
+                      <FaArrowUpLong />
+                    </h1>
+                  }
+                  className={"text-blue-600 bg-white"}
                 />
               )}
-              {/* <button
-                className="text-blue-500 hover:underline cursor-pointer"
-                onClick={() => setDesCriptionLimit()}
-              >
-                Read More
-              </button> */}
             </p>
           </motion.div>
 
           {/* Meta Info */}
-          <div className="flex flex-col justify-center items-center gap-5 h-fit">
-            <button
-              onClick={openMaps}
-              className={`bg-transparent px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out hover:text-[#FFC20E] border h-full flex md:flex-col justify-center items-center text-neutral-500`}
-            >
-              <span>
-                <BiSolidNavigation className="md:text-3xl" />
-              </span>
-              <span className="text-black">Get Directions</span>
-            </button>
+          <div className="flex flex-col justify-center items-start md:items-center gap-1 md:gap-5 h-fit md:border-l md:px-10">
+            <Button
+              // normal={false}
+              onClick={() => setPopup4(true)}
+              className2={"text-white px-1 py-1"}
+              className={"w-full"}
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <IoFastFoodSharp className="text-2xl" /> Food
+                </h1>
+              }
+            />
             <Button
               label={"Get a facilitator"}
+              className={"w-full"}
               onClick={() => setPopup2(true)}
             />
             <Button
@@ -279,18 +279,25 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
             )}
           </div>
         </div>
-        <div className="flex justify-between text-sm text-gray-500 md:px-5 px-2 pb-5 w-full">
-          <span>
-            Exploration time ⏱ : <br />
-            {place?.averageTimeSpent || "NA"} min
-          </span>
-          <span>
-            Best time to visit: <br /> <strong>{place?.bestTimeToVisit}</strong>
-          </span>
-          {/* <span className="bg-[#39B54A] text-white inline-block w-fit text-xs px-3 py-1 rounded-full">
-          {" "}
-          ₹{place?.entryFee}
-        </span> */}
+        <div className="flex flex-col md:flex-row gap-1 md:gap-5 text-sm text-gray-800 md:px-5 px-2 w-full">
+          <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
+            <MdAccessTime className="text-3xl" />
+            <span className="border-l pl-3">
+              Exploration time <br />
+              <span className="font-semibold">
+                {place?.averageTimeSpent || "NA"} min
+              </span>
+            </span>
+          </h1>
+          <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
+            <FaRegCalendarAlt className="text-3xl" />
+            <span className="border-l pl-3">
+              Best time to visit <br />
+              <span className="font-semibold">
+                {place?.bestTimeToVisit || "Forever"}
+              </span>
+            </span>
+          </h1>
         </div>
         {localStorage.role === "Admin" ? (
           <div className="flex justify-center items-center gap-10">
