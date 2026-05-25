@@ -46,7 +46,10 @@ const Header = () => {
           <img src={logo2} className="w-28 hidden md:block" />
         </Link>
         {localStorage.role === "Admin" ? (
-          ""
+          <Button
+            label={"Go to dashboard"}
+            onClick={() => navigate("/admin/dashboard")}
+          />
         ) : (
           <div className="flex justify-end md:justify-end items-center gap-5 w-full">
             {isHome ? (
