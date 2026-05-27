@@ -13,10 +13,11 @@ const communitySchema = new mongoose.Schema(
         unique: true,
         required: true,
       },
+      socialLinks: [{ platformName: { type: String }, url: { type: String } }],
       contactNumber: { type: String, required: true, unique: true },
       pan: { type: String },
       aadhar: { type: String },
-      soloTraveler: { type: String, default: "No" },
+      soloTraveler: { type: String, default: "No" }, // if the solo traveler is "no" then we shall ask for options if he says yes then dont ask
       password: { type: String, required: true, select: false }, // "select:false" is a condition which will not allow the controller to send password with the whole object
     },
     communityDetails: {
