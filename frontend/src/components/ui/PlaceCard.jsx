@@ -17,13 +17,19 @@ import {
   FaRegCopy,
   FaShareAlt,
   FaTrash,
+  FaUserTag,
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { FetchData } from "../../utils/FetchFromApi";
 import { truncateString } from "../../utils/Utility-functions";
 import { Helmet } from "react-helmet-async";
-import { MdAccessTime, MdFoodBank, MdOutlineLocationOn } from "react-icons/md";
+import {
+  MdAccessTime,
+  MdAddLocationAlt,
+  MdFoodBank,
+  MdOutlineLocationOn,
+} from "react-icons/md";
 import FoodCard from "./FoodCard";
 import { IoFastFoodSharp, IoLocationOutline } from "react-icons/io5";
 import { FaArrowRightLong, FaArrowUpLong } from "react-icons/fa6";
@@ -249,7 +255,11 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
               }
             />
             <Button
-              label={"Get a facilitator"}
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <FaUserTag className="text-2xl" /> Get a Facilitator
+                </h1>
+              }
               className={"w-full"}
               onClick={() => setPopup2(true)}
             />
@@ -279,25 +289,40 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col md:flex-row gap-1 md:gap-5 text-sm text-gray-800 md:px-5 px-2 w-full">
-          <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
-            <MdAccessTime className="text-3xl" />
-            <span className="border-l pl-3">
-              Exploration time <br />
-              <span className="font-semibold">
-                {place?.averageTimeSpent || "NA"} min
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center ">
+          <div className="flex flex-col md:flex-row gap-1 md:gap-5 text-sm text-gray-800 md:px-5 px-2">
+            <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
+              <MdAccessTime className="text-3xl" />
+              <span className="border-l pl-3">
+                Exploration time <br />
+                <span className="font-semibold">
+                  {place?.averageTimeSpent || "NA"} min
+                </span>
               </span>
-            </span>
-          </h1>
-          <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
-            <FaRegCalendarAlt className="text-3xl" />
-            <span className="border-l pl-3">
-              Best time to visit <br />
-              <span className="font-semibold">
-                {place?.bestTimeToVisit || "Forever"}
+            </h1>
+            <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md ">
+              <FaRegCalendarAlt className="text-3xl" />
+              <span className="border-l pl-3">
+                Best time to visit <br />
+                <span className="font-semibold">
+                  {place?.bestTimeToVisit || "Forever"}
+                </span>
               </span>
-            </span>
-          </h1>
+            </h1>
+          </div>
+          {place?.uploaderName ? (
+            <h1 className="flex justify-start md:justify-center items-center bg-gray-100 px-3 py-1 gap-3 shadow rounded-md text-xs m-2">
+              <MdAddLocationAlt className="text-base md:text-3xl" />
+              <span className="border-l pl-3">
+                Place added by <br />
+                <span className="font-semibold">
+                  {place?.uploaderName || "Forever"}
+                </span>
+              </span>
+            </h1>
+          ) : (
+            ""
+          )}
         </div>
         {localStorage.role === "Admin" ? (
           <div className="flex justify-center items-center gap-10">
