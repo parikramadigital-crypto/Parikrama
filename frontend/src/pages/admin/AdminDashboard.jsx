@@ -21,6 +21,7 @@ import {
   Users,
   Enquiry,
   Country,
+  SubAdmins,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -44,6 +45,7 @@ import FoodKiosk from "../kiosks/FoodKiosk";
 import AddNewHotel from "./AddNewHotel";
 import AddNewClub from "./AddNewClub";
 import AddCountry from "./AddCountry";
+import SubAdmin from "./SubAdmin.jsx";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   // hooks
@@ -55,6 +57,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState([]);
   const [facilitator, setFacilitator] = useState([]);
+  const [subAdminData, setSubAdminData] = useState([]);
   const [inactivePlaceData, setInactivePlaceData] = useState([]);
   const [inactiveFacilitator, setInactiveFacilitator] = useState([]);
   const [promotionData, setPromotionData] = useState([]);
@@ -80,6 +83,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [popup6, setPopup6] = useState(false);
   const [popup7, setPopup7] = useState(false);
   const [popup8, setPopup8] = useState(false);
+  const [popup9, setPopup9] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // quick options drop down
   // extras
@@ -110,6 +114,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setUserData(res.data.data.users);
       setEnquiryData(res.data.data.enquiry);
       setCountryData(res.data.data.country);
+      setSubAdminData(res.data.data.subAdmin);
       setPendingFoodCount(res.data.data.underReviewCount);
 
       // Fetch hotels separately
@@ -279,7 +284,13 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     { label: "Countries", count: 0 },
     { label: "Packages", count: 0 },
     { label: "Promotions", count: 0 },
+    { label: "Sub Admins", count: 0 },
   ];
+
+  const filteredSections =
+    user?.restrictedAccess === true
+      ? sections.filter((section) => user?.sectionList?.includes(section.label))
+      : sections;
 
   return localStorage.role === "Admin" ? (
     <div className="flex flex-col h-fit gap-5 justify-between items-start">
@@ -411,7 +422,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
         <aside className="static bottom-0 left-0 w-60 flex justify-start items-start h-[70vh] overflow-scroll no-scrollbar">
           <nav>
             <ul className="flex gap-5 items-start flex-col">
-              {sections.map((section, idx) => (
+              {filteredSections.map((section, idx) => (
                 <li
                   key={idx}
                   className={`cursor-pointer transition-all duration-300 rounded-xl w-full px-4 py-2 ${
@@ -558,6 +569,19 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               <Enquiry
                 TableData={enquiryData}
                 Text="Enquiries"
+                user={user?._id}
+              />
+            </div>
+          )}
+          {activeSection === "Sub Admins" && (
+            <div className="w-full h-full flex flex-col justify-start items-start">
+              <Button
+                label={"Add new sub admin"}
+                onClick={() => setPopup9(true)}
+              />
+              <SubAdmins
+                TableData={subAdminData}
+                Text="Sub admins"
                 user={user?._id}
               />
             </div>
@@ -792,6 +816,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <AddCountry onCancel={() => setPopup8(false)} adminId={user?._id} />
+          </motion.div>
+        )}
+        {popup9 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <SubAdmin onCancel={() => setPopup9(false)} adminId={user?._id} />
           </motion.div>
         )}
         {socketNotifications.length > 0 && (

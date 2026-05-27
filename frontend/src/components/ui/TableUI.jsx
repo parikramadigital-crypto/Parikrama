@@ -898,7 +898,9 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
                         }
                       />
                     ) : (
-                      <span className="bg-green-300 text-green-800 font-semibold p-2 rounded-md">Verified</span>
+                      <span className="bg-green-300 text-green-800 font-semibold p-2 rounded-md">
+                        Verified
+                      </span>
                     )}
                   </td>
                 </tr>
@@ -1568,6 +1570,108 @@ const Country = ({ Text = "", TableData = [] }) => {
   );
 };
 
+const SubAdmins = ({ Text = "", TableData = [], user }) => {
+  const [search, setSearch] = useState("");
+
+  const TableHeaders = [
+    "Name",
+    "Employee ID",
+    "Email",
+    "Contact Number",
+    "Sections alloted",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((c) =>
+      `
+        ${c?.name}
+        ${c?.employeeId}
+        ${c?.email}
+        ${c?.phoneNumber}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  // const deletePlaceKiosk = async ({ placeKioskId }) => {
+  //   if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+  //   try {
+  //     const response = await FetchData(
+  //       `foodCourt/delete/food-court/by-id/${user}/${placeKioskId}`,
+  //       "delete",
+  //     );
+  //     alert(response.data.message);
+  //     alert("Kindly reload the dashboard");
+  //   } catch (err) {}
+  // };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search sub admins..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr
+                  key={data._id}
+                  className={`hover:bg-gray-50 border-b ${data?.verified === false && data?.active === false ? "bg-gray-200" : ""}`}
+                >
+                  <td className="px-5 py-3">
+                    <Link to={`/current/food-court/${data?._id}`}>
+                      {data?.name}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3">{data?.employeeId}</td>
+                  <td className="px-5 py-3">{data?.email}</td>
+                  <td className="px-5 py-3">{data?.phoneNumber}</td>
+                  <td className="px-5 py-3">{data?.sectionList.length}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-6 text-gray-500">
+                  No Data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 export {
   City,
   State,
@@ -1583,4 +1687,5 @@ export {
   Users,
   Enquiry,
   Country,
+  SubAdmins,
 };
