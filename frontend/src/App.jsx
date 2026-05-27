@@ -50,6 +50,7 @@ import ContactUs from "./pages/contactus/ContactUs";
 import FoodCourtFeed from "./pages/kiosks/FoodCourtFeed";
 import FoodPlaceReview from "./components/ui/FoodPlaceReview";
 import CorporatePlan from "./pages/corporate/CorporatePlan";
+import ClubUpdates from "./pages/club/ClubUpdates";
 
 function App() {
   const { user, role, isAuthenticated } = useSelector((state) => state.auth);
@@ -184,6 +185,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/corporate/plans" element={<CorporatePlan />} />
           <Route path="/how-this-site-works" element={<HowThisSiteWorks />} />
+          <Route path="/updates/for/club" element={<ClubUpdates />} />
           {/* ================= FALLBACK ================= */}
         </Routes>
       </div>

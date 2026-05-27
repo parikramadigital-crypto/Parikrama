@@ -15,7 +15,7 @@ const links = [
   { label: "Corporate", path: "/corporate/plans" },
   { label: "Privacy Policy", path: "/privacy-policy" },
   { label: "Terms of service", path: "/terms-of-service" },
-  // { label: "Club Updates", path: "/updates/for/club" },
+  { label: "Club Updates", path: "/updates/for/club" },
   // { label: "About us", path: "/" },
   // { label: "How this site works", path: "/how-this-site-works" },
 ];
