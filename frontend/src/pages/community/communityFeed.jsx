@@ -37,11 +37,18 @@ const CommunityFeed = ({ startLoading, stopLoading }) => {
           <br /> If you are an Influencer, Blogger, Solo-Traveller, Group
           Travellers, Bikers, Cycling etc.
         </h1>
-        <Button
-          label={"Click here to make new Community"}
-          className={"text-sm font-normal"}
-          onClick={() => navigate("/community/form")}
-        />
+        <div className="flex items-center gap-5">
+          <Button
+            label={"Register here"}
+            className={"text-sm font-normal"}
+            onClick={() => navigate("/community/form")}
+          />
+          <Button
+            label={"Login"}
+            className={"text-sm font-normal"}
+            onClick={() => navigate("/login/community")}
+          />
+        </div>
       </div>
       <div className="flex justify-center items-center gap-10">
         <InputBox Placeholder="Enter here to search" />

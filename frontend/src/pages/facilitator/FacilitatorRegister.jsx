@@ -253,6 +253,7 @@ const FacilitatorRegister = ({
                   LabelName="Email"
                   Name="email"
                   Placeholder="Enter your email id"
+                  Type="email"
                   required
                 />
                 <InputBox
