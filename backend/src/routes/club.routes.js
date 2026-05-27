@@ -18,6 +18,13 @@ import {
   followRequest,
   acceptFollowRequest,
   rejectFollowRequest,
+  getClubByContactInfo,
+  otpForClubById,
+  verifyOtp,
+  removeMember,
+  removeEvent,
+  uploadGalleryImages,
+  removeGalleryImage,
 } from "../controllers/club.controllers.js";
 
 const router = Router();
@@ -54,25 +61,31 @@ router.route("/update/:clubId").post(
   ]),
   updateClub,
 );
+
+router
+  .route("/club/:clubId/gallery")
+  .post(upload.array("images"), uploadGalleryImages);
+router.route("/club/:clubId/gallery/:imageId").delete(removeGalleryImage);
 router.route("/delete/:adminId/:clubId").delete(deleteClub);
 router.route("/inactive/:clubId").get(getInactiveClubById);
 router.route("/activate/:clubId").post(activateClub);
+router.route("/club/get/club-by-information").post(getClubByContactInfo);
+router.route("/club/get/otp-club/:clubId").post(otpForClubById);
+router.route("/club/verify-otp/:clubId").post(verifyOtp);
 
 /* Member routes */
-router.route("/:clubId/member").post(addClubMember);
+router.route("/club/:clubId/member").post(addClubMember);
+router.route("/club/:clubId/member/:memberId").delete(removeMember);
 
 /* Event routes */
-router.route("/:clubId/event").post(addClubEvent);
+router.route("/club/:clubId/event").post(addClubEvent);
+router.route("/club/:clubId/event/:eventId").delete(removeEvent);
 
 /* Partnership routes */
 router.route("/:clubId/hotel").post(addParikramaHotel);
 
 router.route("/club/follow-request/:clubId").post(followRequest);
-router
-  .route("/club/accept-request/:clubId")
-  .post(acceptFollowRequest);
-router
-  .route("/club/reject-request/:clubId")
-  .post(rejectFollowRequest);
+router.route("/club/accept-request/:clubId").post(acceptFollowRequest);
+router.route("/club/reject-request/:clubId").post(rejectFollowRequest);
 
 export default router;

@@ -137,7 +137,8 @@ const clubSchema = new mongoose.Schema(
     events: [
       {
         title: String,
-        date: Date,
+        validFrom: Date,
+        validUpto: Date,
         description: String,
       },
     ],
@@ -196,6 +197,11 @@ const clubSchema = new mongoose.Schema(
         ref: "Community",
       },
     ],
+
+    otp: {
+      type: String,
+      default: null,
+    },
 
     adminVerified: {
       type: Boolean,

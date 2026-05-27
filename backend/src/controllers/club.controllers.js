@@ -532,59 +532,74 @@ const activateClub = asyncHandler(async (req, res) => {
 
 const addClubMember = asyncHandler(async (req, res) => {
   const { clubId } = req.params;
-  const { name, email, phone, address, cityId, stateId } = req.body;
 
-  if (!clubId || !name) {
-    throw new ApiError(400, "Club ID and member name are required");
-  }
+  const { name, email, contactNumber, address, city, state } = req.body;
 
   const club = await Club.findById(clubId);
-  if (!club) {
-    throw new ApiError(404, "Club not found");
-  }
 
-  const member = {
+  if (!club) throw new ApiError(404, "Club not found");
+
+  club.members.push({
     name,
     email,
-    contactNumber: phone,
+    contactNumber,
     address,
-    city: cityId,
-    state: stateId,
-  };
+    city,
+    state,
+  });
 
-  club.members.push(member);
   await club.save();
 
-  res
-    .status(201)
-    .json(new ApiResponse(201, club.members, "Member added successfully"));
+  res.status(201).json(new ApiResponse(201, club.members, "Member added"));
+});
+
+const removeMember = asyncHandler(async (req, res) => {
+  const { clubId, memberId } = req.params;
+
+  const club = await Club.findById(clubId);
+
+  if (!club) throw new ApiError(404, "Club not found");
+
+  club.members = club.members.filter((m) => String(m._id) !== String(memberId));
+
+  await club.save();
+
+  res.status(200).json(new ApiResponse(200, {}, "Member removed"));
 });
 
 const addClubEvent = asyncHandler(async (req, res) => {
   const { clubId } = req.params;
-  const { title, date, description } = req.body;
 
-  if (!clubId || !title) {
-    throw new ApiError(400, "Club ID and event title are required");
-  }
+  const { title, validFrom, validUpto, description } = req.body;
 
   const club = await Club.findById(clubId);
-  if (!club) {
-    throw new ApiError(404, "Club not found");
-  }
 
-  const event = {
+  if (!club) throw new ApiError(404, "Club not found");
+
+  club.events.push({
     title,
-    date: date ? new Date(date) : new Date(),
+    validFrom,
+    validUpto,
     description,
-  };
+  });
 
-  club.events.push(event);
   await club.save();
 
-  res
-    .status(201)
-    .json(new ApiResponse(201, club.events, "Event added successfully"));
+  res.status(201).json(new ApiResponse(201, club.events, "Event added"));
+});
+
+const removeEvent = asyncHandler(async (req, res) => {
+  const { clubId, eventId } = req.params;
+
+  const club = await Club.findById(clubId);
+
+  if (!club) throw new ApiError(404, "Club not found");
+
+  club.events = club.events.filter((e) => String(e._id) !== String(eventId));
+
+  await club.save();
+
+  res.status(200).json(new ApiResponse(200, {}, "Event removed"));
 });
 
 const addParikramaHotel = asyncHandler(async (req, res) => {
@@ -729,6 +744,143 @@ const rejectFollowRequest = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, {}, "Request rejected"));
 });
 
+const getClubByContactInfo = asyncHandler(async (req, res) => {
+  const { email, contactNumber } = req.body;
+  if (!contactNumber || !email)
+    throw new ApiError(401, "All fields are required");
+
+  const club = await Club.find({
+    "contactDetails.phone": contactNumber,
+    "contactDetails.email": email,
+  }).select("clubName contactDetails.email contactDetails.phone images.logo");
+
+  if (club.length === 0) throw new ApiError(400, "No club found !");
+  if (club.length > 1) {
+    res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          club,
+          "The otp has been sent to your contact number",
+        ),
+      );
+  }
+
+  if (club.length === 1) {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    club.otp = otp;
+    await club.save();
+
+    res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          club,
+          "The otp has been sent to your contact number",
+        ),
+      );
+  }
+});
+
+const otpForClubById = asyncHandler(async (req, res) => {
+  const { clubId } = req.params;
+  const { clubName, clubEmail } = req.body;
+
+  const club = await Club.findById(clubId).select(
+    "clubName contactDetails.email contactDetails.phone images.logo",
+  );
+  if (!club) throw new ApiError(400, "Club not found");
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  club.otp = otp;
+  await club.save();
+
+  res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        { club, otp },
+        "The otp has been sent to your contact number",
+      ),
+    );
+});
+
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, contactNumber, otp } = req.body;
+  const { clubId } = req.params;
+  const club = await Club.findById(clubId).populate(
+    "location.state location.city",
+  );
+  if (!club) throw new ApiError(400, "Invalid request");
+
+  if (String(club.otp) !== String(otp)) {
+    throw new ApiError(401, "Invalid OTP Please register again.");
+  }
+
+  club.otp = undefined;
+  res
+    .status(201)
+    .json(new ApiResponse(201, club, "OTP verified successfully !"));
+});
+
+const uploadGalleryImages = asyncHandler(async (req, res) => {
+  const { clubId } = req.params;
+
+  const club = await Club.findById(clubId);
+
+  if (!club) throw new ApiError(404, "Club not found");
+
+  const uploadedImages = [];
+
+  for (const file of req.files) {
+    const uploaded = await UploadImages(
+      file.filename,
+      {
+        folderStructure: `/clubs/${club.clubName}/gallery`,
+      },
+      ["club-gallery"],
+    );
+
+    uploadedImages.push({
+      url: uploaded.url,
+      fileId: uploaded.fileId,
+    });
+  }
+
+  club.images.gallery.push(...uploadedImages);
+
+  await club.save();
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, club.images.gallery, "Gallery updated"));
+});
+
+const removeGalleryImage = asyncHandler(async (req, res) => {
+  const { clubId, imageId } = req.params;
+
+  const club = await Club.findById(clubId);
+
+  if (!club) throw new ApiError(404, "Club not found");
+
+  const image = club.images.gallery.id(imageId);
+
+  if (!image) throw new ApiError(404, "Image not found");
+
+  await DeleteImage(image.fileId);
+
+  club.images.gallery = club.images.gallery.filter(
+    (img) => String(img._id) !== String(imageId),
+  );
+
+  await club.save();
+
+  res.status(200).json(new ApiResponse(200, {}, "Image removed"));
+});
+
 export {
   createClubPublic,
   createClub,
@@ -742,9 +894,16 @@ export {
   getInactiveClubById,
   activateClub,
   addClubMember,
+  removeMember,
   addClubEvent,
+  removeEvent,
   addParikramaHotel,
   followRequest,
   acceptFollowRequest,
   rejectFollowRequest,
+  getClubByContactInfo,
+  otpForClubById,
+  verifyOtp,
+  uploadGalleryImages,
+  removeGalleryImage,
 };
