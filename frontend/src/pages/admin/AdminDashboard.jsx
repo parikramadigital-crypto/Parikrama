@@ -187,10 +187,10 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     }
 
     // Max size 2MB
-    const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+    const MAX_SIZE = 5 * 1024 * 1024; // 2MB
 
     if (files[0].size > MAX_SIZE) {
-      alert("Image size must be less than 2 MB");
+      alert("Image size must be less than 5 MB");
       e.target.value = "";
       return;
     }
