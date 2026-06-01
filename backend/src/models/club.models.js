@@ -137,9 +137,41 @@ const clubSchema = new mongoose.Schema(
     events: [
       {
         title: String,
+
         validFrom: Date,
+
         validUpto: Date,
+
         description: String,
+
+        joinedUsers: [
+          {
+            name: {
+              type: String,
+              trim: true,
+            },
+
+            email: {
+              type: String,
+              trim: true,
+              lowercase: true,
+            },
+
+            contactNumber: {
+              type: String,
+              trim: true,
+            },
+
+            address: {
+              type: String,
+            },
+
+            joinedAt: {
+              type: Date,
+              default: Date.now,
+            },
+          },
+        ],
       },
     ],
 

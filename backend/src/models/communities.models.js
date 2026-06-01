@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { stringify } from "querystring";
 
 const communitySchema = new mongoose.Schema(
   {
@@ -13,11 +14,12 @@ const communitySchema = new mongoose.Schema(
         unique: true,
         required: true,
       },
-      socialLinks: [{ platformName: { type: String }, url: { type: String } }],
+      socialLinks: [{ platformName: String, url: String }],
       contactNumber: { type: String, required: true, unique: true },
       pan: { type: String },
       aadhar: { type: String },
-      soloTraveler: { type: String, default: "No" }, // if the solo traveler is "no" then we shall ask for options if he says yes then dont ask
+      soloTraveler: { type: String, default: "No" },
+      travelerInfo: { type: String },
       password: { type: String, required: true, select: false }, // "select:false" is a condition which will not allow the controller to send password with the whole object
     },
     communityDetails: {
