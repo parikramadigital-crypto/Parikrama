@@ -561,9 +561,10 @@ const CommunityDashboard = ({
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-start bg-black/70 z-50 overflow-scroll"
           >
-            <div className="bg-white p-5 rounded-xl w-3/4">
+            <div className="bg-white p-5 rounded-xl w-full md:w-3/4">
               <h1 className="text-xl font-semibold ">Update profile</h1>
               <CommunityRegForm
+                communityId={user?._id}
                 updateProfile={true}
                 onCancel={() => {
                   setPopup2(false);
