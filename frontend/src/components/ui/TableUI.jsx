@@ -1648,7 +1648,7 @@ const SubAdmins = ({ Text = "", TableData = [], user }) => {
                   className={`hover:bg-gray-50 border-b ${data?.verified === false && data?.active === false ? "bg-gray-200" : ""}`}
                 >
                   <td className="px-5 py-3">
-                    <Link to={`/current/food-court/${data?._id}`}>
+                    <Link to={`/current/edit-sub-admin/${data?._id}`}>
                       {data?.name}
                     </Link>
                   </td>
