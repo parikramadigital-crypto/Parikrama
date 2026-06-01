@@ -25,6 +25,8 @@ import {
   removeEvent,
   uploadGalleryImages,
   removeGalleryImage,
+  guestEnquiryForEvents,
+  getAllUpcomingAndOngoingEvents,
 } from "../controllers/club.controllers.js";
 
 const router = Router();
@@ -80,6 +82,10 @@ router.route("/club/:clubId/member/:memberId").delete(removeMember);
 /* Event routes */
 router.route("/club/:clubId/event").post(addClubEvent);
 router.route("/club/:clubId/event/:eventId").delete(removeEvent);
+router
+  .route("/club-guest/:clubId/events/:eventId/join")
+  .post(guestEnquiryForEvents);
+router.route("/club/get-all/events").get(getAllUpcomingAndOngoingEvents);
 
 /* Partnership routes */
 router.route("/:clubId/hotel").post(addParikramaHotel);

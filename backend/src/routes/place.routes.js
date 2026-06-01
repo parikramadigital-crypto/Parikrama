@@ -13,6 +13,7 @@ import {
   explorePlaces,
   searchPlaces,
   getHeroPlaces,
+  getKidsPlace,
 } from "../controllers/place.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
@@ -27,6 +28,7 @@ router.route("/inactive/:placeId").get(getInactivePlaceById);
 router.route("/city/:cityId").get(getPlacesByCity);
 router.route("/related-places/:query").get(getPlacesByCity);
 router.route("/explore/places").get(explorePlaces);
+router.route("/kids/explore/places").get(getKidsPlace);
 router
   .route("/guest/register-new-place/user")
   .post(upload.array("images", 5), uploaderPlace);
