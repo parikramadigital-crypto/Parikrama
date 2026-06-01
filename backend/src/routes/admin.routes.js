@@ -9,6 +9,8 @@ import {
   regenerateAdminRefreshToken,
   dashboardData,
   createSubAdmin,
+  getSubAdminById,
+  updateSubAdmin,
 } from "../controllers/admin.controllers.js";
 import {
   deletePromotion,
@@ -29,6 +31,9 @@ router.route("/dashboard/data").get(dashboardData);
 router.route("/states").get(getAllStates);
 router.route("/cities").get(getAllCities);
 router.route("/places").get(getAllPlaces);
+
+router.route("/sub-admin/get-by/id/:subAdminId").get(getSubAdminById);
+router.route("/sub-admin/update/:subAdminId").post(updateSubAdmin);
 
 //routes for promotions
 router

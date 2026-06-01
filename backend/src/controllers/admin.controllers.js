@@ -224,6 +224,75 @@ const createSubAdmin = asyncHandler(async (req, res) => {
   //   );
 });
 
+const updateSubAdmin = asyncHandler(async (req, res) => {
+  const { subAdminId } = req.params;
+
+  const {
+    name,
+    employeeId,
+    email,
+    phoneNumber,
+    restrictedAccess,
+    sectionList,
+  } = req.body;
+
+  if (!name || !employeeId || !email || !phoneNumber) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const allowedSections = [
+    "Overview",
+    "Enquiries",
+    "Hotels",
+    "Clubs",
+    "Active Places",
+    "Inactive Places",
+    "Food Place",
+    "Users",
+    "Verified Facilitator",
+    "Non-Verified Facilitator",
+    "Cities",
+    "States",
+    "Countries",
+    "Packages",
+    "Promotions",
+  ];
+  const formattedSectionList = Array.isArray(sectionList)
+    ? sectionList
+    : sectionList
+      ? [sectionList]
+      : [];
+
+  const invalidSections = formattedSectionList.filter(
+    (section) => !allowedSections.includes(section),
+  );
+
+  if (invalidSections.length > 0) {
+    throw new ApiError(400, `Invalid sections: ${invalidSections.join(", ")}`);
+  }
+
+  const subAdmin = await Admin.findByIdAndUpdate(
+    subAdminId,
+    {
+      name: name,
+      employeeId: employeeId,
+      email: email.toLowerCase(),
+      phoneNumber: phoneNumber,
+      restrictedAccess: true,
+      sectionList: formattedSectionList,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  // await subAdmin.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, subAdmin, "Sub admin updated successfully"));
+});
+
 const loginAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -334,10 +403,23 @@ const dashboardData = asyncHandler(async (req, res) => {
   );
 });
 
+const getSubAdminById = asyncHandler(async (req, res) => {
+  const { subAdminId } = req.params;
+  const subAdmin = await Admin.findById(subAdminId);
+  if (!subAdmin) throw new ApiError(400, "Sub Admin not found");
+  console.log(subAdmin);
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, subAdmin, "Sub admin fetched successfully !"));
+});
+
 export {
   loginAdmin,
   regenerateAdminRefreshToken,
   createSubAdmin,
+  updateSubAdmin,
   registerAdmin,
   dashboardData,
+  getSubAdminById,
 };
