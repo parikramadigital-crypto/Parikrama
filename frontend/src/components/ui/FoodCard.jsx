@@ -7,6 +7,7 @@ import { MdVerified } from "react-icons/md";
 const FoodCard = ({ f }) => {
   return f?.map((data) => (
     <Link
+      key={data?._id}
       to={`/current/food-court/${data?._id}`}
       className="group block bg-white border border-gray-200 rounded-3xl shadow-sm hover:shadow-lg transition overflow-hidden md:w-[90%]"
     >

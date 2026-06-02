@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaHotel, FaUsersCog } from "react-icons/fa";
 import {
   FaBusSimple,
@@ -14,8 +14,25 @@ import { ImSpoonKnife } from "react-icons/im";
 import { Link, useNavigate } from "react-router-dom";
 import InputBox from "../InputBox";
 import { CiSearch } from "react-icons/ci";
+import RandomImageSlider from "./RandomImageSlider";
+import { FetchData } from "../../utils/FetchFromApi";
+import Button from "../Button";
+import { HiUserGroup } from "react-icons/hi";
 
 const FloatNavBar = () => {
+  const [leftBanner, setLeftBanner] = useState([]);
+  const left = leftBanner?.map((banner) => [banner?.images?.url]);
+  const banner = async () => {
+    try {
+      const response = await FetchData("promotions/get/all/promotions", "get");
+      setLeftBanner(response.data.data.promotionsMin);
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    banner();
+  }, []);
+
   const navigate = useNavigate();
   const buttons = [
     {
@@ -86,7 +103,7 @@ const FloatNavBar = () => {
     },
   ];
   return (
-    <div className="pb-2 bg-[#F2F3F4] md:bg-transparent mx-5 px-2 rounded-t-xl shadow-2xl md:shadow-none">
+    <div className="pb-2 bg-[#F2F3F4] md:bg-transparent mx-5 px-2 rounded-t-xl shadow-2xl md:shadow-none w-full">
       <div className="md:hidden flex justify-center items-center w-full relative">
         <InputBox
           onClick={() => navigate("/search-feed/places")}
@@ -95,41 +112,65 @@ const FloatNavBar = () => {
         />
         <CiSearch className="absolute right-3 text-gray-500" />
       </div>
-      <div className="flex flex-row justify-center items-centers flex-wrap gap-2">
+      <div className="flex flex-row justify-center lg:justify-between items-centers flex-wrap w-full">
         {buttons.map((b, index) => (
           <Link
             key={index}
             to={b.url}
-            className={`md:h-24 h-16 w-20 md:w-28 flex flex-col justify-center items-center rounded group hover:bg-neutral-100 bg-neutral-50 duration-300 ease-in-out hover:shadow-xl`}
+            className={`flex justify-center items-center group hover:bg-[#FFC20D]/50  duration-300 ease-in-out hover:shadow-xl w-24 p-10 h-12 flex-col gap-1 hover:rounded-xl`}
+            // className={`flex justify-center items-center group hover:bg-neutral-100  duration-300 ease-in-out hover:shadow-xl w-24 p-10 h-12 flex-col gap-1 hover:rounded-xl  ${
+            //   index === buttons.length - 1 ? "" : "borde"
+            // }`}
           >
             <span
-              className={`md:text-3xl ${b.color} duration-300 ease-in-out group-hover:shadow-2xl`}
+              className={`md:text-2xl text-xl ${b.color} duration-300 ease-in-out group-hover:shadow-2xl`}
             >
               {b.icon}
             </span>
-            <span className="text-xs md:text-base">{b.label}</span>
+
+            <span className="text-xs md:text-sm">{b.label}</span>
           </Link>
         ))}
       </div>
       <div className="relative rounded-xl overflow-hidden m-3 shadow-2xl md:hidden flex">
-        <img
+        {/* <img
           src={
             "https://ik.imagekit.io/parikrama/Epic%20Mountain%20Travel%20Adventure%20_%20Solo%20Hiking%20Views%20That%20Inspire%20Wanderlust.jpeg"
           }
-        />
-        <div className="absolute bg-black/10 h-full w-full top-0 left-0 flex flex-col justify-between items-end px-5 py-10 text-xs">
-          <p className="text-right font-semibold">
+        /> */}
+        <RandomImageSlider images={left} />
+        <div className="absolute bg-black/10 h-full w-full top-0 left-0 flex flex-col justify-between items-end text-xs">
+          <p className="text-right font-semibold text-neutral-300 bg-black/80 my-10 pr-10 py-1 px-3">
             Plan a perfect holiday with us. <br />
             Packages for every kind of traveler
           </p>
-          <button
+          <div className="m-7">
+            <Button
+              // normal={false}
+              label={"Explore travel Packages"}
+              onClick={() => navigate("/explore")}
+              className={"font-semibold"}
+            />
+          </div>
+          {/* <button
             onClick={() => navigate("/explore")}
             className="text-xs border-[#FFC20D] border-[0.5px] bg-white/50 rounded-xl px-3 py-1"
           >
             Explore Travel <br />
             Packages
-          </button>
+          </button> */}
         </div>
+      </div>
+      <div className="w-full justify-center items-center md:hidden flex py-2">
+        <Button
+          label={
+            <h1 className="flex justify-center items-center gap-2">
+              <HiUserGroup />
+              Register Yourself as Facilitator
+            </h1>
+          }
+          onClick={() => navigate("/login/facilitator")}
+        />
       </div>
     </div>
   );
