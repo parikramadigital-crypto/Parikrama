@@ -11,27 +11,6 @@ const PlaceSearch = ({ query, startLoading, stopLoading }) => {
   const debounceRef = useRef(null);
   const controllerRef = useRef(null);
 
-  // 🔥 MAIN SEARCH EFFECT
-  useEffect(() => {
-    // If empty → fetch trending
-    if (!query || !query.trim()) {
-      fetchTrending();
-      return;
-    }
-
-    // Debounce
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      handleSearch(query);
-    }, 400);
-
-    return () => clearTimeout(debounceRef.current);
-  }, [query]);
-
-  // 🔍 SEARCH API CALL
   const handleSearch = async (searchQuery) => {
     try {
       setLoading(true);
@@ -88,7 +67,25 @@ const PlaceSearch = ({ query, startLoading, stopLoading }) => {
     }
   };
 
-  // 🎯 UI
+  useEffect(() => {
+    // If empty → fetch trending
+    if (!query || !query.trim()) {
+      fetchTrending();
+      return;
+    }
+
+    // Debounce
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      handleSearch(query);
+    }, 400);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [query]);
+
   return (
     <div className="w-full md:w-[80vw] flex justify-center items-center">
       {loading ? (
