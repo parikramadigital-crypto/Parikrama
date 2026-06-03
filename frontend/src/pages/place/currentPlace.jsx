@@ -60,7 +60,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
   }, [user, placeId]);
 
   return (
-    <div className="w-full">
+    <div className="w-full py-0 md:py-5">
       {/* Top section */}
       <div className="w-full lg:px-20 px-2">
         <ExpandedPlaceCard
