@@ -201,7 +201,7 @@ const GuestPlace = ({ startLoading, stopLoading }) => {
               className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
               // onChange={handleChange}
             >
-              <option value="">Select options</option>
+              <option value="">No</option>
               {["Yes", "No"]?.map((c) => (
                 <option key={c} value={c}>
                   {c}
