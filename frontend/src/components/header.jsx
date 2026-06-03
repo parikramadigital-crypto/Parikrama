@@ -7,7 +7,7 @@ import { CiMenuFries, CiSearch } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { BiArrowFromLeft } from "react-icons/bi";
+import { BiArrowFromLeft, BiSupport } from "react-icons/bi";
 import { LiaHotelSolid } from "react-icons/lia";
 import {
   MdAdd,
@@ -23,8 +23,10 @@ import InputBox from "./InputBox";
 const Header = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  console.log(user);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
+  const [adminDetails, setAdminDetails] = useState(false);
   const location = useLocation();
   const isHome =
     location.pathname === "/search-feed/places" ||
@@ -37,8 +39,16 @@ const Header = () => {
     setPopup2(false);
   };
 
+  const adminUserDetails = [
+    { label: "Name", value: user?.name },
+    { label: "Email", value: user?.email },
+    { label: "Phone number", value: user?.phoneNumber },
+    { label: "Admin Id", value: user?.employeeId },
+    { label: "Role", value: user?.role },
+  ];
+
   return (
-    <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
+    <header className="w-full bg-white shadow-md fixed top-0 left-0 z-50 max-h-20">
       <div className="mx-auto px-4 py-3 md:py-1 flex items-center justify-around w-full gap-10 md:gap-40">
         {/* Logo Section */}
         <Link to={"/"} className="flex items-center">
@@ -46,10 +56,53 @@ const Header = () => {
           <img src={logo2} className="w-28 hidden md:block" />
         </Link>
         {localStorage.role === "Admin" ? (
-          <Button
-            label={"Go to dashboard"}
-            onClick={() => navigate("/admin/dashboard")}
-          />
+          <div className="flex gap-2 justify-center items-center">
+            <Button
+              label={"Go to dashboard"}
+              onClick={() => navigate("/admin/dashboard")}
+            />
+            <div>
+              <Button
+                normal={false}
+                label={
+                  <h1 className="flex justify-center items-center gap-2">
+                    <BiSupport />
+                    Your details
+                  </h1>
+                }
+                onClick={() => setAdminDetails(true)}
+              />
+            </div>
+            <AnimatePresence>
+              {adminDetails && (
+                <motion.div
+                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: -100 }}
+                  exit={{ opacity: 0, x: 100 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.4,
+                    ease: "easeInOut",
+                  }}
+                  className="fixed top-0 left-0 h-screen w-full flex justify-center items-center bg-black/70"
+                >
+                  <div className="flex w-fit shadow-2xl p-5 rounded-xl bg-neutral-100 justify-between ">
+                    <div className="md:space-y-2">
+                      {adminUserDetails.map((item, index) => (
+                        <h1 key={index}>
+                          <strong>{item.label} :</strong> {item.value ?? "NA"}
+                        </h1>
+                      ))}
+                      <Button
+                        label={"Ok"}
+                        onClick={() => setAdminDetails(false)}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         ) : (
           <div className="flex justify-end md:justify-end items-center gap-5 w-full">
             {isHome ? (

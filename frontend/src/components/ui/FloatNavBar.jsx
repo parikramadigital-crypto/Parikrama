@@ -103,7 +103,7 @@ const FloatNavBar = () => {
     },
   ];
   return (
-    <div className="pb-2 bg-[#F2F3F4] md:bg-transparent mx-5 px-2 rounded-t-xl shadow-2xl md:shadow-none w-full">
+    <div className="p-2 bg-[#F2F3F4] md:bg-transparent mx-5 px-2 rounded-t-xl shadow-2xl md:shadow-none w-full">
       <div className="md:hidden flex justify-center items-center w-full relative">
         <InputBox
           onClick={() => navigate("/search-feed/places")}

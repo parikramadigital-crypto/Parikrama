@@ -293,142 +293,19 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       : sections;
 
   return localStorage.role === "Admin" ? (
-    <div className="flex flex-col h-fit gap-5 justify-between items-start">
-      {/* <h2 className="text-2xl font-bold mb-2 px-20">Admin Dashboard</h2> */}
-      {/* ADMIN DETAILS  */}
-      <div className="w-full px-20">
-        <div className="rounded-xl overflow-hidden">
-          <button
-            className={"w-full bg-gray-300 px-10 py-2"}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <div className="flex justify-between items-center">
-              <h2 className="font-semibold uppercase">
-                Your Details and Quick Actions
-              </h2>
-
-              <motion.div
-                animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <FaChevronDown className="w-6 h-6" />
-              </motion.div>
-            </div>
-          </button>
-
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-              >
-                <div className="flex w-full shadow-2xl p-5 rounded-b-xl bg-neutral-200 justify-between ">
-                  <div className="md:space-y-2">
-                    {userDetails.map((item, index) => (
-                      <h1 key={index}>
-                        <strong>{item.label} :</strong> {item.value ?? "NA"}
-                      </h1>
-                    ))}
-                  </div>
-                  {/* BUTTONS  */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {/* <div className="flex justify-center items-start gap-5"> */}
-                    <Button
-                      label={
-                        <h1 className="flex justify-center items-center gap-2">
-                          <LuRefreshCw />
-                          Reload Dashboard
-                        </h1>
-                      }
-                      className={"w-full text-nowrap"}
-                      onClick={() => fetchDashboard()}
-                    />
-                    {/* <Button
-                      label={
-                        <h1 className="flex justify-center items-center gap-2">
-                          <FaUserPlus />
-                          Add Sub-Admin
-                        </h1>
-                      }
-                      className={"w-full text-nowrap"}
-                      onClick={() => setPopup2(true)}
-                    /> */}
-                    <Button
-                      label={
-                        <h1 className="flex justify-center items-center gap-2">
-                          <RiImageAddFill /> Add new banner
-                        </h1>
-                      }
-                      className={"w-full text-nowrap"}
-                      onClick={() => setPopup(true)}
-                    />
-                    {commands.map((item, index) => (
-                      <Button
-                        key={index}
-                        label={item.label}
-                        className={"w-full text-nowrap"}
-                        onClick={() => navigate(item.path)}
-                      />
-                    ))}
-                    <Button
-                      label={
-                        <h1 className="flex justify-center items-center gap-2">
-                          <MdOutlineRule />
-                          C.M.S.
-                        </h1>
-                      }
-                      className={"w-full"}
-                      onClick={() => setPopup3(true)}
-                    />
-                    <Button
-                      label={
-                        <h1 className="flex justify-center items-center gap-2">
-                          <IoMdLogOut />
-                          Log out
-                        </h1>
-                      }
-                      className={"w-full"}
-                      onClick={() => logout()}
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white p-4 shadow rounded">
-          <h3>Total Visits</h3>
-          <p className="text-2xl font-bold">{stats?.totalVisits}</p>
-        </div>
-
-        <div className="bg-white p-4 shadow rounded">
-          <h3>Today's Visitors</h3>
-          <p className="text-2xl font-bold">{stats?.todayVisits}</p>
-        </div>
-
-        <div className="bg-white p-4 shadow rounded">
-          <h3>Unique Users</h3>
-          <p className="text-2xl font-bold">{stats?.uniqueVisitors}</p>
-        </div>
-      </div> */}
-
+    <div className="flex flex-col h-[90vh] justify-start items-start bg-red-400">
       {/* Tables  */}
-      <div className="flex w-full bg-neutral-200 px-5 py-5 rounded-xl h-full gap-5">
-        <aside className="static bottom-0 left-0 w-60 flex justify-start items-start h-[70vh] overflow-scroll no-scrollbar">
+      <div className="flex w-full bg-neutral-100 px-2 h-full gap-5">
+        <aside className="static bottom-0 left-0 w-72 flex justify-start items-start overflow-scroll no-scrollbar bg-neutral-200 p-3 rounded-xl shadow border border-neutral-200">
           <nav>
-            <ul className="flex gap-5 items-start flex-col">
+            <ul className="flex items-start flex-col">
               {filteredSections.map((section, idx) => (
                 <li
                   key={idx}
-                  className={`cursor-pointer transition-all duration-300 rounded-xl w-full px-4 py-2 ${
+                  className={`cursor-pointer transition-all duration-300 w-full px-4 py-2 rounded-xl ${
                     activeSection === section.label
                       ? "bg-[#FFC20E]"
-                      : "bg-white text-black"
+                      : "hover:bg-white text-black"
                   }`}
                   onClick={() => {
                     localStorage.setItem("activeSection", section.label);
@@ -455,137 +332,195 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             </ul>
           </nav>
         </aside>
-        <main className="w-full px-5 overflow-scroll bg-neutral-100 rounded-md pb-5">
-          {activeSection === "Overview" && (
-            <div className="flex justify-start items-start gap-5 pb-5 pt-5 overflow-y-scroll w-fit">
-              <div className="flex flex-col gap-4">
-                <div className="bg-white p-4 shadow rounded">
-                  <h3>Total Visits</h3>
-                  <p className="text-2xl font-bold">{stats?.totalVisits}</p>
-                </div>
+        <main className="w-full">
+          <div className="w-full px-5 overflow-scroll bg-neutral-100 rounded-md h-[90%]">
+            {activeSection === "Overview" && (
+              <div className="flex gap-5">
+                <div className="flex flex-col gap-4 w-fit">
+                  <div className="bg-white p-4 shadow rounded">
+                    <h3>Total Visits</h3>
+                    <p className="text-2xl font-bold">{stats?.totalVisits}</p>
+                  </div>
 
-                <div className="bg-white p-4 shadow rounded">
-                  <h3>Today's Visitors</h3>
-                  <p className="text-2xl font-bold">{stats?.todayVisits}</p>
-                </div>
+                  <div className="bg-white p-4 shadow rounded">
+                    <h3>Today's Visitors</h3>
+                    <p className="text-2xl font-bold">{stats?.todayVisits}</p>
+                  </div>
 
-                <div className="bg-white p-4 shadow rounded">
-                  <h3>Unique Users</h3>
-                  <p className="text-2xl font-bold">{stats?.uniqueVisitors}</p>
+                  <div className="bg-white p-4 shadow rounded">
+                    <h3>Unique Users</h3>
+                    <p className="text-2xl font-bold">
+                      {stats?.uniqueVisitors}
+                    </p>
+                  </div>
                 </div>
+                {/* <CitiesByStateBarChart cities={cityData} /> */}
+                {/* <StatesDonutChart states={stateData} /> */}
+                <CategoryPieChart places={placeData} />
               </div>
-              <CategoryPieChart places={placeData} />
-              <StatesDonutChart states={stateData} />
-              <CitiesByStateBarChart cities={cityData} />
-            </div>
-          )}
-          {activeSection === "Promotions" && (
-            <Promotions
-              TableData={promotionData}
-              Text="Promotions"
-              user={user?._id}
+            )}
+            {activeSection === "Promotions" && (
+              <Promotions
+                TableData={promotionData}
+                Text="Promotions"
+                user={user?._id}
+              />
+            )}
+            {activeSection === "Packages" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"List new package"}
+                  onClick={() => setPopup4(true)}
+                />
+                <TravelPackages
+                  TableData={packageData}
+                  Text="Travel Packages"
+                  user={user?._id}
+                />
+              </div>
+            )}
+            {activeSection === "Hotels" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"List new hotel"}
+                  onClick={() => setPopup6(true)}
+                />
+                <Hotels TableData={hotelData} Text="Listed Hotels" />
+              </div>
+            )}
+            {activeSection === "Clubs" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"List new club"}
+                  onClick={() => setPopup7(true)}
+                />
+                <Clubs TableData={clubData} Text="Listed Clubs" />
+              </div>
+            )}
+            {activeSection === "Active Places" && (
+              <Place TableData={placeData} Text="Listed Places" />
+            )}
+            {activeSection === "Cities" && (
+              <City TableData={cityData} Text="Listed Cities" />
+            )}
+            {activeSection === "States" && (
+              <State TableData={stateData} Text="Listed States" />
+            )}
+            {activeSection === "Countries" && (
+              <div className="">
+                <Button label={"Add country"} onClick={() => setPopup8(true)} />
+                <Country TableData={countryData} Text="Listed Countries" />
+              </div>
+            )}
+            {activeSection === "Inactive Places" && (
+              <InactivePlace
+                TableData={inactivePlaceData}
+                Text="Places under review"
+                user={user?._id}
+              />
+            )}
+            {activeSection === "Verified Facilitator" && (
+              <Facilitator TableData={facilitator} Text="Active Facilitator" />
+            )}
+            {activeSection === "Non-Verified Facilitator" && (
+              <InactiveFacilitator
+                TableData={inactiveFacilitator}
+                Text="Facilitator under review"
+                user={user?._id}
+              />
+            )}
+            {activeSection === "Food Place" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"List new Food Place"}
+                  onClick={() => setPopup5(true)}
+                />
+                <FoodKiosks
+                  TableData={foodKioskData}
+                  Text="Food kiosks"
+                  user={user?._id}
+                />
+              </div>
+            )}
+            {activeSection === "Users" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Users TableData={userData} Text="User details" />
+              </div>
+            )}
+            {activeSection === "Enquiries" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Enquiry
+                  TableData={enquiryData}
+                  Text="Enquiries"
+                  user={user?._id}
+                />
+              </div>
+            )}
+            {activeSection === "Sub Admins" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"Add new sub admin"}
+                  onClick={() => setPopup9(true)}
+                />
+                <SubAdmins
+                  TableData={subAdminData}
+                  Text="Sub admins"
+                  user={user?._id}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* buttons  */}
+          <div className="flex h-14 justify-center items-center gap-2">
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <LuRefreshCw />
+                  Reload Dashboard
+                </h1>
+              }
+              className={"w-full text-nowrap"}
+              onClick={() => fetchDashboard()}
             />
-          )}
-          {activeSection === "Packages" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Button
-                label={"List new package"}
-                onClick={() => setPopup4(true)}
-              />
-              <TravelPackages
-                TableData={packageData}
-                Text="Travel Packages"
-                user={user?._id}
-              />
-            </div>
-          )}
-          {activeSection === "Hotels" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Button
-                label={"List new hotel"}
-                onClick={() => setPopup6(true)}
-              />
-              <Hotels TableData={hotelData} Text="Listed Hotels" />
-            </div>
-          )}
-          {activeSection === "Clubs" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Button label={"List new club"} onClick={() => setPopup7(true)} />
-              <Clubs TableData={clubData} Text="Listed Clubs" />
-            </div>
-          )}
-          {activeSection === "Active Places" && (
-            <Place TableData={placeData} Text="Listed Places" />
-          )}
-          {activeSection === "Cities" && (
-            <City TableData={cityData} Text="Listed Cities" />
-          )}
-          {activeSection === "States" && (
-            <State TableData={stateData} Text="Listed States" />
-          )}
-          {activeSection === "Countries" && (
-            <div className="">
-              <Button label={"Add country"} onClick={() => setPopup8(true)} />
-              <Country TableData={countryData} Text="Listed Countries" />
-            </div>
-          )}
-          {activeSection === "Inactive Places" && (
-            <InactivePlace
-              TableData={inactivePlaceData}
-              Text="Places under review"
-              user={user?._id}
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <RiImageAddFill /> Add new banner
+                </h1>
+              }
+              className={"w-full text-nowrap"}
+              onClick={() => setPopup(true)}
             />
-          )}
-          {activeSection === "Verified Facilitator" && (
-            <Facilitator TableData={facilitator} Text="Active Facilitator" />
-          )}
-          {activeSection === "Non-Verified Facilitator" && (
-            <InactiveFacilitator
-              TableData={inactiveFacilitator}
-              Text="Facilitator under review"
-              user={user?._id}
+            {commands.map((item, index) => (
+              <Button
+                key={index}
+                label={item.label}
+                className={"w-full text-nowrap"}
+                onClick={() => navigate(item.path)}
+              />
+            ))}
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <MdOutlineRule />
+                  C.M.S.
+                </h1>
+              }
+              className={"w-full"}
+              onClick={() => setPopup3(true)}
             />
-          )}
-          {activeSection === "Food Place" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Button
-                label={"List new Food Place"}
-                onClick={() => setPopup5(true)}
-              />
-              <FoodKiosks
-                TableData={foodKioskData}
-                Text="Food kiosks"
-                user={user?._id}
-              />
-            </div>
-          )}
-          {activeSection === "Users" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Users TableData={userData} Text="User details" />
-            </div>
-          )}
-          {activeSection === "Enquiries" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Enquiry
-                TableData={enquiryData}
-                Text="Enquiries"
-                user={user?._id}
-              />
-            </div>
-          )}
-          {activeSection === "Sub Admins" && (
-            <div className="w-full h-full flex flex-col justify-start items-start">
-              <Button
-                label={"Add new sub admin"}
-                onClick={() => setPopup9(true)}
-              />
-              <SubAdmins
-                TableData={subAdminData}
-                Text="Sub admins"
-                user={user?._id}
-              />
-            </div>
-          )}
+            <Button
+              label={
+                <h1 className="flex justify-center items-center gap-2">
+                  <IoMdLogOut />
+                  Log out
+                </h1>
+              }
+              className={"w-full"}
+              onClick={() => logout()}
+            />
+          </div>
         </main>
       </div>
 
