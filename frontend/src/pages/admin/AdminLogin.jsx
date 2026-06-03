@@ -37,7 +37,7 @@ const AdminLogin = ({ startLoading, stopLoading }) => {
       }
     } catch (err) {
       console.log(err);
-      // setError(parseErrorMessage(err?.response?.data));
+      alert(parseErrorMessage(err?.response?.data));
     } finally {
       stopLoading();
     }
