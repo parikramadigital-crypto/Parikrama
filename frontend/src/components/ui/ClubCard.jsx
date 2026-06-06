@@ -7,6 +7,8 @@ const ClubCard = ({ club }) => {
   const imageUrl =
     club?.images?.coverImage?.url || club?.images?.gallery?.[0]?.url || "";
 
+  console.log(club);
+
   return (
     <Link
       to={`/clubs/${club?._id}`}
@@ -40,11 +42,15 @@ const ClubCard = ({ club }) => {
               {club?.clubName}
             </h3>
           </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-1 rounded-full bg-[#FFC20E]/20 px-3 py-1 text-sm font-medium text-[#6B4A00]">
-              <BiSolidStar /> {club?.ratings?.average || 0}
+          {club?.ratings?.count === 0 ? (
+            ""
+          ) : (
+            <div className="text-right">
+              <div className="inline-flex items-center gap-1 rounded-full bg-[#FFC20E]/20 px-3 py-1 text-sm font-medium text-[#6B4A00]">
+                <BiSolidStar /> {club?.ratings?.average || 0}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
