@@ -7,11 +7,13 @@ import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { foodKiosksFormInputs } from "../../constants/Constants";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaCircleCheck } from "react-icons/fa6";
 
 const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
   const formRef = useRef();
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [popup, setPopup] = useState(false);
   const [cities, setCities] = useState([]);
   const [places, setPlaces] = useState([]);
@@ -21,6 +23,108 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
   const [storeImagePreview, setStoreImagePreview] = useState([]);
   const [menuImagePreview, setMenuImagePreview] = useState([]);
   const [foodImagePreview, setFoodImagePreview] = useState([]);
+  const [location, setLocation] = useState(null);
+
+  const GetLocation = () => {
+    // const [location, setLocation] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchLocation = async () => {
+      setLoading(true);
+
+      if (!navigator.geolocation) {
+        alert("Your browser does not support location services.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Check current permission status
+        const permission = await navigator.permissions.query({
+          name: "geolocation",
+        });
+
+        if (permission.state === "denied") {
+          alert(
+            "Location permission is blocked. Please enable location access from your browser settings and try again.",
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (permission.state === "prompt") {
+          alert(
+            "Parikrama needs access to your location to continue. Please click 'Allow' when the browser asks for permission.",
+          );
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+
+            setSuccess("Location fetched successfully.");
+            setLoading(false);
+          },
+          (error) => {
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                alert(
+                  "Location access was denied. Please allow location permission and try again.",
+                );
+                break;
+
+              case error.POSITION_UNAVAILABLE:
+                alert(
+                  "Unable to determine your location. Please ensure GPS/Location is enabled.",
+                );
+                break;
+
+              case error.TIMEOUT:
+                alert("Location request timed out. Please try again.");
+                break;
+
+              default:
+                alert("Error fetching location. Please try again later.");
+            }
+
+            setLoading(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0,
+          },
+        );
+      } catch (err) {
+        console.error(err);
+        alert("Unable to access location permissions.");
+        setLoading(false);
+      }
+    };
+
+    return (
+      <div>
+        <Button
+          Disabled={loading}
+          onClick={fetchLocation}
+          label={loading ? "Fetching Location..." : "Attach Location"}
+        />
+        {/* <button onClick={fetchLocation}>
+          {loading ? "Fetching Location..." : "Get Current Location"}
+        </button> */}
+
+        {/* {location && (
+          <div>
+            <p>Latitude: {location.latitude}</p>
+            <p>Longitude: {location.longitude}</p>
+          </div>
+        )} */}
+      </div>
+    );
+  };
 
   //   fetch city
   useEffect(() => {
@@ -118,6 +222,10 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
       setStoreImagePreview([]);
       setMenuImagePreview([]);
       setFoodImagePreview([]);
+      setLocation({
+        latitude: "",
+        longitude: "",
+      });
       alert(response.data.message);
     } catch (err) {
       alert(parseErrorMessage(err.response.data));
@@ -146,6 +254,9 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
         className="bg-white md:p-8 p-2 rounded-xl w-full flex justify-start items-center flex-col"
       >
         <h1 className="font-semibold text-xl">Add new food place</h1>
+        {/* <p>Hello {location}</p> */}
+
+        {/* <p>Hello 2 {userLocation}</p> */}
         <p className="font-semibold">Note: * marked fields are necessary.</p>
         <div className="grid md:grid-cols-2 md:gap-4 w-full md:w-[70vw]">
           {foodKiosksFormInputs.map((i) => (
@@ -157,6 +268,16 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
               Type={i.type}
             />
           ))}
+          <div className="flex justify-between items-center">
+            <GetLocation />
+            {success && (
+              <p className="text-green-700 flex justify-center items-center gap-2">
+                <FaCircleCheck />
+                {success}
+              </p>
+            )}
+          </div>
+
           <div className="py-8">
             <label className="block text-sm font-medium mb-1">City*</label>
             <select
@@ -295,6 +416,26 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           )}
           <Button label={"Submit"} type={"submit"} />
         </div>
+        <InputBox
+          className="hidden"
+          LabelClassname="hidden"
+          LabelName="Longitude"
+          Placeholder="Longitude of the place"
+          Name="lng"
+          Type="text"
+          Required={false}
+          Value={location?.longitude}
+        />
+        <InputBox
+          className="hidden"
+          LabelClassname="hidden"
+          LabelName="Latitude"
+          Placeholder="Latitude of the place"
+          Name="lat"
+          Type="text"
+          Required={false}
+          Value={location?.latitude}
+        />
       </form>
 
       <AnimatePresence>
