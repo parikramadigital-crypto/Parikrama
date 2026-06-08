@@ -164,8 +164,8 @@ const createFoodCourt = asyncHandler(async (req, res) => {
     !category ||
     !place ||
     !city ||
-    !state ||
-    !establishment
+    !state
+    // !establishment
   )
     throw new ApiError(400, "Data are missing for registering new Food Court");
 
