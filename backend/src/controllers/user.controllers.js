@@ -8,6 +8,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessAndRefreshTokens } from "../utils/TokenGenerator.js";
 import Jwt from "jsonwebtoken";
+import { sendLoginOtpSMS, sendOtpSMS, sendWelcomeSMS } from "../workers/sms.workers.js";
 
 const createUser = asyncHandler(async (req, res) => {
   const { contactNumber } = req.body;
@@ -25,6 +26,7 @@ const createUser = asyncHandler(async (req, res) => {
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   newUser.otp = otp;
+  await sendOtpSMS(contactNumber, otp);
   await newUser.save();
 
   res.status(201).json(
@@ -41,12 +43,14 @@ const createUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const contactNumber = req.body;
+  const { phone } = contactNumber;
 
   const user = await UserSchema.findOne(contactNumber);
   if (!user) throw new ApiError(404, "User not found");
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   user.otp = otp;
+  await sendLoginOtpSMS(phone, otp);
   await user.save();
 
   res.status(201).json(
@@ -84,6 +88,7 @@ const verifyUserOtp = asyncHandler(async (req, res) => {
   }
 
   user.otp = undefined;
+  await sendWelcomeSMS(contactNumber);
 
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
