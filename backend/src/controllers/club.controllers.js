@@ -9,6 +9,10 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { UploadImages, DeleteBulkImage } from "../utils/imageKit.io.js";
+import {
+  sendClubRegistrationSMS,
+  sendLoginOtpSMS,
+} from "../workers/sms.workers.js";
 
 const parseArrayField = (value) => {
   if (Array.isArray(value)) return value;
@@ -140,6 +144,8 @@ const createClubPublic = asyncHandler(async (req, res) => {
     });
   }
 
+  await sendClubRegistrationSMS(phone);
+
   const club = await Club.create({
     clubName: clubName.trim(),
     slug: generateSlug(clubName),
@@ -233,6 +239,8 @@ const createClub = asyncHandler(async (req, res) => {
       fileId: uploaded.fileId,
     });
   }
+
+  await sendClubRegistrationSMS(phone);
 
   const club = await Club.create({
     clubName: clubName.trim(),
@@ -770,6 +778,7 @@ const getClubByContactInfo = asyncHandler(async (req, res) => {
   if (club.length === 1) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     club.otp = otp;
+    await sendLoginOtpSMS(contactNumber, otp);
     await club.save();
 
     res

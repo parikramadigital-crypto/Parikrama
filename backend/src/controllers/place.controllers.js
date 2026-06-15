@@ -18,6 +18,10 @@ import {
   sendResponse,
 } from "../utils/searchFeedHelpers.js";
 import { FoodCourt } from "../models/foodCourt.models.js";
+import {
+  sendPlaceApprovalSMS,
+  sendPlaceSubmissionSMS,
+} from "../workers/sms.workers.js";
 
 const createPlace = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
@@ -378,7 +382,14 @@ const makePlaceActive = asyncHandler(async (req, res) => {
   const place = await Place.findByIdAndUpdate(placeId, { isActive: true });
   if (!place) throw new ApiError(400, "Place not found");
 
-  res.status(200).json(new ApiResponse(200, place, "Place Accepted !"));
+  if (place.uploaderContact) {
+    await sendPlaceApprovalSMS(place.uploaderContact);
+  }
+  place.uploaderName = "";
+  place.uploaderContact = "";
+  await place.save();
+
+  return res.status(200).json(new ApiResponse(200, place, "Place Accepted !"));
 });
 
 const uploaderPlace = asyncHandler(async (req, res) => {
@@ -478,6 +489,8 @@ const uploaderPlace = asyncHandler(async (req, res) => {
       isActive: false,
     });
 
+    await sendPlaceSubmissionSMS(uploaderContact);
+
     res
       .status(201)
       .json(new ApiResponse(201, place, "Place created successfully"));
@@ -555,6 +568,8 @@ const uploaderPlace = asyncHandler(async (req, res) => {
     },
     isActive: false,
   });
+
+  await sendPlaceSubmissionSMS(uploaderContact);
 
   res
     .status(201)

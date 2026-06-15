@@ -8,35 +8,19 @@ import { generateAccessAndRefreshTokens } from "../utils/TokenGenerator.js";
 import { Admin } from "../models/admin.models.js";
 import SendMail from "../utils/NodeMailer.js";
 import { emailQueue } from "../queues/email.queue.js";
+import {
+  sendFacilitatorApprovalSMS,
+  sendFacilitatorRegistrationSMS,
+  sendOtpSMS,
+} from "../workers/sms.workers.js";
 
 const registerFacilitator = asyncHandler(async (req, res) => {
-  console.log("console from req", req.body);
-  const {
-    name,
-    phone,
-    password,
-    role,
-    email,
-    // place,
-    // city,
-    // state,
-    // experienceYears,
-    // bio,
-    // languages,
-    // documentNumber,
-  } = req.body;
-
-  console.log("console", name, phone, password, role);
-  // if (!name || !phone || !password || !role || !place || !city || !state) {
-  //   throw new ApiError(400, "Required fields missing");
-  // }
-  if (!name || !phone || !password || !email) {
+  const { name, phone, password, role, email } = req.body;
+  if (!name || !phone || !password) {
     throw new ApiError(400, "Required fields missing");
   }
 
-  const existing = await Facilitator.findOne({
-    $or: [{ phone }, ...(email ? [{ email }] : [])],
-  });
+  const existing = await Facilitator.findOne({ phone: phone });
 
   if (existing) {
     throw new ApiError(409, "Facilitator already exists");
@@ -50,46 +34,6 @@ const registerFacilitator = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid password");
   }
 
-  // const sanitize = (str = "") =>
-  //   str
-  //     .toString()
-  //     .toLowerCase()
-  //     .trim()
-  //     .replace(/[^a-z0-9-_]/g, "")
-  //     .replace(/\s+/g, "-");
-
-  // const safeName = sanitize(name);
-  // const safePhone = sanitize(phone);
-
-  // /* ---------------- PROFILE IMAGE ---------------- */
-  // let profileImages = [];
-  // if (req.files?.profileImage?.length) {
-  //   const img = req.files.profileImage[0];
-  //   const uploaded = await UploadImages(img.filename, {
-  //     folderStructure: `facilitators/${safeName}-${safePhone}/profile`,
-  //   });
-
-  //   profileImages.push({
-  //     url: uploaded.url,
-  //     fileId: uploaded.fileId,
-  //   });
-  // }
-
-  // /* ---------------- DOCUMENT IMAGES ---------------- */
-  // let documents = [];
-  // if (req.files?.documentImage?.length) {
-  //   for (const doc of req.files.documentImage) {
-  //     const uploaded = await UploadImages(doc.filename, {
-  //       folderStructure: `facilitators/${safeName}-${safePhone}/documents`,
-  //     });
-
-  //     documents.push({
-  //       url: uploaded.url,
-  //       fileId: uploaded.fileId,
-  //     });
-  //   }
-  // }
-
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   const facilitator = await Facilitator.create({
     name,
@@ -97,44 +41,10 @@ const registerFacilitator = asyncHandler(async (req, res) => {
     phone,
     password,
     role,
-    // place,
-    // city,
-    // state,
-    // experienceYears: Number(experienceYears) || 0,
-    // languages: languages ? languages.split(",").map((l) => l.trim()) : [],
-    // images: profileImages,
-    // bio,
-    // languages,
-    // verification: {
-    //   documentNumber,
-    //   documents: documents,
-    // },
     otp,
   });
-
-  await emailQueue.add("sendMailJob", {
-    type: "WELCOME_EMAIL",
-    data: {
-      receivers: email,
-      subject: "Welcome to Parikrama 🎉",
-      html_templateName: "welcome.html",
-      replacements: {
-        name: "Parikrama Team",
-      },
-    },
-  });
-
-  await emailQueue.add("sendMailJob", {
-    type: "OTP_EMAIL",
-    data: {
-      receivers: email,
-      subject: "Your OTP Code",
-      html_templateName: "otp.html",
-      replacements: {
-        otp: otp,
-      },
-    },
-  });
+  await sendOtpSMS(phone, otp);
+  await sendFacilitatorRegistrationSMS(phone);
 
   res.status(201).json(
     new ApiResponse(
@@ -601,7 +511,9 @@ const activateFacilitator = asyncHandler(async (req, res) => {
   const facilitator = await Facilitator.findByIdAndUpdate(facilitatorId, {
     isVerified: true,
   });
+  const contactNumber = facilitator.phone;
   if (!facilitator) throw new ApiError(400, "Not a valid facilitator");
+  await sendFacilitatorApprovalSMS(contactNumber);
 
   res
     .status(201)
