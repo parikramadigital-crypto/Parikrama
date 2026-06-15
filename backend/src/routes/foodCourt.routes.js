@@ -56,6 +56,9 @@ router
   .route("/verify/food-court/by-id/:foodCourtId/:adminId")
   .post(verifyByAdmin);
 router
+  .route("/cancel-verification/food-court/by-id/:foodCourtId/:adminId")
+  .post(verifyByAdmin);
+router
   .route("/deactivate/food-court/by-id/:foodCourtId/:adminId")
   .post(markAsInactiveAndNonVerified);
 router

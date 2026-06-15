@@ -4,6 +4,7 @@ import {
   createEnquiry,
   deleteEnquiry,
   getEnquiriesById,
+  markAsHot,
   markEnquiryAsReviewed,
 } from "../controllers/enquiry.controllers.js";
 
@@ -18,6 +19,9 @@ router
 router
   .route("/mark-as-reviewed/:adminId/:enquiryId")
   .post(markEnquiryAsReviewed);
+router
+  .route("/mark-as-hot/:adminId/:enquiryId")
+  .post(markAsHot);
 router.route("/delete/enquiry/:adminId/:enquiryId").post(deleteEnquiry);
 
 export default router;
