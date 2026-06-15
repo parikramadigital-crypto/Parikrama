@@ -33,7 +33,7 @@ const ContactUs = () => {
         <div className="flex flex-col justify-center items-center">
           <h1>
             <strong>Address: </strong>C-25, 2nd Floor, C Block, Sector 58,
-            Noida, Uttar Pradesh 201309
+            Noida, Uttar Pradesh 201301
           </h1>
           <h1>
             <strong>Contact: </strong> +91 95993 50524

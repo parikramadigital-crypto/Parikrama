@@ -8,6 +8,7 @@ import { formatDateTimeString } from "../../utils/mongoDB_DateTime";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef } from "react";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
+import { IoMdCheckmark } from "react-icons/io";
 
 const Place = ({ Text = "", TableData = [] }) => {
   const [search, setSearch] = useState("");
@@ -103,7 +104,12 @@ const Place = ({ Text = "", TableData = [] }) => {
   );
 };
 
-const InactivePlace = ({ Text = "", TableData = [], user }) => {
+const InactivePlace = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -139,7 +145,7 @@ const InactivePlace = ({ Text = "", TableData = [], user }) => {
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {}
   };
 
@@ -475,7 +481,12 @@ const Facilitator = ({ Text = "", TableData = [] }) => {
   );
 };
 
-const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
+const InactiveFacilitator = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -507,14 +518,15 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deleteFacilitator = async ({ facilitatorId }) => {
-    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+    if (!window.confirm("Are you sure you want to delete this facilitator?"))
+      return;
     try {
       const response = await FetchData(
         `facilitator/delete-facilitator/${user}/${facilitatorId}`,
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {}
   };
 
@@ -592,7 +604,7 @@ const InactiveFacilitator = ({ Text = "", TableData = [], user }) => {
   );
 };
 
-const Promotions = ({ Text = "", TableData = [], user }) => {
+const Promotions = ({ Text = "", TableData = [], user, reloadDashboard }) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -620,14 +632,15 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePromotion = async ({ promotionId }) => {
-    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+    if (!window.confirm("Are you sure you want to delete this promotion?"))
+      return;
     try {
       const response = await FetchData(
         `promotions/delete-promotion/${user}/${promotionId}`,
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {}
   };
 
@@ -706,7 +719,12 @@ const Promotions = ({ Text = "", TableData = [], user }) => {
   );
 };
 
-const TravelPackages = ({ Text = "", TableData = [], user }) => {
+const TravelPackages = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = ["Package name", "Place name", "Priority", "Action"];
@@ -728,14 +746,16 @@ const TravelPackages = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePackage = async ({ packageId }) => {
-    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+    if (!window.confirm("Are you sure you want to delete this package?"))
+      return;
+    console.log("Funtion did stop");
     try {
       const response = await FetchData(
         `promotions/delete-promotion/${user}/${packageId}`,
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {}
   };
 
@@ -804,7 +824,7 @@ const TravelPackages = ({ Text = "", TableData = [], user }) => {
   );
 };
 
-const FoodKiosks = ({ Text = "", TableData = [], user }) => {
+const FoodKiosks = ({ Text = "", TableData = [], user, reloadDashboard }) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -832,15 +852,19 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
   }, [search, TableData]);
 
   const deletePlaceKiosk = async ({ placeKioskId }) => {
-    if (!window.confirm("Are you sure you want to delete this hotel?")) return;
+    if (!window.confirm("Are you sure you want to delete the listing ?"))
+      return;
     try {
       const response = await FetchData(
-        `foodCourt/delete/food-court/by-id/${user}/${placeKioskId}`,
+        `foodCourt/delete/food-court/by-id/${placeKioskId}/${user}`,
         "delete",
       );
+      console.log(response);
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
-    } catch (err) {}
+      reloadDashboard();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -881,7 +905,10 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
                   className={`hover:bg-gray-50 border-b ${data?.verified === false && data?.active === false ? "bg-gray-200" : ""}`}
                 >
                   <td className="px-5 py-3">
-                    <Link to={`/current/food-court/${data?._id}`}>
+                    <Link
+                      to={`/current/food-court/${data?._id}`}
+                      className="hover:text-blue-500 hover:underline"
+                    >
                       {data?.name}
                     </Link>
                   </td>
@@ -897,10 +924,16 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
                           deletePlaceKiosk({ placeKioskId: data._id })
                         }
                       />
+                    ) : data?.verified === true && data?.active === true ? (
+                      <p className="bg-green-300 font-semibold text-green-700 p-1 truncate w-fit">
+                        Active & Verified
+                      </p>
+                    ) : data?.active === true ? (
+                      <p className="bg-green-300 font-semibold text-green-700 p-1 w-fit">
+                        Active
+                      </p>
                     ) : (
-                      <span className="bg-green-300 text-green-800 font-semibold p-2 rounded-md">
-                        Verified
-                      </span>
+                      ""
                     )}
                   </td>
                 </tr>
@@ -919,7 +952,7 @@ const FoodKiosks = ({ Text = "", TableData = [], user }) => {
   );
 };
 
-const Hotels = ({ Text = "", TableData = [] }) => {
+const Hotels = ({ Text = "", TableData = [], reloadDashboard }) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -957,7 +990,7 @@ const Hotels = ({ Text = "", TableData = [] }) => {
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {
       alert("Failed to delete hotel");
     }
@@ -1040,7 +1073,7 @@ const Hotels = ({ Text = "", TableData = [] }) => {
   );
 };
 
-const Clubs = ({ Text = "", TableData = [] }) => {
+const Clubs = ({ Text = "", TableData = [], reloadDashboard }) => {
   const [search, setSearch] = useState("");
 
   const TableHeaders = [
@@ -1078,7 +1111,7 @@ const Clubs = ({ Text = "", TableData = [] }) => {
         "delete",
       );
       alert(response.data.message);
-      alert("Kindly reload the dashboard");
+      reloadDashboard();
     } catch (err) {
       alert("Failed to delete club");
     }
@@ -1240,11 +1273,19 @@ const Users = ({ Text = "", TableData = [] }) => {
   );
 };
 
-const Enquiry = ({ Text = "", TableData = [], user }) => {
+const Enquiry = ({
+  Text = "",
+  TableData = [],
+  TableData2 = [],
+  TableData3 = [],
+  user,
+  reloadDashboard,
+}) => {
   const [search, setSearch] = useState("");
   const [request, setRequest] = useState();
   const [popup, setPopup] = useState(false);
   const formRef = useRef();
+  const [activeTable, setActiveTable] = useState("Pending Enquiry");
 
   const TableHeaders = [
     "Action",
@@ -1254,15 +1295,24 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
     "Enquired on (DDMMYY)",
   ];
 
+  const displayData =
+    activeTable === "Pending Enquiry"
+      ? TableData
+      : activeTable === "Reviewed Enquiry"
+        ? TableData2
+        : activeTable === "Hot Enquiry"
+          ? TableData3
+          : "";
+
   const filteredData = useMemo(() => {
-    if (!search.trim()) return TableData;
+    if (!search.trim()) return displayData;
 
     const q = search.toLowerCase();
 
-    return TableData.filter((s) =>
+    return displayData.filter((s) =>
       `${s?.enquiryType}`.toLowerCase().includes(q),
     );
-  }, [search, TableData]);
+  }, [search, displayData]);
 
   const getRequest = async ({ enquiryId }) => {
     try {
@@ -1350,9 +1400,27 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
       formRef.current.reset();
       setPopup(false);
       alert(response.data.message);
-      alert("Kindly reload dashboard");
+      reloadDashboard();
     } catch (err) {
       // console.log(err);
+      alert(parseErrorMessage(err.response.data));
+    }
+  };
+
+  const markAsHot = async () => {
+    if (!window.confirm("Are you sure you want to mark this as Hot Enquiry ?"))
+      return;
+    try {
+      const response = await FetchData(
+        `enquiry/mark-as-hot/${user}/${request?._id}`,
+        "post",
+      );
+      console.log(response);
+      setPopup(false);
+      alert(response.data.message);
+      reloadDashboard();
+    } catch (err) {
+      console.log(err);
       alert(parseErrorMessage(err.response.data));
     }
   };
@@ -1363,6 +1431,54 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
         <h2 className="text-2xl font-bold">
           {Text} (<span className="text-sm">{filteredData.length}</span>)
         </h2>
+
+        <div className="bg-neutral-300 px-3 py-2 flex justify-center items-center gap-2 rounded-xl">
+          <button
+            onClick={() => setActiveTable("Pending Enquiry")}
+            className={`${activeTable === "Pending Enquiry" ? "bg-[#FFC20D]" : "bg-neutral-200"}  rounded-xl px-3 py-1`}
+          >
+            {activeTable === "Pending Enquiry" ? (
+              <h1 className="font-medium flex justify-center items-center gap-2 duration-300 ease-in-out">
+                <IoMdCheckmark />
+                Pending Enquiry
+              </h1>
+            ) : (
+              <h1 className="font-light flex justify-center items-center gap-2 duration-300 ease-in-out">
+                Pending Enquiry
+              </h1>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTable("Reviewed Enquiry")}
+            className={`${activeTable === "Reviewed Enquiry" ? "bg-[#FFC20D]" : "bg-neutral-200"}  rounded-xl px-3 py-1`}
+          >
+            {activeTable === "Reviewed Enquiry" ? (
+              <h1 className="font-medium flex justify-center items-center gap-2 duration-300 ease-in-out">
+                <IoMdCheckmark />
+                Reviewed Enquiry
+              </h1>
+            ) : (
+              <h1 className="font-light flex justify-center items-center gap-2 duration-300 ease-in-out">
+                Reviewed Enquiry
+              </h1>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTable("Hot Enquiry")}
+            className={`${activeTable === "Hot Enquiry" ? "bg-[#FFC20D]" : "bg-neutral-200"}  rounded-xl px-3 py-1`}
+          >
+            {activeTable === "Hot Enquiry" ? (
+              <h1 className="font-medium flex justify-center items-center gap-2 duration-300 ease-in-out">
+                <IoMdCheckmark />
+                Hot Enquiry
+              </h1>
+            ) : (
+              <h1 className="font-light flex justify-center items-center gap-2 duration-300 ease-in-out">
+                Hot Enquiry
+              </h1>
+            )}
+          </button>
+        </div>
 
         <div className="w-96">
           <InputBox
@@ -1400,6 +1516,7 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
                     </button>
                   </td>
                   <td className="px-5 py-3">
+                    {data?.markAsHotLead === true ? "🔥" : ""}
                     {data?.enquiryType === "ContactUsForm"
                       ? "Contact Form"
                       : ""}
@@ -1449,6 +1566,7 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <div className="bg-white rounded-md p-5 w-[60vw] flex justify-center items-center gap-10 flex-col">
+              {console.log(request)}
               {request ? (
                 <div>
                   {data?.map((r, index) => (
@@ -1466,25 +1584,51 @@ const Enquiry = ({ Text = "", TableData = [], user }) => {
               ) : (
                 ""
               )}
-              <div className="flex flex-col justify-center items-center">
-                <form ref={formRef} onSubmit={handleSubmit}>
-                  <InputBox
-                    Name="customerFeedBack"
-                    Placeholder="Feedback"
-                    LabelName="What did the customer said ?"
-                    Type="text"
-                  />
-                  <div className="flex justify-center items-center gap-10">
-                    <Button
-                      label={"Close"}
-                      onClick={() => {
-                        setPopup(false);
-                        formRef.current.reset();
-                      }}
-                    />
-                    <Button label={"Mark as reviewed"} type={"submit"} />
+              <div className="flex flex-col justify-center items-center w-full">
+                {request?.reviewedByAdmin === true ? (
+                  <div className="w-full bg-neutral-300 p-2 gap-2">
+                    <h1>
+                      <strong>Feed Back:</strong> {request?.customerFeedBack}
+                    </h1>
+                    <div className="p-2 flex justify-center items-center bg-neutral-200 w-full gap-5">
+                      <Button
+                        label={"Mark as hot lead"}
+                        onClick={() => markAsHot()}
+                      />
+                      <Button
+                        normal={false}
+                        label={"Close"}
+                        onClick={() => {
+                          setPopup(false);
+                        }}
+                      />
+                    </div>
                   </div>
-                </form>
+                ) : (
+                  <form
+                    ref={formRef}
+                    onSubmit={handleSubmit}
+                    className="w-full bg-neutral-300 p-2 gap-2"
+                  >
+                    <InputBox
+                      className="bg-white"
+                      Name="customerFeedBack"
+                      Placeholder="Feedback"
+                      LabelName="What did the customer said ?"
+                      Type="text"
+                    />
+                    <div className="flex justify-center items-center gap-10">
+                      <Button
+                        label={"Close"}
+                        onClick={() => {
+                          setPopup(false);
+                          formRef.current.reset();
+                        }}
+                      />
+                      <Button label={"Mark as reviewed"} type={"submit"} />
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
           </motion.div>

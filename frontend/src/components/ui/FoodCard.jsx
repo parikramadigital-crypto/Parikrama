@@ -29,15 +29,20 @@ const FoodCard = ({ f }) => {
               </span>
             </p>
             <h3 className=" font-semibold text-gray-900 mt-2 flex justify-start items-center w-full gap-2">
-              <span
-                className={`px-1 py-1 rounded-full text-xs w-fit ${
-                  data.verified
-                    ? "bg-green-100 text-green-600"
-                    : "bg-red-100 text-red-600"
-                }`}
-              >
-                {data.verified ? <MdVerified /> : ""}
-              </span>
+              {data.verified === true ? (
+                <span
+                  className={`px-1 py-1 rounded-full text-xs w-fit ${
+                    data.verified
+                      ? "bg-green-100 text-green-600"
+                      : "bg-red-100 text-red-600"
+                  }`}
+                >
+                  {data.verified ? <MdVerified /> : ""}
+                </span>
+              ) : (
+                ""
+              )}
+
               <span> {data?.name}</span>
             </h3>
           </div>
