@@ -216,7 +216,7 @@ const FacilitatorRegister = ({
 
         {step === "VERIFY" && (
           <>
-            <p className="mb-2">OTP Sent Successfully {otp}</p>
+            <p className="mb-2">OTP Sent Successfully</p>
 
             <InputBox
               LabelName="Enter OTP"
@@ -250,11 +250,11 @@ const FacilitatorRegister = ({
                   Placeholder="Enter your contact number"
                 />
                 <InputBox
-                  LabelName="Email"
+                  LabelName="Email (Optional)"
                   Name="email"
                   Placeholder="Enter your email id"
                   Type="email"
-                  required
+                  Required={false}
                 />
                 <InputBox
                   LabelName="Role"

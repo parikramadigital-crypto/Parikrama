@@ -134,9 +134,6 @@ const UserRegisterLogin = () => {
             Login
           </button>
         </div>
-        <span className="bg-red-300 text-red-600 font-semibold">
-          {otp ? <p>Paste this OTP {otp}</p> : ""}
-        </span>
 
         {/* Animated Form */}
         <AnimatePresence mode="wait">
