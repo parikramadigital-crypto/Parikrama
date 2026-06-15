@@ -3,6 +3,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/admin.models.js";
 import { EnquiryDetails } from "../models/enquiry.models.js";
+import {
+  sendFlightEnquirySMS,
+  sendHotelEnquirySMS,
+  sendPackageEnquirySMS,
+} from "../workers/sms.workers.js";
 
 const createCorporateEnquiry = asyncHandler(async (req, res) => {
   const {
@@ -21,6 +26,8 @@ const createCorporateEnquiry = asyncHandler(async (req, res) => {
 
   if (!enquiryType || !companyName || !companyEmail || !contactNumber)
     throw new ApiError(400, "Invalid response, please try again later");
+
+  // CorporateEnquiry
 
   const enquiry = await EnquiryDetails.create({
     enquiryType: enquiryType,
@@ -69,6 +76,20 @@ const createEnquiry = asyncHandler(async (req, res) => {
   )
     throw new ApiError(400, "Invalid response, please try again later");
 
+  // PackageEnquiryForm
+  if (enquiryType === "PackageEnquiryForm") {
+    await sendPackageEnquirySMS(contactPersonPhone);
+  }
+  // ContactUsForm
+  if (enquiryType === "ContactUsForm") {
+    await sendPackageEnquirySMS(contactPersonPhone);
+  }
+
+  // flightBusHotel
+  if (enquiryType === "flightBusHotel") {
+    await sendFlightEnquirySMS(contactPersonPhone);
+    await sendHotelEnquirySMS(contactPersonPhone);
+  }
   const enquiry = await EnquiryDetails.create({
     enquiryType: enquiryType,
     formDetails: {
@@ -133,6 +154,21 @@ const markEnquiryAsReviewed = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, enquiry, "Enquiry marked as reviewed."));
 });
 
+const markAsHot = asyncHandler(async (req, res) => {
+  const { adminId, enquiryId } = req.params;
+  const admin = await Admin.findById(adminId);
+  if (!admin) throw new ApiError(400, "Invalid admin");
+
+  const enquiry = await EnquiryDetails.findByIdAndUpdate(enquiryId, {
+    markAsHotLead: true,
+  });
+  if (!enquiry) throw new ApiError(400, "Enquiry details not found");
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, enquiry, "Marked as Hot enquiry"));
+});
+
 const deleteEnquiry = asyncHandler(async (req, res) => {
   const { adminId, enquiryId } = req.body;
   const admin = await Admin.findById(adminId);
@@ -151,5 +187,6 @@ export {
   createEnquiry,
   getEnquiriesById,
   markEnquiryAsReviewed,
+  markAsHot,
   deleteEnquiry,
 };

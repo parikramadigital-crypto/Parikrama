@@ -367,6 +367,12 @@ const dashboardData = asyncHandler(async (req, res) => {
   })
     .populate("stateId cityId placeId")
     .sort({ createdAt: -1 });
+  const hotEnquiry = await EnquiryDetails.find({
+    reviewedByAdmin: true,
+    markAsHotLead: true,
+  })
+    .populate("stateId cityId placeId")
+    .sort({ createdAt: -1 });
 
   // facilitators
   const activeFacilitator = await Facilitator.find({
@@ -397,6 +403,7 @@ const dashboardData = asyncHandler(async (req, res) => {
       packages,
       enquiry,
       reviewedEnquiry,
+      hotEnquiry,
       activeFacilitator,
       inactiveFacilitator,
     }),
