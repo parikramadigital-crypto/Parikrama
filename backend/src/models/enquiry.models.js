@@ -28,6 +28,7 @@ const enquirySchema = new mongoose.Schema(
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
     customerFeedBack: { type: String, trim: true },
     reviewedByAdmin: { type: Boolean, default: false },
+    markAsHotLead: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

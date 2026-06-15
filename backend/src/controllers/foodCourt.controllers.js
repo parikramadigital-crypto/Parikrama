@@ -256,7 +256,7 @@ const createFoodCourt = asyncHandler(async (req, res) => {
     foodImages: foodImages,
     menuImages: menuImages,
     establishment,
-    // active: true,
+    active: false,
     // verified: true,
   });
 
@@ -313,7 +313,7 @@ const getAllFoodCourts = asyncHandler(async (req, res) => {
 });
 
 const foodCourtFeed = asyncHandler(async (req, res) => {
-  const foodCourts = await FoodCourt.find({ active: true, verified: true })
+  const foodCourts = await FoodCourt.find({ active: true })
     .populate({
       path: "place",
       select: "name",
@@ -519,6 +519,24 @@ const verifyByAdmin = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, foodCourt, "Verified successfully !"));
 });
 
+const cancelVerificationByAdmin = asyncHandler(async (req, res) => {
+  const { foodCourtId, adminId } = req.params;
+
+  const admin = await Admin.findById(adminId);
+  if (!admin) return new ApiError(400, "Invalid request");
+
+  const foodCourt = await FoodCourt.findByIdAndUpdate(foodCourtId, {
+    verified: false,
+  });
+
+  await foodCourt.save();
+  if (!foodCourt) throw new ApiError(400, "Food Court not found");
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, foodCourt, "Marked as non-verified !"));
+});
+
 const markAsInactiveAndNonVerified = asyncHandler(async (req, res) => {
   const { foodCourtId, adminId } = req.params;
 
@@ -661,6 +679,7 @@ export {
   foodCourtFeed,
   verifyByAdmin,
   markAsActive,
+  cancelVerificationByAdmin,
   markAsInactiveAndNonVerified,
   addFoodPlaceReview,
 };
