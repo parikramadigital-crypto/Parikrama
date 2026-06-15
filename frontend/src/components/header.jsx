@@ -23,7 +23,6 @@ import InputBox from "./InputBox";
 const Header = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
   const [popup, setPopup] = useState(false);
   const [popup2, setPopup2] = useState(false);
   const [adminDetails, setAdminDetails] = useState(false);
