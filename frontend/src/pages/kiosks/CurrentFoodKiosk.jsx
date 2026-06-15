@@ -112,6 +112,15 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
                       onClick={() =>
                         handleAdminControls({
                           header: "post",
+                          process: "cancel-verification",
+                        })
+                      }
+                    />
+                    <Button
+                      label={"Mark Food place as non-verified"}
+                      onClick={() =>
+                        handleAdminControls({
+                          header: "post",
                           process: "deactivate",
                         })
                       }
@@ -136,15 +145,20 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
             {/* 🔥 Header */}
             <div className="w-fit">
               <div className="flex justify-start items-center gap-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs w-fit ${
-                    data.verified
-                      ? "bg-green-100 text-green-600"
-                      : "bg-red-100 text-red-600"
-                  }`}
-                >
-                  {data.verified ? <MdVerified /> : "Not Verified"}
-                </span>
+                {data?.verified === true ? (
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs w-fit ${
+                      data.verified
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    {data.verified ? <MdVerified /> : "Not Verified"}
+                  </span>
+                ) : (
+                  ""
+                )}
+
                 <h1 className="text-2xl font-bold">{data.name}</h1>
                 <button
                   className="bg-[#FFC20D] px-2 py-1 rounded-full flex justify-center items-center text-xs gap-1"

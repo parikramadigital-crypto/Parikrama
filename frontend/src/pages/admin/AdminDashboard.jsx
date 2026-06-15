@@ -68,6 +68,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [clubData, setClubData] = useState([]);
   const [userData, setUserData] = useState([]);
   const [enquiryData, setEnquiryData] = useState([]);
+  const [hotEnquiryData, setHotEnquiryData] = useState([]);
+  const [reviewedEnquiryData, setReviewedEnquiryData] = useState([]);
   const [countryData, setCountryData] = useState([]);
   const [socketNotifications, setSocketNotifications] = useState([]);
   // preview
@@ -92,16 +94,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   );
   const [stats, setStats] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-
+  
   const fetchStats = async () => {
     const res = await FetchData("analytics/visitors", "get");
     setStats(res.data.data);
   };
-
+  
   const fetchDashboard = async () => {
     try {
       startLoading();
       const res = await FetchData("admin/dashboard/data", "get");
+      console.log(res)
       setPlaceData(res.data.data.place);
       setCityData(res.data.data.city);
       setStateData(res.data.data.state);
@@ -113,6 +116,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setFoodKioskData(res.data.data.foodCourts);
       setUserData(res.data.data.users);
       setEnquiryData(res.data.data.enquiry);
+      setHotEnquiryData(res.data.data.hotEnquiry);
+      setReviewedEnquiryData(res.data.data.reviewedEnquiry);
       setCountryData(res.data.data.country);
       setSubAdminData(res.data.data.subAdmin);
       setPendingFoodCount(res.data.data.underReviewCount);
@@ -364,6 +369,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 TableData={promotionData}
                 Text="Promotions"
                 user={user?._id}
+                reloadDashboard={() => fetchDashboard()}
               />
             )}
             {activeSection === "Packages" && (
@@ -385,7 +391,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   label={"List new hotel"}
                   onClick={() => setPopup6(true)}
                 />
-                <Hotels TableData={hotelData} Text="Listed Hotels" />
+                <Hotels
+                  TableData={hotelData}
+                  Text="Listed Hotels"
+                  reloadDashboard={() => fetchDashboard()}
+                />
               </div>
             )}
             {activeSection === "Clubs" && (
@@ -394,7 +404,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   label={"List new club"}
                   onClick={() => setPopup7(true)}
                 />
-                <Clubs TableData={clubData} Text="Listed Clubs" />
+                <Clubs
+                  TableData={clubData}
+                  Text="Listed Clubs"
+                  reloadDashboard={() => fetchDashboard()}
+                />
               </div>
             )}
             {activeSection === "Active Places" && (
@@ -436,6 +450,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup5(true)}
                 />
                 <FoodKiosks
+                  reloadDashboard={() => fetchDashboard()}
                   TableData={foodKioskData}
                   Text="Food kiosks"
                   user={user?._id}
@@ -451,6 +466,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               <div className="w-full h-full flex flex-col justify-start items-start">
                 <Enquiry
                   TableData={enquiryData}
+                  TableData2={reviewedEnquiryData}
+                  TableData3={hotEnquiryData}
                   Text="Enquiries"
                   user={user?._id}
                 />
