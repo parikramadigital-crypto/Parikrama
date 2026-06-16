@@ -87,6 +87,17 @@ export const sendFlightEnquirySMS = async (phone) => {
   });
 };
 
+export const sendCorporateEnquirySMS = async (phone) => {
+  const message =
+    "Your corporate enquiry has been received by Parikrama. Our team will contact you shortly with the best available quotations. - Team Parikrama";
+
+  return await sendSMS({
+    phone,
+    message,
+    templateId: SMS_TEMPLATES.CORPORATE_ENQUIRY,
+  });
+};
+
 export const sendHotelEnquirySMS = async (phone) => {
   const message =
     "Your Hotel enquiry has been received by Parikrama. Our team will contact you shortly with the best available fares. - Team Parikrama";
