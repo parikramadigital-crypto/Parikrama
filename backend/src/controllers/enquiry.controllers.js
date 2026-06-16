@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/admin.models.js";
 import { EnquiryDetails } from "../models/enquiry.models.js";
 import {
+  sendCorporateEnquirySMS,
   sendFlightEnquirySMS,
   sendHotelEnquirySMS,
   sendPackageEnquirySMS,
@@ -28,6 +29,7 @@ const createCorporateEnquiry = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid response, please try again later");
 
   // CorporateEnquiry
+  await sendCorporateEnquirySMS(contactNumber);
 
   const enquiry = await EnquiryDetails.create({
     enquiryType: enquiryType,
