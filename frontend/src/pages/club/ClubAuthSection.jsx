@@ -222,9 +222,9 @@ const ClubAuthSection = ({ setClubSession }) => {
                   className="w-full border rounded-xl p-4 text-center tracking-[10px] text-2xl"
                 />
 
-                <span className="bg-red-300 text-red-600 font-semibold">
+                {/* <span className="bg-red-300 text-red-600 font-semibold">
                   {otp ? <p>Paste this OTP {otp}</p> : ""}
-                </span>
+                </span> */}
 
                 <button
                   type="submit"
