@@ -199,11 +199,11 @@ const FacilitatorRegister = ({
         className={`bg-white md:p-8 rounded-xl  ${completeProfile === true ? "md:w-full w-[95vw] px-5 py-5" : "w-fit"}`}
       >
         {completeProfile === false ? (
-          <h2 className="md:text-2xl  font-bold mb-6 text-wrap leading-[1.1]">
+          <h2 className="md:text-2xl  font-bold mb-6 text-wrap leading-[1.1] flex flex-col">
             Facilitator Registration{" "}
             <span className="text-xs md:text-sm font-normal">
-              You can register yourself as a Facilitator (Photographer, Pandit,
-              Guide, etc.) for a particular place.
+              You can register yourself as a Facilitator (Travel Guide,
+              Photographer, Spritual Guide, Temple Guide, Tour Operator etc.)
             </span>
           </h2>
         ) : (
@@ -225,7 +225,6 @@ const FacilitatorRegister = ({
               onChange={(e) => setEnteredOtp(e.target.value)}
               required
             />
-            {console.log(enteredOtp)}
 
             <Button label="Verify OTP" type="submit" className="w-full mt-4" />
           </>
@@ -237,44 +236,95 @@ const FacilitatorRegister = ({
           <div className="">
             {completeProfile === false ? (
               <div>
-                <InputBox
-                  LabelName="Full Name"
-                  Name="name"
-                  required
-                  Placeholder="Enter your name"
-                />
-                <InputBox
-                  LabelName="Phone"
-                  Name="phone"
-                  required
-                  Placeholder="Enter your contact number"
-                />
-                <InputBox
-                  LabelName="Email (Optional)"
-                  Name="email"
-                  Placeholder="Enter your email id"
-                  Type="email"
-                  Required={false}
-                />
-                <InputBox
-                  LabelName="Role"
-                  Name="role"
-                  required
-                  Placeholder="Travel Guide, Photographer, Pandit, Temple Guide, Tour Operator and many more.."
-                />
-                <InputBox
-                  LabelName="Password"
-                  Name="password"
-                  Type="password"
-                  required
-                  Placeholder="Password"
-                  PasswordIndication={true}
-                />
-                <Button
-                  label="Register"
-                  type="submit"
-                  className="w-full md:col-span-2 mt-4"
-                />
+                <div className="grid md:grid-cols-2 justify-center items-center gap-5">
+                  <InputBox
+                    LabelName="Full Name"
+                    Name="name"
+                    required
+                    Placeholder="Enter your name"
+                  />
+                  <InputBox
+                    LabelName="Phone"
+                    Name="phone"
+                    required
+                    Placeholder="Enter your contact number"
+                  />
+                  {/* CITY */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      City*
+                    </label>
+                    <select
+                      name="city"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+                      onChange={(e) => handleCityChange(e.target.value)}
+                    >
+                      <option value="">Select City</option>
+                      {cities.map((c) => (
+                        <option key={c._id} value={c._id}>
+                          {c.name} , {c.state?.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Role*
+                    </label>
+                    <select
+                      name="role"
+                      required
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+                    >
+                      <option value="">Select your service</option>
+                      {[
+                        "Travel Guide",
+                        "Photographer",
+                        "Spiritual Guide",
+                        "Temple Guide",
+                        "Tour Guide",
+                        "Activity Instructor",
+                        "Driver",
+                        "Boat Captain",
+                        "Porter",
+                        "Translator",
+                        "Photographer",
+                        "Geat Outfitter",
+                        "Itinerary Planner",
+                        "Agency Representative",
+                        "Others",
+                      ].map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* <InputBox
+                    LabelName="Role"
+                    Name="role"
+                    required
+                    Placeholder="Travel Guide, Photographer, Pandit, Temple Guide, Tour Operator and many more.."
+                  /> */}
+                </div>
+                <div>
+                  <InputBox
+                    LabelName="Password"
+                    Name="password"
+                    Type="password"
+                    required
+                    Placeholder="Password"
+                    PasswordIndication={true}
+                  />
+                  <Button
+                    label="Register"
+                    type="submit"
+                    className="w-full md:col-span-2 mt-4"
+                  />
+                </div>
               </div>
             ) : (
               ""
@@ -287,6 +337,13 @@ const FacilitatorRegister = ({
                   Name="documentNumber"
                   required
                 />
+                <InputBox
+                  LabelName="Email (Optional)"
+                  Name="email"
+                  Placeholder="Enter your email id"
+                  Type="email"
+                  Required={false}
+                />
 
                 <InputBox
                   LabelName="Experience Years"
@@ -298,25 +355,6 @@ const FacilitatorRegister = ({
                   Name="languages"
                   required
                 />
-
-                {/* CITY */}
-                <div>
-                  <label className="block text-sm font-medium mb-1">City</label>
-                  <select
-                    name="city"
-                    required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
-                    onChange={(e) => handleCityChange(e.target.value)}
-                  >
-                    <option value="">Select City</option>
-                    {cities.map((c) => (
-                      <option key={c._id} value={c._id}>
-                        {c.name} , {c.state?.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 {/* PLACE */}
                 <div>
                   <label className="block text-sm font-medium mb-1">

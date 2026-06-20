@@ -52,6 +52,10 @@ const Footer = () => {
   const { user } = useSelector((state) => state.auth);
   const [popup, setPopup] = useState();
   const navigate = useNavigate();
+  const LinkNavigate = (link) => {
+    navigate(link);
+    setPopup(false);
+  };
 
   return (
     <div className="bg-[#e5e5e5] text-neutral-600 p-2 rounded-t-2xl">
