@@ -8,7 +8,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { generateAccessAndRefreshTokens } from "../utils/TokenGenerator.js";
 import Jwt from "jsonwebtoken";
-import { sendLoginOtpSMS, sendOtpSMS, sendWelcomeSMS } from "../workers/sms.workers.js";
+import {
+  sendLoginOtpSMS,
+  sendOtpSMS,
+  sendWelcomeSMS,
+} from "../workers/sms.workers.js";
 
 const createUser = asyncHandler(async (req, res) => {
   const { contactNumber } = req.body;

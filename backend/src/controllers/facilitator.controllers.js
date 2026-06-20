@@ -58,7 +58,6 @@ const registerFacilitator = asyncHandler(async (req, res) => {
 
 const verifyOTP = asyncHandler(async (req, res) => {
   const { facilitatorId, otp } = req.body;
-
   if (!facilitatorId || !otp) {
     throw new ApiError(400, "Facilitator ID and OTP are required");
   }
@@ -104,8 +103,6 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
 const loginFacilitator = asyncHandler(async (req, res) => {
   const { email, phone, password } = req.body;
-  console.log(email, phone, password);
-
   if ((!email && !phone) || !password) {
     throw new ApiError(400, "Email/Phone and password required");
   }
@@ -141,8 +138,6 @@ const loginFacilitator = asyncHandler(async (req, res) => {
   facilitator.password = undefined;
   facilitator.refreshToken = undefined;
 
-  console.log(facilitator);
-
   res.status(200).json(
     new ApiResponse(
       200,
@@ -166,7 +161,6 @@ const completeFacilitatorProfileByHimself = asyncHandler(async (req, res) => {
     languages,
     documentNumber,
   } = req.body;
-
   const { facilitatorId } = req.params;
   const facilitator = await Facilitator.findById(facilitatorId);
   if (!facilitator) throw new ApiError(404, "Invalid request");
@@ -256,7 +250,6 @@ const logoutFacilitator = asyncHandler(async (req, res) => {
 
 const refreshFacilitatorToken = asyncHandler(async (req, res) => {
   const token = req.body.refreshToken;
-
   if (!token) throw new ApiError(401, "Unauthorized request");
 
   const decoded = Jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
@@ -283,7 +276,6 @@ const getCurrentFacilitator = asyncHandler(async (req, res) => {
   const { facilitatorId } = req.params;
   const facilitator =
     await Facilitator.findById(facilitatorId).populate("state city place");
-
   if (!facilitator) {
     throw new ApiError(404, "Facilitator not found");
   }
@@ -293,7 +285,6 @@ const getCurrentFacilitator = asyncHandler(async (req, res) => {
 
 const facilitatorDashboard = asyncHandler(async (req, res) => {
   const { facilitatorId } = req.params;
-  console.log(facilitatorId);
   if (!facilitatorId) return new ApiError(404, "Id not valid");
 
   const facilitator =
@@ -325,7 +316,6 @@ const updateFacilitatorProfile = asyncHandler(async (req, res) => {
 
 const addFacilitatorSlots = asyncHandler(async (req, res) => {
   const { slots } = req.body;
-
   if (!Array.isArray(slots) || slots.length === 0) {
     throw new ApiError(400, "Slots array required");
   }
@@ -396,7 +386,6 @@ const verifyFacilitator = asyncHandler(async (req, res) => {
 
 const addFacilitatorReview = asyncHandler(async (req, res) => {
   const { facilitatorId } = req.params;
-
   const {
     customerName,
     customerPhone,
@@ -405,9 +394,7 @@ const addFacilitatorReview = asyncHandler(async (req, res) => {
     behaviour,
     comment,
   } = req.body;
-
   /* ---------- VALIDATION ---------- */
-
   if (
     !customerName ||
     !customerPhone ||
@@ -430,23 +417,17 @@ const addFacilitatorReview = asyncHandler(async (req, res) => {
   }
 
   const facilitator = await Facilitator.findById(facilitatorId);
-
   if (!facilitator) {
     throw new ApiError(404, "Facilitator not found");
   }
-
   /* ---------- DUPLICATE CHECK ---------- */
-
   const alreadyReviewed = facilitator.reviews.find(
     (r) => r.customerPhone === customerPhone,
   );
-
   if (alreadyReviewed) {
     throw new ApiError(409, "You already reviewed this facilitator");
   }
-
   /* ---------- PUSH REVIEW ---------- */
-
   facilitator.reviews.push({
     customerName,
     customerPhone,
@@ -455,9 +436,7 @@ const addFacilitatorReview = asyncHandler(async (req, res) => {
     behaviour,
     comment,
   });
-
   /* ---------- RECALCULATE AVERAGES ---------- */
-
   const total = facilitator.reviews.length;
 
   let commSum = 0;
@@ -471,11 +450,8 @@ const addFacilitatorReview = asyncHandler(async (req, res) => {
   });
 
   facilitator.ratings.communicationAvg = Number((commSum / total).toFixed(1));
-
   facilitator.ratings.knowledgeAvg = Number((knowSum / total).toFixed(1));
-
   facilitator.ratings.behaviourAvg = Number((behSum / total).toFixed(1));
-
   facilitator.ratings.overallAvg = Number(
     (
       (facilitator.ratings.communicationAvg +
@@ -486,7 +462,6 @@ const addFacilitatorReview = asyncHandler(async (req, res) => {
   );
 
   facilitator.ratings.totalReviews = total;
-
   await facilitator.save();
 
   res.status(201).json(
@@ -571,7 +546,6 @@ const AcceptDocumentVerification = asyncHandler(async (req, res) => {
 
 const RejectDocumentVerification = asyncHandler(async (req, res) => {
   const { adminId, facilitatorId } = req.params;
-
   if (!adminId || !facilitatorId) {
     throw new ApiError(400, "Invalid request");
   }
@@ -591,7 +565,6 @@ const RejectDocumentVerification = asyncHandler(async (req, res) => {
     },
     { new: true },
   );
-
   if (!facilitator) {
     throw new ApiError(404, "Not a valid facilitator");
   }
@@ -603,7 +576,6 @@ const RejectDocumentVerification = asyncHandler(async (req, res) => {
 
 const deleteFacilitator = asyncHandler(async (req, res) => {
   const { adminId, facilitatorId } = req.params;
-
   if (!adminId || !facilitatorId) {
     throw new ApiError(400, "Invalid request");
   }
