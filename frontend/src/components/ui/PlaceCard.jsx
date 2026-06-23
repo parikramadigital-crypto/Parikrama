@@ -461,7 +461,7 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                                 <strong>About</strong>
                                 {fac?.bio}
                               </p>
-                              {fac?.verification?.status === "Pending" ? (
+                              {/* {fac?.verification?.status === "Pending" ? (
                                 <p>
                                   <strong>Note : </strong>Please contact and
                                   hire on your own risk, this facilitator is not
@@ -469,7 +469,7 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                                 </p>
                               ) : (
                                 ""
-                              )}
+                              )} */}
                               <Button label={"Call"} />
                             </motion.div>
                           )}
@@ -539,7 +539,7 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
       >
         <h1>
           You can register yourself as a Facilitator (Travel Guide,
-          Photographer, Pandit, Temple Guide, Tour Operator etc.)
+          Photographer, Spritual Guide, Temple Guide, Tour Operator etc.)
         </h1>
         <span className="flex justify-center items-center gap-2 ">
           Register / Login <BiArrowFromLeft />

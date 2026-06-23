@@ -256,7 +256,7 @@ function App() {
               element={<FoodPlaceReview />}
             />
             {/* ================= TRAVEL ================= */}
-            <Route path="/flights-busses" element={<FlightBus />} />
+            <Route path="/flights-busses/:flight" element={<FlightBus />} />
             <Route path="/travel-packages" element={<PackagesListing />} />
             {/* ================= HOTELS ================= */}
             <Route path="/hotels" element={<HotelListing />} />

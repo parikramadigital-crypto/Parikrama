@@ -38,7 +38,7 @@ const FloatNavBar = () => {
     {
       label: "Flights",
       icon: <MdOutlineFlight />,
-      url: "/flights-busses",
+      url: `/flights-busses/${true}`,
       color: "text-blue-700",
     },
     {
@@ -56,15 +56,15 @@ const FloatNavBar = () => {
     {
       label: "Buses",
       icon: <FaBusSimple />,
-      url: "/flights-busses",
+      url: `/flights-busses/${false}`,
       color: "text-red-600 ",
     },
-    {
-      label: "Trains",
-      icon: <FaTrainTram />,
-      url: "/flights-busses",
-      color: "text-cyan-600",
-    },
+    // {
+    //   label: "Trains",
+    //   icon: <FaTrainTram />,
+    //   url: "/flights-busses",
+    //   color: "text-cyan-600",
+    // },
     {
       label: "Hotels",
       icon: <FaHotel />,
