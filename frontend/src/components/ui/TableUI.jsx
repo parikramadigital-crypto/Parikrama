@@ -727,7 +727,7 @@ const TravelPackages = ({
 }) => {
   const [search, setSearch] = useState("");
 
-  const TableHeaders = ["Package name", "Place name", "Priority", "Action"];
+  const TableHeaders = ["Package name", "State name", "Priority", "Action"];
 
   const filteredData = useMemo(() => {
     if (!search.trim()) return TableData;
@@ -751,7 +751,7 @@ const TravelPackages = ({
     console.log("Funtion did stop");
     try {
       const response = await FetchData(
-        `promotions/delete-promotion/${user}/${packageId}`,
+        `packages/delete-package/${user}/${packageId}`,
         "delete",
       );
       alert(response.data.message);
@@ -794,13 +794,16 @@ const TravelPackages = ({
               filteredData.map((data) => (
                 <tr key={data._id} className="hover:bg-gray-50 border-b">
                   <td className="px-5 py-3">{data?.name}</td>
-                  <td className="px-5 py-3">{data?.place?.name}</td>
+                  <td className="px-5 py-3">{data?.state?.name}</td>
                   <td className="px-5 py-3">
                     {data?.priority === "exclusiveDeals"
                       ? "Exclusive Deals"
                       : ""}
                     {data?.priority === "trendingDeals" ? "Trending Deals" : ""}
                     {data?.priority === "hotDeals" ? "Hot Deals" : ""}
+                    {data?.priority === "lastMomentPackage"
+                      ? "Last Moment Deals"
+                      : ""}
                   </td>
                   <td className="px-5 py-3">
                     <Button

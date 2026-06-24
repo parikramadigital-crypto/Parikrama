@@ -7,29 +7,58 @@ import { FetchData } from "../../utils/FetchFromApi";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { useEffect } from "react";
 
-const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
+const RegisterTravelPackage = ({
+  startLoading,
+  stopLoading,
+  onCancel,
+  offPopup,
+}) => {
   const formRef = useRef();
   const [error, setError] = useState("");
   const [tags, setTags] = useState("");
-  // const [places, setPlaces] = useState([]);
+  const [states, setStates] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [filteredState, setFilteredState] = useState([]);
 
   useEffect(() => {
-    const loadPlaces = async () => {
+    const loadStates = async () => {
       try {
-        const res = await FetchData("places", "get");
-        // setPlaces(res?.data?.data || []);
+        const response = await FetchData("states", "get");
+        console.log(response);
+        setStates(response?.data?.data || []);
       } catch (err) {
         console.log(err);
       }
     };
 
-    loadPlaces();
+    const loadCountry = async () => {
+      try {
+        const response = await FetchData("country/get/all-country", "get");
+        console.log(response);
+        setCountries(response.data.data || []);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    loadStates();
+    loadCountry();
   }, []);
+
+  const handleCountryChange = (countryId) => {
+    const country = countries.find((c) => c._id === countryId);
+    setSelectedCountry(countryId);
+    const state = states.filter((d) => d.country?._id === countryId);
+
+    setFilteredState(state);
+  };
 
   const priorityOptions = [
     { _id: "hotDeals", label: "Hot Deals" },
     { _id: "trendingDeals", label: "Trending Deals" },
     { _id: "exclusiveDeals", label: "Exclusive Deals" },
+    { _id: "lastMomentPackage", label: "Last Moment Deals" },
   ];
 
   const handleSubmit = async (e) => {
@@ -59,7 +88,7 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
         alert("Package Created Successfully");
 
         formRef.current.reset();
-        offPopup;
+        offPopup();
         setTags("");
       }
     } catch (err) {
@@ -93,31 +122,41 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
           Placeholder="Golden Triangle Tour"
           required
         />
-
-        {/* Place ID */}
-        {/* <InputBox
-          LabelName="Place ID"
-          Name="place"
-          Placeholder="MongoDB Place ID"s
-          required
-        /> */}
-        <InputBox LabelName="State" Name="state" Placeholder="State name" />
-        <InputBox LabelName="City" Name="city" Placeholder="City name" />
-        {/* <div className="py-4">
-          <label className="block text-sm font-medium mb-1">Place</label>
-          <select
-            name="place"
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
-          >
-            <option value="">Select Place</option>
-            {places.map((p) => (
-              <option key={p._id} value={p._id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div> */}
+        {/* country  */}
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block text-sm font-medium mb-1">Country*</label>
+            <select
+              name="country"
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+              onChange={(e) => handleCountryChange(e.target.value)}
+            >
+              <option value="">Select Country</option>
+              {countries.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">State*</label>
+            <select
+              name="state"
+              required
+              disabled={!selectedCountry}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+            >
+              <option value="">Select State</option>
+              {filteredState.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {/* Description */}
         <InputBox
@@ -127,22 +166,84 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
         />
 
         {/* Duration */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-1">
           <InputBox
-            LabelName="Duration Nights"
+            LabelName="Total Duration"
+            Placeholder="Total duration including Days and Nights"
+            Name="days"
+            Type="number"
+          />
+          <InputBox
+            LabelName="Number of nights"
+            Placeholder="Number of nights in total days"
             Name="durationNight"
             Type="number"
           />
 
           <InputBox
-            LabelName="Duration Days"
+            LabelName="Number of days"
+            Placeholder="Number of days in total days"
             Name="durationDay"
+            Type="number"
+          />
+          <InputBox
+            LabelName="Number of persons (including adults & kids)"
+            Placeholder="Number of persons"
+            Name="numberOfPerson"
             Type="number"
           />
         </div>
 
-        {/* Price */}
-        <InputBox LabelName="Price" Name="price" Type="number" />
+        <div className="grid grid-cols-3 gap-2 justify-center items-center ">
+          {/* Price */}
+          <InputBox
+            LabelName="Price of Package"
+            Name="price"
+            Type="number"
+            Placeholder="Eg: 25,000/-"
+          />
+          {/* Priority */}
+          <div className="flex justify-center items-center w-full">
+            <div className="py-4 w-full">
+              <label className="block text-sm font-medium mb-1">
+                Priority*
+              </label>
+
+              <select
+                name="priority"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+              >
+                <option value="">Select</option>
+                {priorityOptions.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-center items-center w-full">
+            <div className="py-4 w-full">
+              <label className="block text-sm font-medium mb-1">
+                Only for adults ?
+              </label>
+
+              <select
+                name="onlyForAdults"
+                defaultValue={"No"}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+              >
+                <option value="">Select</option>
+                {["Yes", "No"].map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
         {/* Tags */}
         <InputBox
@@ -150,13 +251,6 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
           Placeholder="Adventure, Snow, Luxury"
           Value={tags}
           onChange={(e) => setTags(e.target.value)}
-        />
-
-        {/* Priority */}
-        <SelectBox
-          LabelName="Priority"
-          Name="priority"
-          Options={priorityOptions}
         />
 
         {/* Images */}
@@ -173,8 +267,19 @@ const RegisterTravelPackage = ({ startLoading, stopLoading, onCancel }) => {
           />
         </div>
 
-        <Button label="Create Package" type="submit" className="w-full mt-4" />
-        <Button label="Cancel" onClick={onCancel} className="w-full mt-4" />
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            label="Cancel"
+            onClick={onCancel}
+            className="w-full mt-4"
+            normal={false}
+          />
+          <Button
+            label="Create Package"
+            type="submit"
+            className="w-full mt-4"
+          />
+        </div>
       </form>
     </div>
   );

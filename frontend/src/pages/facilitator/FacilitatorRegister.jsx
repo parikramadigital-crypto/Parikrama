@@ -12,10 +12,10 @@ const FacilitatorRegister = ({
   completeProfile = false,
   onCancel,
   facilitatorId,
+  CityID,
 }) => {
   const formRef = useRef();
   const navigate = useNavigate();
-  // console.log(facilitatorId);
 
   /* ---------------- STEP CONTROL ---------------- */
   const [step, setStep] = useState("REGISTER"); // REGISTER | VERIFY
@@ -35,6 +35,7 @@ const FacilitatorRegister = ({
 
   const [profilePreview, setProfilePreview] = useState([]);
   const [docPreview, setDocPreview] = useState([]);
+  const [otherRole, setOtherRole] = useState("");
 
   /* ---------------- IMAGE HANDLERS ---------------- */
 
@@ -62,6 +63,95 @@ const FacilitatorRegister = ({
     setDocPreview(files.map((f) => URL.createObjectURL(f)));
   };
 
+  /* ---------------- DELETION OF TEMPORARY REGISTRATION ---------------- */
+  const handleCancelRegistration = async () => {
+    try {
+      const facilitatorId = localStorage.getItem("id");
+      const response = await FetchData(
+        `facilitator/cancel-registration/${facilitatorId}`,
+        "delete",
+      );
+      alert(response.data.message);
+      window.location.reload();
+      localStorage.removeItem("id");
+    } catch (err) {
+      // console.log(err);
+    }
+  };
+
+  /* ---------------- TO MAKE SURE THAT OTP IS ENTERED ---------------- */
+
+  const hasUnsavedData = () => {
+    if (!formRef.current) return false;
+
+    const formData = new FormData(formRef.current);
+
+    for (const [, value] of formData.entries()) {
+      if (value instanceof File) {
+        if (value.size > 0) return true;
+      } else if (String(value).trim() !== "") {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (!hasUnsavedData()) return;
+
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.pathname);
+
+    const handleBackButton = async () => {
+      // No data entered → allow normal navigation
+      if (!hasUnsavedData()) {
+        window.removeEventListener("popstate", handleBackButton);
+        window.history.back();
+        return;
+      }
+
+      const confirmLeave = window.confirm(
+        "If you leave this page, all entered data will be lost. Continue?",
+      );
+
+      if (!confirmLeave) {
+        window.history.pushState(null, "", window.location.pathname);
+        return;
+      }
+
+      try {
+        // Optional: Delete incomplete registration
+        if (step === "VERIFY" && facilitator?._id) {
+          await handleCancelRegistration();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+      window.removeEventListener("popstate", handleBackButton);
+      window.history.back();
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, [step, facilitator]);
+
   /* ---------------- FETCH CITIES ---------------- */
 
   useEffect(() => {
@@ -69,9 +159,10 @@ const FacilitatorRegister = ({
       try {
         startLoading();
         const res = await FetchData("cities", "get");
+        console.log(res);
         setCities(res?.data?.data || []);
       } catch (err) {
-        console.log(err);
+        //  console.log(err);
       } finally {
         stopLoading();
       }
@@ -88,7 +179,7 @@ const FacilitatorRegister = ({
         const res = await FetchData("places", "get");
         setPlaces(res?.data?.data || []);
       } catch (err) {
-        console.log(err);
+        //console.log(err);
       }
     };
 
@@ -108,6 +199,23 @@ const FacilitatorRegister = ({
     setFilteredPlaces(cityPlaces);
   };
 
+  useEffect(() => {
+    if (completeProfile === true) {
+      const getPlaces = async () => {
+        try {
+          const response = await FetchData(`places/city/by-id/${CityID}`, "get");
+          console.log(response);
+          setFilteredPlaces(response.data.data || []);
+        } catch (err) {
+          // console.log(err);
+          // alert("Something went wrong, please try again later");
+        }
+      };
+
+      getPlaces();
+    }
+  }, []);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -126,7 +234,8 @@ const FacilitatorRegister = ({
         formData,
         // true,
       );
-
+      //  console.log(res);
+      localStorage.setItem("id", res.data.data.facilitator._id);
       setOtp(res.data.data.otp);
       setFacilitator(res.data.data.facilitator);
       setStep("VERIFY");
@@ -175,7 +284,7 @@ const FacilitatorRegister = ({
         facilitatorId: facilitator?._id,
         otp: enteredOtp,
       });
-      console.log(response);
+      //console.log(response);
       alert(response.data.message);
       navigate("/");
     } catch (err) {
@@ -276,9 +385,16 @@ const FacilitatorRegister = ({
                     <select
                       name="role"
                       required
+                      value={otherRole}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
+                      onChange={(c) => {
+                        setOtherRole(c.target.value);
+                        // if (setOtherRole != "Others") {
+                        //   setOtherRole("");
+                        // }
+                      }}
                     >
-                      <option value="">Select your service</option>
+                      <option value="">Select your role</option>
                       {[
                         "Travel Guide",
                         "Photographer",
@@ -290,7 +406,6 @@ const FacilitatorRegister = ({
                         "Boat Captain",
                         "Porter",
                         "Translator",
-                        "Photographer",
                         "Geat Outfitter",
                         "Itinerary Planner",
                         "Agency Representative",
@@ -302,13 +417,16 @@ const FacilitatorRegister = ({
                       ))}
                     </select>
                   </div>
-
-                  {/* <InputBox
-                    LabelName="Role"
-                    Name="role"
-                    required
-                    Placeholder="Travel Guide, Photographer, Pandit, Temple Guide, Tour Operator and many more.."
-                  /> */}
+                  {otherRole === "Others" ? (
+                    <InputBox
+                      LabelName="Please Specify"
+                      Placeholder="Tell us what you do..."
+                      Name="otherRole"
+                      // required
+                    />
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div>
                   <InputBox
@@ -355,6 +473,7 @@ const FacilitatorRegister = ({
                   Name="languages"
                   required
                 />
+
                 {/* PLACE */}
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -363,7 +482,7 @@ const FacilitatorRegister = ({
                   <select
                     name="place"
                     required
-                    disabled={!selectedCity}
+                    // disabled={!selectedCity}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none"
                   >
                     <option value="">Select Place</option>
