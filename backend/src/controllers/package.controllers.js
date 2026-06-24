@@ -12,19 +12,34 @@ import { Admin } from "../models/admin.models.js";
 const createTravelPackage = asyncHandler(async (req, res) => {
   const {
     name,
-    // place,
-    city,
     state,
+    country,
     description,
     durationNight,
     durationDay,
+    days,
     price,
+    numberOfPerson,
     tags,
     priority,
+    onlyForAdults,
   } = req.body;
 
-  if (!name) {
-    throw new ApiError(400, "Package name and place are required");
+  if (
+    !name ||
+    !state ||
+    !country ||
+    !description ||
+    !durationNight ||
+    !durationDay ||
+    !days ||
+    !price ||
+    !numberOfPerson ||
+    !tags ||
+    !onlyForAdults ||
+    !priority
+  ) {
+    throw new ApiError(400, "Package details are missing !");
   }
 
   let images = [];
@@ -44,15 +59,17 @@ const createTravelPackage = asyncHandler(async (req, res) => {
 
   const travelPackage = await TravelPackages.create({
     name,
-    place,
-    city,
     state,
+    country,
     description,
     durationNight,
     durationDay,
+    days,
     price,
+    numberOfPerson,
     tags,
     priority,
+    onlyForAdults,
     image: images,
   });
 
@@ -153,7 +170,6 @@ const deleteTravelPackage = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const travelPackage = await TravelPackages.findById(id);
-
   if (!travelPackage) {
     throw new ApiError(404, "Package not found");
   }

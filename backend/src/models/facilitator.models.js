@@ -40,9 +40,26 @@ const facilitatorSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      // enum: ["Guide", "Pandit", "Instructor", "Local Host"],
-      // required: true,
+      enum: [
+        "Travel Guide",
+        "Photographer",
+        "Spiritual Guide",
+        "Temple Guide",
+        "Tour Guide",
+        "Activity Instructor",
+        "Driver",
+        "Boat Captain",
+        "Porter",
+        "Translator",
+        "Photographer",
+        "Geat Outfitter",
+        "Itinerary Planner",
+        "Agency Representative",
+        "Others",
+      ],
+      default: "Others",
     },
+    otherRole: String,
 
     bio: String,
 
