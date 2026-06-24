@@ -17,6 +17,7 @@ import {
   verifyOTP,
   deleteFacilitator,
   completeFacilitatorProfileByHimself,
+  deleteTemporaryRegistration,
 } from "../controllers/facilitator.controllers.js";
 
 import { VerifyFacilitator } from "../middlewares/facilitatorAuth.middleware.js";
@@ -85,6 +86,9 @@ router.route("/book-slot").post(VerifyUser, bookFacilitatorSlot);
 router
   .route("/delete-facilitator/:adminId/:facilitatorId")
   .delete(deleteFacilitator);
+router
+  .route("/cancel-registration/:facilitatorId")
+  .delete(deleteTemporaryRegistration);
 router.route("/activate/:adminId/:facilitatorId").post(activateFacilitator);
 router
   .route("/de-activate/:adminId/:facilitatorId")

@@ -14,6 +14,7 @@ import {
   searchPlaces,
   getHeroPlaces,
   getKidsPlace,
+  getPlaceByCityID,
 } from "../controllers/place.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
@@ -26,6 +27,7 @@ router.route("/search-feed").get(searchPlaces);
 router.route("/current-place/:id").get(getPlaceById);
 router.route("/inactive/:placeId").get(getInactivePlaceById);
 router.route("/city/:cityId").get(getPlacesByCity);
+router.route("/city/by-id/:cityId").get(getPlaceByCityID);
 router.route("/related-places/:query").get(getPlacesByCity);
 router.route("/explore/places").get(explorePlaces);
 router.route("/kids/explore/places").get(getKidsPlace);
