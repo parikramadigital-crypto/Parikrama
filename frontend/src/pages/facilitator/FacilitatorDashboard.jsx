@@ -20,7 +20,6 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
   const dispatch = useDispatch();
   const { copied, copy } = useCopyUrl();
   const [editProfile, setEditProfile] = useState(false);
-
   const DashboardData = async () => {
     try {
       startLoading();
@@ -63,6 +62,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
       place,
       verification,
       subscription,
+      otherRole,
     } = facilitator;
 
     return (
@@ -88,7 +88,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
             <div>
               <h1 className="text-2xl font-bold">{name}</h1>
               <p className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit capitalize">
-                {role}
+                {role === "Others" ? otherRole : role}
               </p>
 
               <div className="mt-2 text-sm space-y-1">
@@ -285,7 +285,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
           )}
         </span>
       </h2>
-      <FacilitatorProfile facilitator={data} />
+      <FacilitatorProfile facilitator={data} city={data?.city?._id} />
       <AnimatePresence>
         {editProfile && (
           <motion.div
@@ -296,6 +296,7 @@ const FacilitatorDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full z-50 bg-black/90 overflow-scroll flex justify-center items-start"
           >
             <FacilitatorRegister
+              CityID={data?.city?._id}
               completeProfile={true}
               onCancel={() => setEditProfile(false)}
               facilitatorId={data?._id}

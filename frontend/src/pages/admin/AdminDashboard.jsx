@@ -94,17 +94,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   );
   const [stats, setStats] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   const fetchStats = async () => {
     const res = await FetchData("analytics/visitors", "get");
     setStats(res.data.data);
   };
-  
+
   const fetchDashboard = async () => {
     try {
       startLoading();
       const res = await FetchData("admin/dashboard/data", "get");
-      console.log(res)
+      console.log(res);
       setPlaceData(res.data.data.place);
       setCityData(res.data.data.city);
       setStateData(res.data.data.state);
@@ -378,6 +378,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   label={"List new package"}
                   onClick={() => setPopup4(true)}
                 />
+                {console.log(packageData)}
                 <TravelPackages
                   TableData={packageData}
                   Text="Travel Packages"
@@ -720,7 +721,13 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
             className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
-            <PackageRegisteration onCancel={() => setPopup4(false)} />
+            <PackageRegisteration
+              onCancel={() => setPopup4(false)}
+              offPopup={() => {
+                setPopup4(false);
+                fetchDashboard();
+              }}
+            />
           </motion.div>
         )}
         {popup5 && (

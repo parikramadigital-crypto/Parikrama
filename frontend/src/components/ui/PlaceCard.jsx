@@ -13,6 +13,7 @@ import InputBox from "../InputBox";
 import {
   FaCopy,
   FaEdit,
+  FaPhoneAlt,
   FaRegCalendarAlt,
   FaRegCopy,
   FaShareAlt,
@@ -32,7 +33,12 @@ import {
 } from "react-icons/md";
 import FoodCard from "./FoodCard";
 import { IoFastFoodSharp, IoLocationOutline } from "react-icons/io5";
-import { FaArrowRightLong, FaArrowUpLong, FaChild, FaChildren } from "react-icons/fa6";
+import {
+  FaArrowRightLong,
+  FaArrowUpLong,
+  FaChild,
+  FaChildren,
+} from "react-icons/fa6";
 
 const PlaceCard = ({ place }) => {
   return (
@@ -396,6 +402,7 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                 {facilitator?.length > 0
                   ? facilitator.map((fac) => (
                       <div className="flex flex-col justify-between items-center bg-neutral-200 px-10 py-5 w-[90%] rounded-xl">
+                        {console.log(fac)}
                         <div className="flex flex-col md:flex-row justify-center items-start md:items-center md:gap-5">
                           <div className="w-10 h-10 md:w-20 md:h-20 rounded-full overflow-hidden object-fill bg-neutral-500 flex justify-center items-center ">
                             <img
@@ -409,13 +416,16 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                               {fac?.experienceYears} year Experience
                             </span>
                             <span className="bg-[#FFC20E] px-2 py-1 rounded-2xl w-fit text-xs">
-                              {fac?.role}
+                              {fac?.role === "Others"
+                                ? fac?.otherRole
+                                : fac?.role}
                             </span>
                           </h2>
                           {facilitatorData ? (
                             ""
                           ) : (
                             <Button
+                              onClick={() => setFacilitatorData(true)}
                               label={"Call"}
                               className={"w-full md:w-fit"}
                             />
@@ -452,14 +462,15 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                                 duration: 0.5,
                                 ease: [0.4, 0, 0.2, 1],
                               }}
+                              className="w-full flex flex-col justify-center items-start"
                             >
                               <p>
                                 <strong>Languages :</strong>{" "}
-                                {fac?.languages}{" "}
+                                {fac?.languages || "Profile update pending !"}
                               </p>
                               <p className="flex flex-col text-xs">
                                 <strong>About</strong>
-                                {fac?.bio}
+                                {fac?.bio || "Profile update pending !"}
                               </p>
                               {/* {fac?.verification?.status === "Pending" ? (
                                 <p>
@@ -470,7 +481,12 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                               ) : (
                                 ""
                               )} */}
-                              <Button label={"Call"} />
+                              <a
+                                href={`tel:+91${fac?.phone}`}
+                                className="bg-[#FFC20E] px-4 py-2 rounded-2xl hover:scale-105 hover:drop-shadow-2xl transition duration-150 ease-in-out flex justify-center items-center gap-3"
+                              >
+                                <FaPhoneAlt /> Call
+                              </a>
                             </motion.div>
                           )}
                         </AnimatePresence>
