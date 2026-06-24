@@ -15,7 +15,7 @@ import {
 } from "../workers/sms.workers.js";
 
 const registerFacilitator = asyncHandler(async (req, res) => {
-  const { name, phone, password, role, email } = req.body;
+  const { name, phone, password, role, email, otherRole, city } = req.body;
   if (!name || !phone || !password) {
     throw new ApiError(400, "Required fields missing");
   }
@@ -23,7 +23,7 @@ const registerFacilitator = asyncHandler(async (req, res) => {
   const existing = await Facilitator.findOne({ phone: phone });
 
   if (existing) {
-    throw new ApiError(409, "Facilitator already exists");
+    throw new ApiError(409, "You are already registered, kindly login !");
   }
   // Must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 digit, and 1 special character
   if (
@@ -41,6 +41,8 @@ const registerFacilitator = asyncHandler(async (req, res) => {
     phone,
     password,
     role,
+    otherRole,
+    city,
     otp,
   });
   await sendOtpSMS(phone, otp);
@@ -51,7 +53,7 @@ const registerFacilitator = asyncHandler(async (req, res) => {
       201,
       // { otp },
       { facilitator, otp },
-      "Facilitator registered successfully",
+      "Registration complete ! Now please enter OTP to complete the verificaiton.",
     ),
   );
 });
@@ -84,7 +86,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
   }
 
   // OTP MATCHED
-  // facilitator.isVerified = true;
+  facilitator.isVerified = true;
   facilitator.otp = undefined; // remove otp
   facilitator.otpExpiresAt = undefined;
 
@@ -597,6 +599,17 @@ const deleteFacilitator = asyncHandler(async (req, res) => {
     );
 });
 
+const deleteTemporaryRegistration = asyncHandler(async (req, res) => {
+  const { facilitatorId } = req.params;
+  const facilitator = await Facilitator.findByIdAndDelete(facilitatorId);
+  if (!facilitator) throw new ApiError(400, "Invalid request");
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, {}, "Please restart the registration process !"),
+    );
+});
+
 export {
   registerFacilitator,
   verifyOTP,
@@ -616,4 +629,5 @@ export {
   AcceptDocumentVerification,
   RejectDocumentVerification,
   deleteFacilitator,
+  deleteTemporaryRegistration,
 };

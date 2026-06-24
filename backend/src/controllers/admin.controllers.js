@@ -356,7 +356,9 @@ const dashboardData = asyncHandler(async (req, res) => {
   const promotions = await Promotion.find()
     .populate("place")
     .sort({ createdAt: -1 });
-  const packages = await TravelPackages.find().sort({ createdAt: -1 });
+  const packages = await TravelPackages.find()
+    .sort({ createdAt: -1 })
+    .populate("state country");
   const enquiry = await EnquiryDetails.find({
     reviewedByAdmin: false,
   })

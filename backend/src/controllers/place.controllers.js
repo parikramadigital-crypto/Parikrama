@@ -234,18 +234,35 @@ const getPlacesByCity = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, places, "Places fetched successfully"));
 });
 
+const getPlaceByCityID = asyncHandler(async (req, res) => {
+  const { cityId } = req.params;
+  if (!cityId) throw new ApiError(400, "Invalid request");
+
+  const city = await City.findById(cityId);
+  if (!city) throw new ApiError(400, "City not found");
+
+  const place = await Place.find({ city: city._id, isActive: true });
+  if (!place) throw new ApiError(400, "Place not found");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, place, "Places fetched successfully !"));
+});
+
 const getPlaceById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   /* -------- PLACE -------- */
   const place = await Place.findById(id).populate("city state");
+  const cityId = place.city._id;
   if (!place || !place.isActive) {
     throw new ApiError(404, "Place not found");
   }
 
   /* -------- FACILITATORS FOR THIS PLACE -------- */
   const facilitators = await Facilitator.find({
-    place: id,
+    city: cityId,
+    // place: id,
     isActive: true,
     isVerified: true,
   }).populate("city state");
@@ -757,6 +774,7 @@ export {
   getHeroPlaces,
   getPlaceById,
   getPlacesByCity,
+  getPlaceByCityID,
   updatePlace,
   deletePlace,
   getInactivePlaceById,
