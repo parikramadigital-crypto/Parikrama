@@ -27,6 +27,7 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
         `places/current-place/${placeId}`,
         "get",
       );
+      // console.log(response)
       setData(response.data.data.place);
       setFacilitator(response.data.data.facilitators);
       setFoodStore(response.data.data.foodStore);
@@ -77,6 +78,8 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
           <div className="w-full overflow-x-hidden flex flex-col gap-2 justify-center items-center md:hidden">
             <h1>This is an itinerary of {data?.city?.name}</h1>
             <CityPlacesCircle
+            cityLong={data?.city?.location?.coordinates[0]}
+            cityLat={data?.city?.location?.coordinates[1]}
               cityName={data?.city?.name}
               places={recommendations}
             />

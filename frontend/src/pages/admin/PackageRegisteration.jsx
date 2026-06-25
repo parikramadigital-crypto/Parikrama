@@ -25,21 +25,17 @@ const RegisterTravelPackage = ({
     const loadStates = async () => {
       try {
         const response = await FetchData("states", "get");
-        console.log(response);
+
         setStates(response?.data?.data || []);
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
 
     const loadCountry = async () => {
       try {
         const response = await FetchData("country/get/all-country", "get");
-        console.log(response);
+
         setCountries(response.data.data || []);
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
 
     loadStates();
@@ -82,6 +78,7 @@ const RegisterTravelPackage = ({
         `packages/register-package/${adminId}`,
         "post",
         formData,
+        true,
       );
 
       if (res.data.success) {
@@ -256,13 +253,12 @@ const RegisterTravelPackage = ({
         {/* Images */}
         <div className="py-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Upload Images
+            Upload Image
           </label>
 
           <input
             type="file"
-            name="images"
-            multiple
+            name="image"
             className="w-full border border-gray-300 p-2 rounded-md"
           />
         </div>

@@ -31,7 +31,7 @@ const RatingBar = ({ label, value, icon: Icon, color, iconColor }) => {
 
 const FoodCourtRatings = ({ ratings, reviews }) => {
   return (
-    <div className="space-y-6 ">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-5">
       {/* Main Rating Card */}
       <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-6">
         <div className="flex flex-col lg:flex-row">

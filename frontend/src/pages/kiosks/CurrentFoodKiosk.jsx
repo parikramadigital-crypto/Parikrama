@@ -11,6 +11,7 @@ import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import FoodCourtRatings from "../../components/ui/FoodCourtRating";
 import useCopyUrl from "../../components/hooks/CopyUrl";
 import { FaShareNodes, FaSquareShareNodes } from "react-icons/fa6";
+import { BiFoodTag, BiSolidNavigation } from "react-icons/bi";
 
 const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
   const { foodCourtId } = useParams();
@@ -30,7 +31,7 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
       );
       setData(response.data.data);
     } catch (err) {
-      console.log(err);
+
     } finally {
       stopLoading();
     }
@@ -47,15 +48,20 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
         `foodCourt/${process}/food-court/by-id/${foodCourtId}/${adminId}`,
         `${header}`,
       );
-      console.log(response);
+
       alert(response.data.message);
       foodCourt();
     } catch (err) {
-      console.log(err);
+
       alert(parseErrorMessage(err.response.data));
     } finally {
       stopLoading();
     }
+  };
+
+  const openMaps = ({ lat, long }) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${long}`;
+    window.open(url, "_blank");
   };
 
   return (
@@ -63,7 +69,7 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
       {!data ? (
         <p>Loading...</p>
       ) : (
-        <div className="flex flex-col md:flex-row justify-center items-start gap-5">
+        <div className="flex flex-col justify-center items-start gap-5">
           <AnimatePresence>
             {success && (
               <motion.p
@@ -81,7 +87,7 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               </motion.p>
             )}
           </AnimatePresence>
-          <div className="space-y-6">
+          <div className="space-y-6 w-full">
             {localStorage.role === "Admin" ? (
               <div className="flex flex-col justify-center items-start gap-5 bg-neutral-200 w-fit p-5 rounded-xl">
                 {/* <h1>Actions to perform</h1> */}
@@ -143,7 +149,7 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               ""
             )}
             {/* 🔥 Header */}
-            <div className="w-fit">
+            <div className="w-full flex flex-col justify-start items-start gap-2">
               <div className="flex justify-start items-center gap-2">
                 {data?.verified === true ? (
                   <span
@@ -182,6 +188,24 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               <h1 className="flex justify-start items-center">
                 <IoLocation /> {data?.city?.name}, {data?.state?.name}
               </h1>
+              {data?.location?.coordinates?.length <= 1 ? (
+                "Exact location not available"
+              ) : (
+                <button
+                  onClick={() =>
+                    openMaps({
+                      lat: data?.location?.coordinates[0],
+                      long: data?.location?.coordinates[1],
+                    })
+                  }
+                  className={`px-4 py-2 rounded-2xl drop-shadow-xl hover:scale-105 hover:shadow-2xl transition duration-150 ease-in-out bg-[#FFC20E] flex md:flex-col justify-center items-center gap-2`}
+                >
+                  <span>
+                    <BiSolidNavigation className="md:text-3xl" />
+                  </span>
+                  <span className="text-black">Get Directions</span>
+                </button>
+              )}
             </div>
             {/* 🍜 Special Food */}
             <div>
@@ -198,59 +222,28 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               </div>
             </div>
 
-            <div className="w-full space-y-2">
-              {/* 🏪 Store Images */}
-              <div className="bg-neutral-200 p-2 rounded-xl">
-                <h2 className="text-lg font-semibold mb-2">Store Images</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {data.storeImages?.map((img) => (
-                    <img
-                      key={img.fileId}
-                      src={img.url}
-                      alt="img"
-                      onClick={() => setPreviewImage(img.url)}
-                      className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* 🍲 Food Images */}
-              <div className="bg-neutral-200 p-2 rounded-xl">
-                <h2 className="text-lg font-semibold mb-2">Food Images</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {data.foodImages?.map((img) => (
-                    <img
-                      key={img.fileId}
-                      src={img.url}
-                      alt="img"
-                      onClick={() => setPreviewImage(img.url)}
-                      className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* 📜 Menu Images */}
-              <div className="bg-neutral-200 p-2 rounded-xl">
-                <h2 className="text-lg font-semibold mb-2">Menu</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {data.menuImages?.map((img) => (
-                    <img
-                      key={img.fileId}
-                      src={img.url}
-                      alt="img"
-                      onClick={() => setPreviewImage(img.url)}
-                      className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
             {/* 📍 Basic Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg">
-              <p>
-                <b>Category:</b> {data.category}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 md:gap-4 bg-gray-50 p-4 rounded-lg w-full">
+              <p className="flex justify-start items-center gap-2">
+                <b>Category:</b> {data.category}{" "}
+                {data?.category === "Veg" ? (
+                  <BiFoodTag className="text-green-700" />
+                ) : (
+                  ""
+                )}
+                {data?.category === "Non-Veg" ? (
+                  <BiFoodTag className="text-red-700" />
+                ) : (
+                  ""
+                )}
+                {data?.category === "Both" ? (
+                  <h1>
+                    <BiFoodTag className="text-green-700" /> /{" "}
+                    <BiFoodTag className="text-red-700" />
+                  </h1>
+                ) : (
+                  ""
+                )}
               </p>
               <p>
                 <b>Contact:</b> {data.contactNumber}
@@ -269,9 +262,9 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               </p>
             </div>
             {/* 📍 Place Info */}
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg w-full">
               <h2 className="text-lg font-semibold mb-2">
-                Nearest Place Details
+                Nearest Tourist Place
               </h2>
               <p>
                 <b>Name:</b> {data.place?.name}
@@ -279,12 +272,66 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
               <p>
                 <b>Category:</b> {data.place?.category}
               </p>
-              <p>
-                <b>Entry Fee:</b> ₹{data.place?.entryFee}
-              </p>
+              {data?.place?.entryFee === 0 ? (
+                ""
+              ) : (
+                <p>
+                  <b>Entry Fee:</b> ₹{data.place?.entryFee}
+                </p>
+              )}
             </div>
           </div>
-          <div className="md:sticky top-24 right-0">
+          {/* images  */}
+          <div className="w-full space-y-2">
+            {/* 🏪 Store Images */}
+            <div className="bg-neutral-200 p-2 rounded-xl">
+              <h2 className="text-lg font-semibold mb-2">Store Images</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {data.storeImages?.map((img) => (
+                  <img
+                    key={img.fileId}
+                    src={img.url}
+                    alt="img"
+                    onClick={() => setPreviewImage(img.url)}
+                    className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* 🍲 Food Images */}
+            <div className="bg-neutral-200 p-2 rounded-xl">
+              <h2 className="text-lg font-semibold mb-2">Food Images</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {data.foodImages?.map((img) => (
+                  <img
+                    key={img.fileId}
+                    src={img.url}
+                    alt="img"
+                    onClick={() => setPreviewImage(img.url)}
+                    className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* 📜 Menu Images */}
+            <div className="bg-neutral-200 p-2 rounded-xl">
+              <h2 className="text-lg font-semibold mb-2">Menu</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {data.menuImages?.map((img) => (
+                  <img
+                    key={img.fileId}
+                    src={img.url}
+                    alt="img"
+                    onClick={() => setPreviewImage(img.url)}
+                    className="w-40 h-40 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="md:sticky top-24 right-0 w-full">
             <FoodCourtRatings ratings={data?.ratings} reviews={data?.reviews} />
           </div>
         </div>
