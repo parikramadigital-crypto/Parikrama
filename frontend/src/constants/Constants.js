@@ -38,7 +38,7 @@ const mockPackages = {
       price: 29800,
       tags: ["Snow", "Nature"],
       image:
-        "https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800",
+        "https://images.unsplash.com/photo-1598091383021-15ddea10925d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dw=800",
     },
     {
       id: 5,
@@ -78,7 +78,7 @@ const mockPackages = {
       price: 19800,
       tags: ["Mountains", "Relax"],
       image:
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800",
+        "https://images.unsplash.com/photo-1721070025492-26368db1706f?q=80&w=2232&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
   ],
 
@@ -91,7 +91,7 @@ const mockPackages = {
       price: 47840,
       tags: ["Adventure", "Biker"],
       image:
-        "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800",
+        "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 10,
@@ -101,7 +101,7 @@ const mockPackages = {
       price: 14500,
       tags: ["Adventure", "River"],
       image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
+        "https://images.unsplash.com/photo-1598610882061-bb806386c5fb?q=80&w=2065&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 11,
@@ -111,7 +111,7 @@ const mockPackages = {
       price: 39900,
       tags: ["Mountains", "Road Trip"],
       image:
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800",
+        "https://images.unsplash.com/photo-1746093846930-ab89242b9fb9?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 12,
@@ -121,7 +121,7 @@ const mockPackages = {
       price: 26800,
       tags: ["Nature", "Waterfalls"],
       image:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+        "https://images.unsplash.com/photo-1625826415128-3fbae9b3022c?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 13,
@@ -131,7 +131,7 @@ const mockPackages = {
       price: 17500,
       tags: ["Heritage", "History"],
       image:
-        "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=800",
+        "https://images.unsplash.com/photo-1632408011026-b7375a96ae8c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 14,
@@ -141,7 +141,7 @@ const mockPackages = {
       price: 16500,
       tags: ["Nature", "Relax"],
       image:
-        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800",
+        "https://images.unsplash.com/photo-1686532794194-5a8a74e3633e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 15,
@@ -151,7 +151,7 @@ const mockPackages = {
       price: 18900,
       tags: ["Hills", "Family"],
       image:
-        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800",
+        "https://images.unsplash.com/photo-1771149149669-abe6fade279c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 16,
@@ -161,7 +161,7 @@ const mockPackages = {
       price: 15500,
       tags: ["Spiritual", "Trekking"],
       image:
-        "https://images.unsplash.com/photo-1597756290641-9a9f8b40c88b?w=800",
+        "https://images.unsplash.com/photo-1612438214708-f428a707dd4e?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
   ],
 
@@ -174,7 +174,7 @@ const mockPackages = {
       price: 54900,
       tags: ["Island", "Luxury"],
       image:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+        "https://images.unsplash.com/photo-1646130322178-c9d8da261891?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 18,
@@ -183,7 +183,7 @@ const mockPackages = {
       duration: "4 Nights / 5 Days",
       price: 25900,
       tags: ["Festival", "Culture"],
-      image: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=800",
+      image: "https://images.unsplash.com/photo-1669015881702-951de590db31?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 19,
@@ -193,7 +193,7 @@ const mockPackages = {
       price: 28900,
       tags: ["Mountains", "Nature"],
       image:
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800",
+        "https://images.unsplash.com/photo-1573398643956-2b9e6ade3456?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 20,
@@ -203,7 +203,7 @@ const mockPackages = {
       price: 33500,
       tags: ["Adventure", "Remote"],
       image:
-        "https://images.unsplash.com/photo-1526779259212-939e64788e3c?w=800",
+        "https://images.unsplash.com/photo-1668437824006-1be44600774b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 21,
@@ -213,7 +213,7 @@ const mockPackages = {
       price: 13900,
       tags: ["Hill Station", "Relax"],
       image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
+        "https://images.unsplash.com/photo-1574323109400-7477368b7b03?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 22,
@@ -223,7 +223,7 @@ const mockPackages = {
       price: 17800,
       tags: ["Beach", "Backpacking"],
       image:
-        "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800",
+        "https://images.unsplash.com/photo-1585435126652-f17450710377?q=80&w=1674&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 23,
@@ -233,7 +233,7 @@ const mockPackages = {
       price: 12500,
       tags: ["Heritage", "Culture"],
       image:
-        "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800",
+        "https://images.unsplash.com/photo-1600112356915-089abb8fc71a?q=80&w=2194&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 24,
@@ -243,7 +243,7 @@ const mockPackages = {
       price: 31200,
       tags: ["Wildlife", "Safari"],
       image:
-        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800",
+        "https://images.unsplash.com/photo-1768622168969-4305586153a9?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
   ],
 };
