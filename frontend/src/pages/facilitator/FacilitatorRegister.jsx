@@ -138,7 +138,6 @@ const FacilitatorRegister = ({
           await handleCancelRegistration();
         }
       } catch (error) {
-        console.log(error);
       }
 
       window.removeEventListener("popstate", handleBackButton);
@@ -159,7 +158,6 @@ const FacilitatorRegister = ({
       try {
         startLoading();
         const res = await FetchData("cities", "get");
-        console.log(res);
         setCities(res?.data?.data || []);
       } catch (err) {
         //  console.log(err);
@@ -204,7 +202,6 @@ const FacilitatorRegister = ({
       const getPlaces = async () => {
         try {
           const response = await FetchData(`places/city/by-id/${CityID}`, "get");
-          console.log(response);
           setFilteredPlaces(response.data.data || []);
         } catch (err) {
           // console.log(err);

@@ -30,7 +30,6 @@ const CurrentCommunity = ({ startLoading, stopLoading }) => {
       );
       setCommunity(response?.data?.data || null);
     } catch (err) {
-      console.log(err);
       setError("Unable to load community details. Please try again.");
     } finally {
       stopLoading();
@@ -54,10 +53,9 @@ const CurrentCommunity = ({ startLoading, stopLoading }) => {
         "post",
         { userType, userId },
       );
-      console.log(response);
+
       alert(response.data.message || "Request sent successfully");
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
     }
   };

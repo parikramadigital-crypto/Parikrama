@@ -20,10 +20,9 @@ const CurrentFacilitator = ({ startLoading, stopLoading }) => {
         `facilitator/current-facilitator/${facilitatorId}`,
         "get",
       );
-      console.log(response);
+
       setData(response.data.data);
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -40,11 +39,10 @@ const CurrentFacilitator = ({ startLoading, stopLoading }) => {
         `facilitator/activate/${user?._id}/${facilitatorId}`,
         "post",
       );
-      console.log(response);
+
       currentFacilitator();
       alert("Marked as active");
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -57,11 +55,10 @@ const CurrentFacilitator = ({ startLoading, stopLoading }) => {
         `facilitator/de-activate/${user?._id}/${facilitatorId}`,
         "post",
       );
-      console.log(response);
+
       currentFacilitator();
       alert("Marked as De-active");
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -74,11 +71,10 @@ const CurrentFacilitator = ({ startLoading, stopLoading }) => {
         `facilitator/approve/documents/${user?._id}/${facilitatorId}`,
         "post",
       );
-      console.log(response);
+
       currentFacilitator();
       alert("Documents verified successfully");
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -91,11 +87,10 @@ const CurrentFacilitator = ({ startLoading, stopLoading }) => {
         `facilitator/reject/documents/${user?._id}/${facilitatorId}`,
         "post",
       );
-      console.log(response);
+
       currentFacilitator();
       alert("Documents rejected successfully");
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }

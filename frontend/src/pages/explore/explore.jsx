@@ -30,7 +30,6 @@ const Explore = ({ startLoading, stopLoading, userProfile = false }) => {
         setPopularData(response?.data?.data?.places || []);
         setEnrichedPlaces(response?.data?.data?.enrichedPlaces || []);
       } catch (err) {
-        console.log(err);
       } finally {
         stopLoading();
       }
@@ -104,8 +103,6 @@ const Explore = ({ startLoading, stopLoading, userProfile = false }) => {
     const [count, setCount] = useState(minLimit);
 
     if (!data?.length) return null;
-
-
 
     return (
       <section className="w-full py-5">
