@@ -24,7 +24,6 @@ const FacilitatorLogin = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const res = await FetchData("facilitator/login", "post", formData);
-      console.log(res);
 
       if (res.data.success) {
         const { facilitator, tokens } = res.data.data;

@@ -11,7 +11,6 @@ const CurrentHotel = ({ startLoading, stopLoading }) => {
   const { hotelId } = useParams();
   const [hotel, setHotel] = useState(null);
   const [error, setError] = useState("");
-  console.log(hotel);
 
   const loadHotel = async () => {
     try {

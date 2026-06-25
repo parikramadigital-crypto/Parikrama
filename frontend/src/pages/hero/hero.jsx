@@ -37,7 +37,6 @@ const Hero = ({ stopLoading, startLoading }) => {
       setRightBanner(response.data.data.promotionsMid);
       setLeftBanner(response.data.data.promotionsMin);
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }

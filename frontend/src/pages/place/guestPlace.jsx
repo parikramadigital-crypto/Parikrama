@@ -82,7 +82,6 @@ const GuestPlace = ({ startLoading, stopLoading }) => {
         formData,
         true,
       );
-      console.log(res);
 
       setSuccess("Place added successfully");
       formRef.current.reset();
