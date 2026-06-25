@@ -35,7 +35,6 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
       const response = await FetchData("promotions/get/all/promotions", "get");
       setRightBanner(response.data.data.promotionsMid);
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -52,7 +51,6 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
         const res = await FetchData("cities", "get");
         setCities(res?.data?.data || []);
       } catch (err) {
-        console.log(err);
       } finally {
         stopLoading();
       }

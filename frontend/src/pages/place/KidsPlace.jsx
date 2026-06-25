@@ -16,10 +16,10 @@ const KidsPlace = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const response = await FetchData("places/kids/explore/places", "get");
-      // console.log(response);
+
       setData(response.data.data || []);
     } catch (err) {
-      // console.log(err);
+
     } finally {
       stopLoading();
     }

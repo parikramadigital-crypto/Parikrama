@@ -25,7 +25,7 @@ const CurrentStateCity = ({ startLoading, stopLoading }) => {
         setPlace(response.data.data.places);
       }
     } catch (err) {
-      console.log(err);
+
     } finally {
       stopLoading();
     }
@@ -45,7 +45,7 @@ const CurrentStateCity = ({ startLoading, stopLoading }) => {
       alert("City deleted successfully !");
       navigate("/admin/dashboard");
     } catch (err) {
-      console.log(err);
+
       alert("Error in deleting city try again later.");
     } finally {
       stopLoading();

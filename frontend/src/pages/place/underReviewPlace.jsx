@@ -77,17 +77,14 @@ const PlaceDetailsCard = ({ place }) => {
       formRef.current.reset();
       window.location.reload();
     } catch (err) {
-      console.log(err);
       setError(err.response.data.message || "Something went wrong");
     }
   };
 
   const acceptPlace = async () => {
-    console.log("hit it");
     try {
       const res = await FetchData(`places/active-new-place/${_id}`, "post");
       // setStates(res?.data?.data || []);
-      console.log(res);
       alert("Place accepted");
       navigate("/admin/dashboard");
     } catch (err) {
@@ -285,7 +282,6 @@ const UnderReviewPlace = ({ startLoading, stopLoading }) => {
       const response = await FetchData(`places/inactive/${placeId}`, "get");
       setData(response.data.data);
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }
@@ -295,7 +291,7 @@ const UnderReviewPlace = ({ startLoading, stopLoading }) => {
     place();
   }, []);
 
-  console.log(data);
+
   return user?.role === "Admin" ? (
     <div className="flex justify-center items-center w-full">
       <PlaceDetailsCard place={data} />
