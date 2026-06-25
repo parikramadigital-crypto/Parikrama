@@ -53,7 +53,6 @@ const Card = ({
         return;
       }
       const response = await FetchData("users/create-user", "post", formData);
-      console.log(response);
       setOtp(response.data.data.otp);
       setNewUser(response.data.data.newUser);
     } catch (err) {
@@ -67,11 +66,8 @@ const Card = ({
       const formData = new FormData(formRef.current);
       const response = await FetchData("users/verify-user", "post", formData);
 
-      console.log(response);
-
       if (response.data.success) {
         const { user, tokens } = response.data.data;
-        console.log(user);
 
         localStorage.setItem("AccessToken", tokens.accessToken);
         localStorage.setItem("RefreshToken", tokens.refreshToken);
@@ -239,7 +235,6 @@ const LiveTelecast = ({ stopLoading, startLoading }) => {
       const response = await FetchData("promotions/get/all/promotions", "get");
       setData(response.data.data.telecastPlace);
     } catch (err) {
-      console.log(err);
     } finally {
       stopLoading();
     }

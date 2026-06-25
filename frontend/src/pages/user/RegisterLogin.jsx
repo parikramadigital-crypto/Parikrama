@@ -43,11 +43,10 @@ const UserRegisterLogin = () => {
         return;
       }
       const response = await FetchData("users/create-user", "post", formData);
-      console.log(response);
+
       setOtp(response.data.data.otp);
       setNewUser(response.data.data.newUser);
     } catch (err) {
-      console.log(err);
       showError(parseErrorMessage(err.response.data));
     }
   };
@@ -64,11 +63,10 @@ const UserRegisterLogin = () => {
         return;
       }
       const response = await FetchData("users/login-user", "post", formData);
-      console.log(response);
+
       setOtp(response.data.data.otp);
       setNewUser(response.data.data.user);
     } catch (err) {
-      console.log(err);
       showError(parseErrorMessage(err.response.data));
     }
   };
@@ -79,11 +77,8 @@ const UserRegisterLogin = () => {
       const formData = new FormData(formRef.current);
       const response = await FetchData("users/verify-user", "post", formData);
 
-      console.log(response);
-
       if (response.data.success) {
         const { user, tokens } = response.data.data;
-        console.log(user);
 
         localStorage.setItem("AccessToken", tokens.accessToken);
         localStorage.setItem("RefreshToken", tokens.refreshToken);
