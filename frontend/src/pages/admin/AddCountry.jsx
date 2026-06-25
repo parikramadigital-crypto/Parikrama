@@ -20,12 +20,10 @@ const AddCountry = ({ startLoading, stopLoading, onCancel, adminId }) => {
         "post",
         formData,
       );
-      console.log(response);
       alert(response.data.message);
       formRef.current.reset();
       onCancel();
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
     } finally {
       stopLoading();

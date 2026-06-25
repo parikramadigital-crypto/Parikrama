@@ -402,7 +402,7 @@ const ExpandedPlaceCard = ({ place, facilitator, foodStore }) => {
                 {facilitator?.length > 0
                   ? facilitator.map((fac) => (
                       <div className="flex flex-col justify-between items-center bg-neutral-200 px-10 py-5 w-[90%] rounded-xl">
-                        {console.log(fac)}
+
                         <div className="flex flex-col md:flex-row justify-center items-start md:items-center md:gap-5">
                           <div className="w-10 h-10 md:w-20 md:h-20 rounded-full overflow-hidden object-fill bg-neutral-500 flex justify-center items-center ">
                             <img

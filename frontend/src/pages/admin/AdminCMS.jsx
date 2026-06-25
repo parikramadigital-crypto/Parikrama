@@ -21,7 +21,6 @@ const AdminCMS = ({ adminId, onClose }) => {
       const res = await FetchData("cms", "get");
       setCmsData(res?.data?.data || {});
     } catch (err) {
-      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +88,6 @@ const AdminCMS = ({ adminId, onClose }) => {
       fetchCMS();
       alert("Updated successfully");
     } catch (err) {
-      console.log(err);
       alert("Update failed");
     } finally {
       setLoading(false);
@@ -109,7 +107,6 @@ const AdminCMS = ({ adminId, onClose }) => {
       fetchCMS();
       alert("Deleted successfully");
     } catch (err) {
-      console.log(err);
       alert("Delete failed");
     } finally {
       setLoading(false);

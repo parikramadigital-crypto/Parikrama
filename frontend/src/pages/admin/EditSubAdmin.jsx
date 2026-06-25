@@ -34,7 +34,6 @@ const EditSubAdmin = ({ startLoading, stopLoading }) => {
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
-  console.log(user)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -69,8 +68,6 @@ const EditSubAdmin = ({ startLoading, stopLoading }) => {
       setSubAdmin(admin);
       setSelectedSections(admin?.sectionList || []);
     } catch (err) {
-      console.log(err);
-
       alert("Failed to load sub admin");
     } finally {
       stopLoading();
@@ -144,11 +141,10 @@ const EditSubAdmin = ({ startLoading, stopLoading }) => {
             ? `admin/sub-admin/de-activate/${adminId}/${user?._id}`
             : "";
       const response = await FetchData(endPoint, "post");
-      console.log(response);
+
       alert(response.data.message);
       loadSubAdmin();
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
     } finally {
       stopLoading();
