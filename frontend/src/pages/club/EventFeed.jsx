@@ -21,7 +21,6 @@ const EventFeed = ({ startLoading, stopLoading }) => {
       const response = await FetchData("clubs/club/get-all/events", "get");
       setData(response.data.data);
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
     } finally {
       stopLoading();
@@ -48,14 +47,12 @@ const EventFeed = ({ startLoading, stopLoading }) => {
           "post",
           formData,
         );
-        console.log(response);
         alert(response.data.message);
         formRef.current.reset();
         setPopup(false);
         getAllEvents();
         // window.location.reload();
       } catch (err) {
-        console.log(err);
         alert(parseErrorMessage(err.response.data));
         getAllEvents();
       } finally {

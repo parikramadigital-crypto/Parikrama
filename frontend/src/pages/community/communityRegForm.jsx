@@ -55,7 +55,7 @@ const CommunityRegForm = ({
       const response = await FetchData("promotions/get/all/promotions", "get");
       setRightBanner(response.data.data.promotionsMid);
     } catch (err) {
-      console.log(err);
+
     } finally {
       stopLoading();
     }
@@ -88,12 +88,12 @@ const CommunityRegForm = ({
         formData,
         true,
       );
-      // console.log(response);
+
       alert(response.data.message);
       formRef.current.reset();
       navigate("/login/community");
     } catch (err) {
-      // console.log(err);
+
       alert(parseErrorMessage(err.response.data));
       // formRef.current.reset();
       // setProfilePreview([]);
@@ -128,7 +128,7 @@ const CommunityRegForm = ({
 
   const handleCompleteProfile = async (e) => {
     e.preventDefault();
-    console.log("Handle complete profile function");
+
     try {
       const formData = new FormData(formRef.current);
       formData.append("socialLinks", JSON.stringify(socialLinks));
@@ -138,10 +138,10 @@ const CommunityRegForm = ({
         formData,
         true,
       );
-      console.log(response);
+
       alert(response.data.message);
     } catch (err) {
-      console.log(err);
+
     }
   };
 

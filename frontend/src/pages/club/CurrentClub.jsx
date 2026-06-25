@@ -79,10 +79,9 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
         "post",
         { userType, userId },
       );
-      console.log(response);
+
       alert(response.data.message || "Request sent successfully");
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
     }
   };
@@ -98,7 +97,7 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
         "post",
         formData,
       );
-      console.log(response);
+
       alert(response.data.message);
       formRef.current.reset();
       setPopup2(false);
@@ -106,7 +105,6 @@ const CurrentClub = ({ startLoading, stopLoading }) => {
       localStorage.clear();
       // window.location.reload();
     } catch (err) {
-      console.log(err);
       alert(parseErrorMessage(err.response.data));
       loadClub();
     } finally {
