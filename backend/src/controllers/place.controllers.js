@@ -252,33 +252,78 @@ const getPlaceByCityID = asyncHandler(async (req, res) => {
 const getPlaceById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  /* -------- PLACE -------- */
+  /* ---------- PLACE ---------- */
   const place = await Place.findById(id).populate("city state");
-  const cityId = place.city._id;
+
   if (!place || !place.isActive) {
     throw new ApiError(404, "Place not found");
   }
 
-  /* -------- FACILITATORS FOR THIS PLACE -------- */
-  const facilitators = await Facilitator.find({
-    city: cityId,
-    // place: id,
+  const cityId = place.city._id;
+
+  /* ==========================================================
+     FACILITATORS
+     ========================================================== */
+
+  // Facilitators assigned to this place
+  const placeFacilitators = await Facilitator.find({
+    place: place._id,
     isActive: true,
     isVerified: true,
-  }).populate("city state");
+  }).populate("place city state");
 
-  const foodStore = await FoodCourt.find({
-    city: place.city._id,
+  // IDs to exclude
+  const placeFacilitatorIds = placeFacilitators.map((f) => f._id);
+
+  // Other facilitators from same city
+  const cityFacilitators = await Facilitator.find({
+    city: cityId,
+    isActive: true,
+    isVerified: true,
+    _id: { $nin: placeFacilitatorIds },
+  }).populate("place city state");
+
+  // Final order: Place facilitators first, then city facilitators
+  const facilitators = [...placeFacilitators, ...cityFacilitators];
+
+  /* ==========================================================
+     FOOD COURTS
+     ========================================================== */
+
+  // Food courts assigned to this place
+  const placeFoodStore = await FoodCourt.find({
+    place: place._id,
     active: true,
-    verified: true,
-  }).populate("place", "name");
+    verified: false,
+  }).populate("place city state");
 
-  res.status(200).json(
-    new ApiResponse(200, {
-      place,
-      facilitators,
-      foodStore,
-    }),
+  const placeFoodIds = placeFoodStore.map((f) => f._id);
+
+  // Other food courts from same city
+  const cityFoodStore = await FoodCourt.find({
+    city: cityId,
+    active: true,
+    verified: false,
+    _id: { $nin: placeFoodIds },
+  }).populate("place city state");
+
+  // Final order: Place food courts first, then city food courts
+  const foodStore = [...placeFoodStore, ...cityFoodStore];
+
+  /* ==========================================================
+     RESPONSE
+     ========================================================== */
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        place,
+        facilitators,
+        foodStore,
+      },
+      "Place details fetched successfully"
+    )
   );
 });
 
