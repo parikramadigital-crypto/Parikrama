@@ -19,7 +19,7 @@ export const FlightBusForm = () => {
       alert(response.data.message);
       formRef.current.reset();
     } catch (err) {
-      console.log(err);
+
       alert(parseErrorMessage(err.response.data));
     }
   };

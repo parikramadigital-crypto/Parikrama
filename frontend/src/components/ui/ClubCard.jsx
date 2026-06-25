@@ -7,8 +7,6 @@ const ClubCard = ({ club }) => {
   const imageUrl =
     club?.images?.coverImage?.url || club?.images?.gallery?.[0]?.url || "";
 
-  console.log(club);
-
   return (
     <Link
       to={`/clubs/${club?._id}`}

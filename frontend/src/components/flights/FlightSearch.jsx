@@ -20,12 +20,9 @@ const FlightSearch = () => {
     try {
       setLoading(true);
       const body = new FormData(formRef.current);
-      for (let pair of body.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
+
       const response = await FetchData("flight/flight-enquiry", "post", body);
       setFlights(response.data.data.data || []);
-      console.log(response)
     } catch (error) {
       console.error(error);
     } finally {
@@ -51,7 +48,7 @@ const FlightSearch = () => {
               onChange={handleChange}
             >
               <option value="">Select options</option>
-              {INDIAN_AIRPORTS?.map((c,index) => (
+              {INDIAN_AIRPORTS?.map((c, index) => (
                 <option key={index} value={c.code}>
                   {c.city} ({c.code})
                 </option>
@@ -66,7 +63,7 @@ const FlightSearch = () => {
               onChange={handleChange}
             >
               <option value="">Select options</option>
-              {INDIAN_AIRPORTS?.map((c,index) => (
+              {INDIAN_AIRPORTS?.map((c, index) => (
                 <option key={index} value={c.code}>
                   {c.city} ({c.code})
                 </option>

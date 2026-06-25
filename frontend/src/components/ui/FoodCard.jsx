@@ -5,7 +5,7 @@ import { truncateString } from "../../utils/Utility-functions";
 import { MdVerified } from "react-icons/md";
 
 const FoodCard = ({ f }) => {
-  console.log(f);
+
   return f?.map((data) => (
     <Link
       key={data?._id}

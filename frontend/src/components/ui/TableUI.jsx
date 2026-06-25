@@ -748,7 +748,7 @@ const TravelPackages = ({
   const deletePackage = async ({ packageId }) => {
     if (!window.confirm("Are you sure you want to delete this package?"))
       return;
-    console.log("Funtion did stop");
+
     try {
       const response = await FetchData(
         `packages/delete-package/${user}/${packageId}`,
@@ -862,12 +862,10 @@ const FoodKiosks = ({ Text = "", TableData = [], user, reloadDashboard }) => {
         `foodCourt/delete/food-court/by-id/${placeKioskId}/${user}`,
         "delete",
       );
-      console.log(response);
+
       alert(response.data.message);
       reloadDashboard();
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -1418,12 +1416,12 @@ const Enquiry = ({
         `enquiry/mark-as-hot/${user}/${request?._id}`,
         "post",
       );
-      console.log(response);
+
       setPopup(false);
       alert(response.data.message);
       reloadDashboard();
     } catch (err) {
-      console.log(err);
+
       alert(parseErrorMessage(err.response.data));
     }
   };
@@ -1569,7 +1567,7 @@ const Enquiry = ({
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <div className="bg-white rounded-md p-5 w-[60vw] flex justify-center items-center gap-10 flex-col">
-              {console.log(request)}
+
               {request ? (
                 <div>
                   {data?.map((r, index) => (
