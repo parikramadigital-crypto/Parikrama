@@ -21,12 +21,12 @@ const PackageCard = ({ data }) => {
         "post",
         formData,
       );
-     // console.log(response);
+      // console.log(response);
       alert(response.data.message);
       formRef.current.reset();
       setModel(false);
     } catch (err) {
-     // console.log(err);
+      // console.log(err);
       alert(parseErrorMessage(err.response.data));
     }
   };
@@ -36,7 +36,7 @@ const PackageCard = ({ data }) => {
       {/* Image */}
       <div className="h-52 overflow-hidden">
         <img
-          src={data.image}
+          src={data.image || data.image[0]?.url}
           alt={data.title}
           className="w-full h-full object-cover hover:scale-105 transition duration-300"
         />
@@ -44,7 +44,7 @@ const PackageCard = ({ data }) => {
 
       {/* Content */}
       <div className="p-4 space-y-2">
-        <h3 className="text-lg font-semibold">{data.title}</h3>
+        <h3 className="text-lg font-semibold">{data.title || data.name}</h3>
 
         <p className="text-gray-500 text-sm">{data.duration}</p>
 
@@ -149,7 +149,26 @@ const PackageCard = ({ data }) => {
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
             className="bg-black/80 h-screen w-full fixed top-0 left-0 z-50 flex md:justify-center items-center flex-col gap-5 overflow-scroll py-5"
           >
-            <div className="bg-white p-5 rounded-md flex justify-center items-center gap-5 flex-col">
+            <div className="bg-white p-5 rounded-md flex justify-center items-center gap-5 flex-col w-[50vw]">
+              <h1 className="capitalize text-center w-full font-semibold text-xl">
+                more details
+              </h1>
+              <div>
+                {[
+                  { label: "Description", value: data.description },
+                  { label: "Total Days", value: data.days },
+                  { label: "Number of day/s", value: data.durationDay },
+                  { label: "Number of night/s", value: data.durationNight },
+                  { label: "Number of person/s", value: data.numberOfPerson },
+                  { label: "Only for adults", value: data.onlyForAdults },
+                  { label: "State", value: data.state.name },
+                  { label: "Country", value: data.country.name },
+                ].map((d, index) => (
+                  <p className="" key={index}>
+                    <strong>{d.label}</strong>: {d.value}
+                  </p>
+                ))}
+              </div>
               <h1>For updated trip details please contact our trip advisor.</h1>
               <Button label={"Ok"} onClick={() => setModel2(false)} />
             </div>
