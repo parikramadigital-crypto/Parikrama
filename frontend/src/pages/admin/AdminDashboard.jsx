@@ -214,7 +214,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       label: (
         <h1 className="flex justify-center items-center gap-2">
           <MdAddLocationAlt />
-          Add new Place
+          New Place
         </h1>
       ),
       path: "/admin/register-place",
@@ -223,10 +223,19 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       label: (
         <h1 className="flex justify-center items-center gap-2">
           <MdAdd />
-          Add new City / State
+          City / State
         </h1>
       ),
       path: "/admin/register-city-state",
+    },
+    {
+      label: (
+        <h1 className="flex justify-center items-center gap-2">
+          <MdAdd />
+          City Darshan
+        </h1>
+      ),
+      path: "/package/city-darshan/creation",
     },
   ];
 
@@ -272,6 +281,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const sections = [
     { label: "Overview", count: 0 },
     { label: "Enquiries", count: enquiryData.length || 0 },
+    { label: "City Darshan Enquiries", count: 0 },
     { label: "Hotels", count: 0 },
     { label: "Clubs", count: 0 },
     { label: "Active Places", count: 0 },
@@ -286,6 +296,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     { label: "Cities", count: 0 },
     { label: "States", count: 0 },
     { label: "Countries", count: 0 },
+    { label: "City Darshan Packages", count: 0 },
     { label: "Packages", count: 0 },
     { label: "Promotions", count: 0 },
     { label: "Sub Admins", count: 0 },
@@ -380,6 +391,16 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <TravelPackages
                   TableData={packageData}
                   Text="Travel Packages"
+                  user={user?._id}
+                  reloadDashboard={() => fetchDashboard()}
+                />
+              </div>
+            )}
+            {activeSection === "City Darshan Packages" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <TravelPackages
+                  TableData={packageData}
+                  Text="City Darshan Packages"
                   user={user?._id}
                   reloadDashboard={() => fetchDashboard()}
                 />
@@ -494,7 +515,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
               label={
                 <h1 className="flex justify-center items-center gap-2">
                   <LuRefreshCw />
-                  Reload Dashboard
+                  Dashboard
                 </h1>
               }
               className={"w-full text-nowrap"}
@@ -503,7 +524,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             <Button
               label={
                 <h1 className="flex justify-center items-center gap-2">
-                  <RiImageAddFill /> Add new banner
+                  <RiImageAddFill /> New banner
                 </h1>
               }
               className={"w-full text-nowrap"}

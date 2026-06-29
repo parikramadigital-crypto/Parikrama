@@ -4,8 +4,8 @@ import {
   FaBusSimple,
   FaChildren,
   FaPersonWalkingLuggage,
-  FaTrainTram,
 } from "react-icons/fa6";
+import { PiCityFill } from "react-icons/pi";
 import { RiBuilding2Fill } from "react-icons/ri";
 import { GiClubs } from "react-icons/gi";
 import { IoFastFoodSharp } from "react-icons/io5";
@@ -59,12 +59,12 @@ const FloatNavBar = () => {
       url: `/flights-busses/${false}`,
       color: "text-red-600 ",
     },
-    // {
-    //   label: "Trains",
-    //   icon: <FaTrainTram />,
-    //   url: "/flights-busses",
-    //   color: "text-cyan-600",
-    // },
+    {
+      label: "City Darshan",
+      icon: <PiCityFill />,
+      url: "/city-darshan",
+      color: "text-cyan-600",
+    },
     {
       label: "Hotels",
       icon: <FaHotel />,
@@ -128,7 +128,7 @@ const FloatNavBar = () => {
               {b.icon}
             </span>
 
-            <span className="text-xs md:text-sm">{b.label}</span>
+            <span className="text-xs md:text-sm text-center">{b.label}</span>
           </Link>
         ))}
       </div>

@@ -17,6 +17,9 @@ const AdminRegistrationForm = lazy(
 );
 const EditSubAdmin = lazy(() => import("./pages/admin/EditSubAdmin"));
 const AddNewClub = lazy(() => import("./pages/admin/AddNewClub"));
+const CityDarshanPackageCreation = lazy(
+  () => import("./pages/cityDarshan/cityDarshanPackageCreation"),
+);
 // AUTH
 const Login = lazy(() => import("./pages/authentication/login"));
 const LoginRegister = lazy(
@@ -61,11 +64,20 @@ const PrivacyPolicy = lazy(() => import("./pages/cms/privacyPolicy"));
 const HowThisSiteWorks = lazy(() => import("./pages/cms/howThisSiteWorks"));
 // TRAVEL
 const FlightBus = lazy(() => import("./pages/flightBus/FlightBus"));
+const CityDarshanBooking = lazy(
+  () => import("./pages/cityDarshan/cityDarshanBooking"),
+);
 const PackagesListing = lazy(
   () => import("./pages/travelPackagesForm/PackageListing"),
 );
 // TELECAST
 const LiveTelecast = lazy(() => import("./pages/liveTelecast/LiveTelecast"));
+const CityDarshanFeed = lazy(
+  () => import("./pages/cityDarshan/cityDarshanFeed"),
+);
+const CurrentCityDarshan = lazy(
+  () => import("./pages/cityDarshan/currentCityDarshan"),
+);
 // USER
 const UserDashboard = lazy(() => import("./pages/user/User"));
 // COMMUNITY
@@ -177,6 +189,11 @@ function App() {
             <Route path="/explore/kids/place" element={<KidsPlace />} />
             <Route path="/explore/club-events" element={<EventFeed />} />
             <Route path="/live-telecasts" element={<LiveTelecast />} />
+            <Route path="/city-darshan" element={<CityDarshanFeed />} />
+            <Route
+              path="/current/city-darshan/:id"
+              element={<CurrentCityDarshan />}
+            />
             {/* ================= CONTACT ================= */}
             <Route
               path="/contact-us/parikrama-global"
@@ -215,6 +232,11 @@ function App() {
               path="/current/edit-sub-admin/:adminId"
               element={<EditSubAdmin />}
             />
+            <Route
+              path="/package/city-darshan/creation"
+              element={<CityDarshanPackageCreation />}
+            />
+
             {/* ================= PLACES ================= */}
             <Route path="/current/place/:placeId" element={<CurrentPlace />} />
             <Route
@@ -258,6 +280,10 @@ function App() {
             {/* ================= TRAVEL ================= */}
             <Route path="/flights-busses/:flight" element={<FlightBus />} />
             <Route path="/travel-packages" element={<PackagesListing />} />
+            <Route
+              path="/city-darshan/booking/:id"
+              element={<CityDarshanBooking />}
+            />
             {/* ================= HOTELS ================= */}
             <Route path="/hotels" element={<HotelListing />} />
             <Route path="/hotels/:hotelId" element={<CurrentHotel />} />
