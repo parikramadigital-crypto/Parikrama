@@ -90,6 +90,7 @@ import publicRoutes from "./routes/public.routes.js";
 import countryRoutes from "./routes/country.routes.js";
 import enquiryRoutes from "./routes/enquiry.routes.js";
 import flightRoutes from "./routes/flight.routes.js";
+import cityDarshanRoutes from "./routes/cityDarshan.routes.js";
 
 app.use("/api/v1/states", stateRoutes);
 app.use("/api/v1/cities", cityRoutes);
@@ -109,6 +110,7 @@ app.use("/api/v1/clubs", clubRoutes);
 app.use("/api/v1/country", countryRoutes);
 app.use("/api/v1/enquiry", enquiryRoutes);
 app.use("/api/v1/flight", flightRoutes);
+app.use("/api/v1/city-darshan/admin", cityDarshanRoutes);
 
 // Public routes (no API prefix - for user-facing shares)
 app.use("/", publicRoutes);
