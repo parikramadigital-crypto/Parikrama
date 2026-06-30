@@ -13,6 +13,7 @@ import {
   sendOtpSMS,
   sendWelcomeSMS,
 } from "../workers/sms.workers.js";
+import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
 
 const createUser = asyncHandler(async (req, res) => {
   const { contactNumber } = req.body;
@@ -163,10 +164,33 @@ const updateProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, {}, "Profile updated successfully !"));
 });
 
+const getBookings = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) throw new ApiError(400, "Invalid request");
+
+  const bookings = await CityDarshanBooking.find({ user: userId }).populate({
+    path: "cityDarshan",
+    select:
+      "exclusion inclusion images name placesToCover totalDistance totalHours",
+    populate: [
+      { path: "city", select: "name" },
+      { path: "state", select: "name" },
+    ],
+  });
+  if (!bookings) throw new ApiError(400, "No bookings found of this user");
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, bookings, "Bookings are fetched successfully !"),
+    );
+});
+
 export {
   createUser,
   verifyUserOtp,
   refreshUserToken,
   loginUser,
   updateProfile,
+  getBookings,
 };
