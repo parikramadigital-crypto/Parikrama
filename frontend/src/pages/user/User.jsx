@@ -13,6 +13,7 @@ import { userFormInputs } from "../../constants/Constants";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { TbLivePhotoFilled } from "react-icons/tb";
 import logo from "../../assets/Logo1.png";
+import CityDarshanBookedCard from "../cityDarshan/cityDarshanBookedCard";
 
 const UserDashboard = ({ startLoading, stopLoading }) => {
   const { user } = useSelector((state) => state.auth);
@@ -27,6 +28,7 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
   const [selectedState, setSelectedState] = useState("");
   const [selectedStateName, setSelectedStateName] = useState("");
   const [cities, setCities] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const right = rightBanner?.map((banner) => [banner?.images?.url]);
 
   const banner = async () => {
@@ -40,9 +42,19 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
     }
   };
 
+  const getBookings = async () => {
+    try {
+      const response = await FetchData(`users/get-bookings/${userId}`, "get");
+      setBookings(response.data.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     banner();
-  }, []);
+    getBookings();
+  }, [user]);
 
   useEffect(() => {
     const loadCities = async () => {
@@ -116,15 +128,14 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
   };
 
   return userRole === "User" ? (
-    <div>
-      <h1 className="text-2xl font-semibold md:px-20 ">
-        Parikrama welcomes to your profile
+    <div className="flex flex-col gap-5">
+      <h1 className="text-2xl font-semibold md:px-20 md:text-left text-center capitalize">
+        Parikrama <br /> welcomes to your profile
       </h1>
-
       <div className="flex justify-center items-center gap-20">
         <div className="md:w-1/2 flex flex-col w-[90%]">
-          {userData?.map((u) => (
-            <div>
+          {userData?.map((u, index) => (
+            <div key={index}>
               <h1 className="flex justify-between items-center gap-10 border-b border-neutral-300 p-3 w-full">
                 <strong>{u.label}: </strong>{" "}
                 <span>{u.value || <p>Update your {u.label}</p>}</span>
@@ -132,17 +143,25 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
             </div>
           ))}
           <div className="flex justify-start items-center md:gap-10 gap-5 p-5">
+            <Button label={"Logout"} onClick={() => logout()} normal={false} />
             {isUserUpdate ? (
               <Button label={"Home"} onClick={() => navigate("/")} />
             ) : (
               <Button label={"Update Profile"} onClick={() => setModel(true)} />
             )}
             {/* <Button label={"Update Profile"} onClick={() => setModel(true)} /> */}
-            <Button label={"Logout"} onClick={() => logout()} />
           </div>
         </div>
         <div className="w-96 h-96 hidden md:flex">
           <RandomImageSlider images={right} />
+        </div>
+      </div>
+      <div className="bg-amber-50 shadow-2xl md:py-10 py-5 ">
+        <h1 className="text-base md:text-xl font-semibold text-center w-full ">
+          Bookings
+        </h1>
+        <div className="p-4 md:p-10">
+          <CityDarshanBookedCard booking={bookings} />
         </div>
       </div>
       <Explore userProfile={true} />
@@ -220,7 +239,7 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="sticky md:bottom-10 bottom-5 w-full flex justify-end items-end px-10">
+      <div className="sticky md:bottom-10 bottom-5 w-full flex justify-end items-end px-10 z-50">
         <button
           onClick={() => navigate("/live-telecasts")}
           className="flex justify-center items-center flex-col gap-2 bg-[#FFC20E] md:bg-neutral-200 rounded-full md:rounded-md md:py-3 py-5 px-3 shadow-black shadow-2xl cursor-pointer hover:scale-105 duration-300 ease-in-out"
