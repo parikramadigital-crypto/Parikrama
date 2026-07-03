@@ -166,23 +166,37 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 const getBookings = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  if (!userId) throw new ApiError(400, "Invalid request");
 
-  const bookings = await CityDarshanBooking.find({ user: userId }).populate({
-    path: "cityDarshan",
-    select:
-      "exclusion inclusion images name placesToCover totalDistance totalHours",
-    populate: [
-      { path: "city", select: "name" },
-      { path: "state", select: "name" },
-    ],
-  });
-  if (!bookings) throw new ApiError(400, "No bookings found of this user");
+  if (!userId) {
+    throw new ApiError(400, "User id is required");
+  }
 
+  const bookings = await CityDarshanBooking.find({ user: userId })
+    .populate({
+      path: "cityDarshan",
+      select: "name images placesToCover totalDistance totalHours city state",
+      populate: [
+        { path: "city", select: "name" },
+        { path: "state", select: "name" },
+      ],
+    })
+    .populate({
+      path: "paymentTransaction",
+      select:
+        "transactionNumber paymentStatus gatewayOrderId gatewayPaymentId amount currency createdAt",
+    })
+    .sort({ createdAt: -1 });
+  console.log("Bookings", bookings);
   return res
     .status(200)
     .json(
-      new ApiResponse(200, bookings, "Bookings are fetched successfully !"),
+      new ApiResponse(
+        200,
+        bookings,
+        bookings.length
+          ? "Bookings fetched successfully"
+          : "No bookings found for this user",
+      ),
     );
 });
 
