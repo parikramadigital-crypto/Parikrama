@@ -73,6 +73,17 @@ const CityDarshanBookedCard = ({ booking }) => {
               <strong>Booking amount : </strong>₹
               {b?.totalAmount.toLocaleString()}
             </p>
+            <p>
+              <strong>Payment status : </strong>
+              {b?.paymentStatus ||
+                b?.paymentTransaction?.paymentStatus ||
+                "Pending"}
+            </p>
+
+            <p>
+              <strong>Transaction no. : </strong>
+              {b?.paymentTransaction?.transactionNumber || "--"}
+            </p>
             <div className="bg-neutral-50 w-full p-2 rounded-xl shadow">
               <strong>Places included :</strong>
               <p className="grid grid-cols-2 lg:grid-cols-3 w-full">
