@@ -115,4 +115,147 @@ const bookCityDarshan = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, booking, "City Darshan booked successfully."));
 });
 
-export { bookCityDarshan };
+const startCityDarshanBooking = asyncHandler(async (req, res) => {
+  const { userId, cityDarshanId } = req.params;
+
+  const {
+    travelDate,
+    pickupTime,
+    pickupLocation,
+    specialInstructions = "",
+    adults,
+    children = 0,
+    vehicleType,
+  } = req.body;
+
+  if (!userId || !cityDarshanId) {
+    throw new ApiError(400, "User id and City Darshan id are required");
+  }
+
+  if (
+    !travelDate ||
+    !pickupTime ||
+    !pickupLocation ||
+    !adults ||
+    !vehicleType
+  ) {
+    throw new ApiError(
+      400,
+      "travelDate, pickupTime, pickupLocation, adults and vehicleType are required",
+    );
+  }
+
+  const user = await UserSchema.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const cityDarshan = await CityDarshan.findById(cityDarshanId);
+  if (!cityDarshan) {
+    throw new ApiError(404, "City Darshan package not found");
+  }
+
+  const numericAdults = Number(adults);
+  const numericChildren = Number(children || 0);
+
+  if (Number.isNaN(numericAdults) || numericAdults < 1) {
+    throw new ApiError(400, "At least 1 adult is required");
+  }
+
+  if (Number.isNaN(numericChildren) || numericChildren < 0) {
+    throw new ApiError(400, "Invalid children count");
+  }
+
+  const selectedVehicle = cityDarshan.vehicles?.find(
+    (vehicle) => vehicle.vehicleType === vehicleType,
+  );
+
+  if (!selectedVehicle) {
+    throw new ApiError(
+      404,
+      "Selected vehicle is not available for this package",
+    );
+  }
+
+  const totalTravellers = numericAdults + numericChildren;
+
+  if (
+    selectedVehicle.maxPersons &&
+    totalTravellers > Number(selectedVehicle.maxPersons)
+  ) {
+    throw new ApiError(
+      400,
+      `Selected vehicle allows maximum ${selectedVehicle.maxPersons} travellers`,
+    );
+  }
+
+  const totalAmount = Number(selectedVehicle.price);
+
+  const booking = await CityDarshanBooking.create({
+    cityDarshan: cityDarshan._id,
+    user: user._id,
+    travelDate: new Date(travelDate),
+    pickupTime,
+    pickupLocation,
+    specialInstructions,
+    adults: numericAdults,
+    children: numericChildren,
+    totalTravellers,
+    vehicle: {
+      vehicleType: selectedVehicle.vehicleType,
+      maxPersons: selectedVehicle.maxPersons,
+      price: selectedVehicle.price,
+    },
+    totalAmount,
+    bookingStatus: "Pending",
+    paymentStatus: "Created",
+    remarks: "Booking initiated. Awaiting payment.",
+  });
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        booking,
+        "City Darshan booking started successfully. Proceed to payment.",
+      ),
+    );
+});
+
+const getUserCityDarshanBookings = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    throw new ApiError(400, "User id is required");
+  }
+
+  const bookings = await CityDarshanBooking.find({ user: userId })
+    .populate({
+      path: "cityDarshan",
+      select: "name images placesToCover totalDistance totalHours city state",
+      populate: [
+        { path: "city", select: "name" },
+        { path: "state", select: "name" },
+      ],
+    })
+    .populate({
+      path: "paymentTransaction",
+      select:
+        "transactionNumber paymentStatus bookingStatus gatewayOrderId gatewayPaymentId amount currency createdAt",
+    })
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        bookings,
+        "City Darshan bookings fetched successfully",
+      ),
+    );
+});
+
+// export { bookCityDarshan, startCityDarshanBooking, getUserCityDarshanBookings };
+export { startCityDarshanBooking, getUserCityDarshanBookings };
