@@ -15,6 +15,7 @@ const InputBox = ({
   LabelClassname = "",
   PasswordIndication = false,
   onClick,
+  Min,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,6 +35,7 @@ const InputBox = ({
         )}
         <div className="relative w-full">
           <input
+            min={Min}
             onClick={onClick}
             disabled={Disabled}
             id={Name}
