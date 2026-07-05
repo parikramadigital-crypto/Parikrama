@@ -146,11 +146,11 @@ const CommunityRegForm = ({
   };
 
   return (
-    <div className="flex flex-row md:justify-between md:items-start gap-10 justify-center items-center w-full">
+    <div className="flex flex-row md:justify-between md:items-start gap-5 justify-center items-center w-full">
       {updateProfile === true ? (
         ""
       ) : (
-        <div className="md:w-1/2 w-[90vw] h-96 rounded-xl overflow-hidden hidden lg:flex justify-center items-center flex-col gap-5 lg:sticky top-24 left-0">
+        <div className="md:w-1/2 w-[90vw] rounded-xl overflow-hidden hidden lg:flex justify-center items-center flex-col gap-5 lg:sticky top-24 left-0">
           <h1 className="font-semibold text-xl">Book Flight, Bus or Hotels</h1>
           <RandomImageSlider images={right} />
           <Button
@@ -169,7 +169,7 @@ const CommunityRegForm = ({
           {updateProfile === true ? (
             ""
           ) : (
-            <div className="flex flex-col justify-center items-center gap-5 ">
+            <div className="flex justify-center items-center gap-5 ">
               <div className="flex justify-center items-center lg:hidden gap-5">
                 <h1>Already registered ?</h1>
                 <Button
@@ -186,7 +186,7 @@ const CommunityRegForm = ({
                 {/* <img src={logo2} className="w-28" /> */}
               </div>
               <h1 className="font-medium w-full text-left">
-                <span className="border-b-2 border-[#FFC20E] text-3xl">
+                <span className="text-3xl">
                   Let's collaborate! Fill out the form below to join us.
                 </span>
                 <br /> If you are an Influencer, Blogger, Solo-Traveller, Group
