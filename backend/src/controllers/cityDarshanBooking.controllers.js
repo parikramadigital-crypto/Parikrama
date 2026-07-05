@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { CityDarshan } from "../models/cityDarshan.models.js";
 import { UploadImages } from "../utils/imageKit.io.js";
 import { UserSchema } from "../models/user.models.js";
+import { Community } from "../models/communities.models.js";
 import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
 
 const bookCityDarshan = asyncHandler(async (req, res) => {
@@ -146,9 +147,9 @@ const startCityDarshanBooking = asyncHandler(async (req, res) => {
   }
 
   const user = await UserSchema.findById(userId);
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
+  const communityUser = await Community.findById(userId);
+
+  // if (!user || !communityUser) throw new ApiError(400, "User not found");
 
   const cityDarshan = await CityDarshan.findById(cityDarshanId);
   if (!cityDarshan) {
@@ -193,7 +194,8 @@ const startCityDarshanBooking = asyncHandler(async (req, res) => {
 
   const booking = await CityDarshanBooking.create({
     cityDarshan: cityDarshan._id,
-    user: user._id,
+    user: user?._id || null,
+    community: communityUser?._id || null,
     travelDate: new Date(travelDate),
     pickupTime,
     pickupLocation,
@@ -257,5 +259,4 @@ const getUserCityDarshanBookings = asyncHandler(async (req, res) => {
     );
 });
 
-// export { bookCityDarshan, startCityDarshanBooking, getUserCityDarshanBookings };
 export { startCityDarshanBooking, getUserCityDarshanBookings };

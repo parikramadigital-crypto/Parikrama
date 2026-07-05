@@ -14,6 +14,8 @@ import { FoodCourt } from "../models/foodCourt.models.js";
 import { UserSchema } from "../models/user.models.js";
 import { EnquiryDetails } from "../models/enquiry.models.js";
 import { Country } from "../models/country.models.js";
+import { CityDarshan } from "../models/cityDarshan.models.js";
+import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -388,7 +390,17 @@ const dashboardData = asyncHandler(async (req, res) => {
     .populate("state city place")
     .sort({ createdAt: -1 });
 
-  // const packages = await TravelPackages.find().populate("place");
+  const cityPackage = await CityDarshan.find({ isActive: true })
+    .populate({
+      path: "city",
+      select: "name",
+    })
+    .populate({
+      path: "state",
+      select: "name",
+    });
+
+  const cityPackageBooking = await CityDarshanBooking.find().populate("user");
 
   return res.status(200).json(
     new ApiResponse(200, {
@@ -408,6 +420,8 @@ const dashboardData = asyncHandler(async (req, res) => {
       hotEnquiry,
       activeFacilitator,
       inactiveFacilitator,
+      cityPackage,
+      cityPackageBooking,
     }),
   );
 });
