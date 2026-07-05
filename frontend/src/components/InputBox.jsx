@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 const InputBox = ({
   LabelName = "",
@@ -18,6 +19,7 @@ const InputBox = ({
   Min,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const isPasswordField = Type === "password";
 
@@ -36,6 +38,12 @@ const InputBox = ({
         <div className="relative w-full">
           <input
             min={Min}
+            onFocus={() => {
+              setShowWarning(true);
+              setTimeout(() => {
+                setShowWarning(false);
+              }, 5000);
+            }}
             onClick={onClick}
             disabled={Disabled}
             id={Name}
@@ -73,14 +81,43 @@ const InputBox = ({
             </button>
           )}
         </div>
-        {PasswordIndication === true ? (
-          <span className="text-[11px] text-red-600 line-clamp-5">
-            Password should be min 8 & max 20 characters, should contain 1
-            uppercase, 1 lowercase, 1 digit, and 1 special character
-          </span>
-        ) : (
-          ""
-        )}
+        <AnimatePresence>
+          {showWarning && (
+            <div>
+              {PasswordIndication === true ? (
+                <motion.div
+                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: -100 }}
+                  exit={{ opacity: 0, x: 100 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.4,
+                    ease: "easeInOut",
+                  }}
+                  className="fixed bottom-10 left-10 bg-red-200 p-4 rounded-xl z-50"
+                >
+                  <button
+                    className="text-red-600 font-bold "
+                    onClick={() => setShowWarning(false)}
+                  >
+                    X
+                  </button>
+                  {PasswordIndication === true ? (
+                    <span className="text-red-600 line-clamp-5 w-96">
+                      Password should be min 8 & max 20 characters, should
+                      contain 1 uppercase, 1 lowercase, 1 digit, and 1 special
+                      character
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </motion.div>
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
