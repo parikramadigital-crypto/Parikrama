@@ -1,3 +1,4 @@
+import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
 import { Community } from "../models/communities.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -215,13 +216,29 @@ const getCommunityDashboardData = asyncHandler(async (req, res) => {
     })
     .lean();
 
+  const bookings = await CityDarshanBooking.find({ community: communityId })
+    .populate({
+      path: "cityDarshan",
+      select: "name images placesToCover totalDistance totalHours city state",
+      populate: [
+        { path: "city", select: "name" },
+        { path: "state", select: "name" },
+      ],
+    })
+    .populate({
+      path: "paymentTransaction",
+      select:
+        "transactionNumber paymentStatus bookingStatus gatewayOrderId gatewayPaymentId amount currency createdAt",
+    })
+    .sort({ createdAt: -1 });
+
   if (!community) {
     throw new ApiError(404, "Community not found");
   }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, community, "Community fetched"));
+    .json(new ApiResponse(200, { community, bookings }, "Community fetched"));
 });
 
 const updateCommunity = asyncHandler(async (req, res) => {

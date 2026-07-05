@@ -14,7 +14,11 @@ const cityDarshanBookingSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserSchema",
-      required: true,
+      index: true,
+    },
+    community: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Community",
       index: true,
     },
 
