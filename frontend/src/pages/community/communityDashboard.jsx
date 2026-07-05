@@ -11,6 +11,7 @@ import InputBox from "../../components/InputBox";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef } from "react";
 import CommunityRegForm from "./communityRegForm";
+import CityDarshanBookedCard from "../cityDarshan/cityDarshanBookedCard";
 
 const CommunityDashboard = ({
   startLoading,
@@ -32,6 +33,7 @@ const CommunityDashboard = ({
   const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [userRequests, setUserRequests] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [communityRequests, setCommunityRequests] = useState([]);
   const [userFollowers, setUserFollowers] = useState([]);
   const [communityFollowers, setCommunityFollowers] = useState([]);
@@ -51,15 +53,22 @@ const CommunityDashboard = ({
         `communities/community/dashboard/${user?._id}`,
         "get",
       );
-      setUserRequests(response.data.data.userFollowRequests);
-      setCommunityRequests(response.data.data.communityFollowRequests);
-      setUserFollowers(response.data.data.acceptedRequestsUser);
-      setCommunityFollowers(response.data.data.acceptedRequestsCommunity);
-      setMembers(response.data.data.members);
-      setData(response.data.data || []);
-      setPersonalData(response.data.data.personalDetails || []);
-      setCommunityData(response.data.data.communityDetails || []);
-      setBankData(response.data.data.communityDetails.bankDetails || []);
+      setBookings(response.data.data.bookings || []);
+      setUserRequests(response.data.data.community.userFollowRequests);
+      setCommunityRequests(
+        response.data.data.community.communityFollowRequests,
+      );
+      setUserFollowers(response.data.data.community.acceptedRequestsUser);
+      setCommunityFollowers(
+        response.data.data.community.acceptedRequestsCommunity,
+      );
+      setMembers(response.data.data.community.members);
+      setData(response.data.data.community || []);
+      setPersonalData(response.data.data.community.personalDetails || []);
+      setCommunityData(response.data.data.community.communityDetails || []);
+      setBankData(
+        response.data.data.community.communityDetails.bankDetails || [],
+      );
     } catch (err) {
     } finally {
       stopLoading();
@@ -205,8 +214,8 @@ const CommunityDashboard = ({
   };
 
   return (
-    <div className="flex justify-center items-start p-5 md:p-10 flex-col lg:flex-row gap-5">
-      <div className="flex flex-col justify-center items-center gap-10 w-full lg:w-auto">
+    <div className="flex justify-start items-start p-5 md:p-10 flex-col lg:flex-row gap-5">
+      <div className="flex flex-col justify-center items-start gap-10 w-full lg:w-1/2">
         {/* personal details  */}
         <div className={`${CSSClassName}`}>
           <h1 className="font-semibold text-xl">Personal details</h1>
@@ -277,6 +286,7 @@ const CommunityDashboard = ({
             </div>
           </div>
         </div>
+
         {/* community details  */}
         <div className={`${CSSClassName}`}>
           <h1 className="font-semibold text-xl">Community details</h1>
@@ -387,7 +397,10 @@ const CommunityDashboard = ({
             ""
           )}
         </div>
-        {/* requests */}
+        {/* City darshan pending / confirmed booking */}
+        <div className="p-4 md:p-10 w-[95vw] overflow-scroll">
+          <CityDarshanBookedCard booking={bookings} />
+        </div>
       </div>
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-neutral-200 rounded-xl py-5">
         <div className="flex justify-center items-center w-full">
