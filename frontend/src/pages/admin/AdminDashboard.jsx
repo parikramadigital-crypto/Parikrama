@@ -22,6 +22,8 @@ import {
   Enquiry,
   Country,
   SubAdmins,
+  CityDarshanPackage,
+  CityDarshanPackageBooking,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -29,12 +31,7 @@ import { LuRefreshCw } from "react-icons/lu";
 import { IoMdLogOut } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import InputBox from "../../components/InputBox";
-import {
-  FaChevronDown,
-  FaChevronRight,
-  FaChevronUp,
-  FaUserPlus,
-} from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import CategoryPieChart from "../../components/ui/CategoryPieChart";
 import StatesDonutChart from "../../components/ui/StatesDonutChart";
 import CitiesByStateBarChart from "../../components/ui/CitiesByStateBarChart";
@@ -72,6 +69,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [reviewedEnquiryData, setReviewedEnquiryData] = useState([]);
   const [countryData, setCountryData] = useState([]);
   const [socketNotifications, setSocketNotifications] = useState([]);
+  const [cityDarshanPackage, setCityDarshanPackage] = useState([]);
+  const [cityDarshanBooking, setCityDarshanBooking] = useState([]);
   // preview
   const [imagePreviews, setImagePreviews] = useState([]);
   // redux subscription
@@ -104,6 +103,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     try {
       startLoading();
       const res = await FetchData("admin/dashboard/data", "get");
+      // console.log(res);
       setPlaceData(res.data.data.place);
       setCityData(res.data.data.city);
       setStateData(res.data.data.state);
@@ -120,6 +120,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       setCountryData(res.data.data.country);
       setSubAdminData(res.data.data.subAdmin);
       setPendingFoodCount(res.data.data.underReviewCount);
+      setCityDarshanPackage(res.data.data.cityPackage);
+      setCityDarshanBooking(res.data.data.cityPackageBooking);
 
       // Fetch hotels separately
       const hotelRes = await FetchData("hotels", "get");
@@ -281,7 +283,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const sections = [
     { label: "Overview", count: 0 },
     { label: "Enquiries", count: enquiryData.length || 0 },
-    { label: "City Darshan Enquiries", count: 0 },
+    { label: "City Darshan Bookings", count: 0 },
     { label: "Hotels", count: 0 },
     { label: "Clubs", count: 0 },
     { label: "Active Places", count: 0 },
@@ -374,33 +376,22 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <CategoryPieChart places={placeData} />
               </div>
             )}
-            {activeSection === "Promotions" && (
-              <Promotions
-                TableData={promotionData}
-                Text="Promotions"
-                user={user?._id}
-                reloadDashboard={() => fetchDashboard()}
-              />
-            )}
-            {activeSection === "Packages" && (
+            {activeSection === "Enquiries" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
-                <Button
-                  label={"List new package"}
-                  onClick={() => setPopup4(true)}
-                />
-                <TravelPackages
-                  TableData={packageData}
-                  Text="Travel Packages"
+                <Enquiry
+                  TableData={enquiryData}
+                  TableData2={reviewedEnquiryData}
+                  TableData3={hotEnquiryData}
+                  Text="Enquiries"
                   user={user?._id}
-                  reloadDashboard={() => fetchDashboard()}
                 />
               </div>
             )}
-            {activeSection === "City Darshan Packages" && (
+            {activeSection === "City Darshan Bookings" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
-                <TravelPackages
-                  TableData={packageData}
-                  Text="City Darshan Packages"
+                <CityDarshanPackageBooking
+                  TableData={cityDarshanBooking}
+                  Text="City Darshan Bookings"
                   user={user?._id}
                   reloadDashboard={() => fetchDashboard()}
                 />
@@ -435,32 +426,10 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             {activeSection === "Active Places" && (
               <Place TableData={placeData} Text="Listed Places" />
             )}
-            {activeSection === "Cities" && (
-              <City TableData={cityData} Text="Listed Cities" />
-            )}
-            {activeSection === "States" && (
-              <State TableData={stateData} Text="Listed States" />
-            )}
-            {activeSection === "Countries" && (
-              <div className="">
-                <Button label={"Add country"} onClick={() => setPopup8(true)} />
-                <Country TableData={countryData} Text="Listed Countries" />
-              </div>
-            )}
             {activeSection === "Inactive Places" && (
               <InactivePlace
                 TableData={inactivePlaceData}
                 Text="Places under review"
-                user={user?._id}
-              />
-            )}
-            {activeSection === "Verified Facilitator" && (
-              <Facilitator TableData={facilitator} Text="Active Facilitator" />
-            )}
-            {activeSection === "Non-Verified Facilitator" && (
-              <InactiveFacilitator
-                TableData={inactiveFacilitator}
-                Text="Facilitator under review"
                 user={user?._id}
               />
             )}
@@ -483,16 +452,59 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <Users TableData={userData} Text="User details" />
               </div>
             )}
-            {activeSection === "Enquiries" && (
+            {activeSection === "Verified Facilitator" && (
+              <Facilitator TableData={facilitator} Text="Active Facilitator" />
+            )}
+            {activeSection === "Non-Verified Facilitator" && (
+              <InactiveFacilitator
+                TableData={inactiveFacilitator}
+                Text="Facilitator under review"
+                user={user?._id}
+              />
+            )}
+            {activeSection === "Cities" && (
+              <City TableData={cityData} Text="Listed Cities" />
+            )}
+            {activeSection === "States" && (
+              <State TableData={stateData} Text="Listed States" />
+            )}
+            {activeSection === "Countries" && (
+              <div className="">
+                <Button label={"Add country"} onClick={() => setPopup8(true)} />
+                <Country TableData={countryData} Text="Listed Countries" />
+              </div>
+            )}
+            {activeSection === "City Darshan Packages" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
-                <Enquiry
-                  TableData={enquiryData}
-                  TableData2={reviewedEnquiryData}
-                  TableData3={hotEnquiryData}
-                  Text="Enquiries"
+                <CityDarshanPackage
+                  TableData={cityDarshanPackage}
+                  Text="City Darshan Packages"
                   user={user?._id}
+                  reloadDashboard={() => fetchDashboard()}
                 />
               </div>
+            )}
+            {activeSection === "Packages" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"List new package"}
+                  onClick={() => setPopup4(true)}
+                />
+                <TravelPackages
+                  TableData={packageData}
+                  Text="Travel Packages"
+                  user={user?._id}
+                  reloadDashboard={() => fetchDashboard()}
+                />
+              </div>
+            )}
+            {activeSection === "Promotions" && (
+              <Promotions
+                TableData={promotionData}
+                Text="Promotions"
+                user={user?._id}
+                reloadDashboard={() => fetchDashboard()}
+              />
             )}
             {activeSection === "Sub Admins" && (
               <div className="w-full h-full flex flex-col justify-start items-start">

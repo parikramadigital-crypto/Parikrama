@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import InputBox from "../../components/InputBox";
 import { FetchData } from "../../utils/FetchFromApi";
 import { truncateString } from "../../utils/Utility-functions";
@@ -1421,7 +1421,6 @@ const Enquiry = ({
       alert(response.data.message);
       reloadDashboard();
     } catch (err) {
-
       alert(parseErrorMessage(err.response.data));
     }
   };
@@ -1567,7 +1566,6 @@ const Enquiry = ({
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <div className="bg-white rounded-md p-5 w-[60vw] flex justify-center items-center gap-10 flex-col">
-
               {request ? (
                 <div>
                   {data?.map((r, index) => (
@@ -1817,6 +1815,242 @@ const SubAdmins = ({ Text = "", TableData = [], user }) => {
   );
 };
 
+const CityDarshanPackage = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const TableHeaders = [
+    "Package name",
+    "City, State",
+    "Priority",
+    "Vehicle Available",
+    "Actions",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((c) =>
+      `
+        ${c?.name}
+        ${c?.priority}
+        ${c?.state?.name}
+        ${c?.city?.name}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  const deletePackage = async ({ packageId }) => {
+    if (!window.confirm("Are you sure you want to delete this package?"))
+      return;
+
+    // try {
+    //   const response = await FetchData(
+    //     `packages/delete-package/${user}/${packageId}`,
+    //     "delete",
+    //   );
+    //   alert(response.data.message);
+    //   reloadDashboard();
+    // } catch (err) {}
+  };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search packages..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                  <td className="px-5 py-3">{data?.name || "na"}</td>
+                  <td className="px-5 py-3">
+                    {data?.city?.name || "na"}, {data?.state?.name || "na"}
+                  </td>
+                  <td className="px-5 py-3 capitalize">
+                    {data?.priority || "na"}
+                  </td>
+                  <td className="px-5 py-3">
+                    {data?.vehicles?.length || "na"}
+                  </td>
+                  <td className="px-5 py-3">
+                    <Button
+                      label={"View / Edit"}
+                      onClick={() =>
+                        navigate(`/current/city-darshan/${data?._id}`)
+                      }
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-6 text-gray-500">
+                  No Data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const CityDarshanPackageBooking = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
+  const [search, setSearch] = useState("");
+
+  const TableHeaders = [
+    "Booking Status",
+    "City Darshan Package",
+    "Booking Amount",
+    "Customer Contact Number",
+    "Total Travelers",
+    "Actions",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((c) =>
+      `
+        ${c?.name}
+        ${c?.priority}
+        ${c?.state?.name}
+        ${c?.city?.name}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  const deletePackage = async ({ packageId }) => {
+    if (!window.confirm("Are you sure you want to delete this package?"))
+      return;
+
+    // try {
+    //   const response = await FetchData(
+    //     `packages/delete-package/${user}/${packageId}`,
+    //     "delete",
+    //   );
+    //   alert(response.data.message);
+    //   reloadDashboard();
+    // } catch (err) {}
+  };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search packages..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+      {console.log(TableData)}
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                  <td className="px-5 py-3">{data?.bookingStatus || "na"}</td>
+                  <td className="px-5 py-3">
+                    {data?.cityDarshan?.name || "na"}
+                  </td>
+                  <td className="px-5 py-3 capitalize">
+                    {data?.totalAmount || "na"}
+                  </td>
+                  <td className="px-5 py-3 capitalize">
+                    {data?.user?.contactNumber || "na"}
+                  </td>
+                  <td className="px-5 py-3 capitalize">
+                    {data?.totalTravellers || "na"}
+                  </td>
+                  <td className="px-5 py-3">
+                    <Button
+                      label={"View / Edit"}
+                      // onClick={() => {
+                      //   getCurrentPackage({ cityDarshanPackageID: data._id });
+                      //   setPopup(true);
+                      // }}
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-6 text-gray-500">
+                  No Data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 export {
   City,
   State,
@@ -1833,4 +2067,6 @@ export {
   Enquiry,
   Country,
   SubAdmins,
+  CityDarshanPackage,
+  CityDarshanPackageBooking,
 };
