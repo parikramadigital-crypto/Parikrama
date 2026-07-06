@@ -391,16 +391,14 @@ const dashboardData = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 });
 
   const cityPackage = await CityDarshan.find({ isActive: true })
-    .populate({
-      path: "city",
-      select: "name",
-    })
-    .populate({
-      path: "state",
-      select: "name",
-    });
+    .populate({ path: "city", select: "name" })
+    .populate({ path: "state", select: "name" })
+    .select("name vehicles priority");
 
-  const cityPackageBooking = await CityDarshanBooking.find().populate("user");
+  const cityPackageBooking = await CityDarshanBooking.find()
+    .select("bookingStatus totalAmount totalTravellers vehicle")
+    .populate({ path: "cityDarshan", select: "name city state" })
+    .populate({ path: "user", select: "name contactNumber" });
 
   return res.status(200).json(
     new ApiResponse(200, {

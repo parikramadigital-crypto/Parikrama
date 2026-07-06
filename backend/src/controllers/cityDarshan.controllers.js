@@ -148,160 +148,266 @@ const registerCityDarshan = asyncHandler(async (req, res) => {
     );
 });
 
-const editCityDarshan = asyncHandler(async (req, res) => {
-  const { packageId } = req.params;
+const updateCityDarshanPackage = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-  const cityDarshan = await CityDarshan.findById(packageId);
-
-  if (!cityDarshan) {
-    throw new ApiError(404, "City Darshan package not found.");
-  }
-
-  const {
-    name,
-    description,
-    country,
-    state,
-    city,
-    numberOfAdults,
-    numberOfChildren,
-    placesToCover,
-    totalDistance,
-    totalHours,
-    pickupTime,
-    dropTime,
-    inclusions,
-    exclusions,
-    vehicles,
-    priority,
-    isActive,
-    isVerified,
-  } = req.body;
-
-  /* ================= IMAGE UPDATE ================= */
-
-  let images = cityDarshan.images;
-
-  if (req.files?.length) {
-    // Delete old images
-    const oldFileIds = cityDarshan.images
-      ?.map((img) => img.fileId)
-      .filter(Boolean);
-
-    if (oldFileIds.length) {
-      await DeleteBulkImage(oldFileIds);
-    }
-
-    const sanitize = (str = "") =>
-      str
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-_]/g, "");
-
-    const folderName = sanitize(name || cityDarshan.name);
-
-    images = [];
-
-    for (const file of req.files) {
-      const uploaded = await UploadImages(file.filename, {
-        folderStructure: `cityDarshan/${folderName}`,
-      });
-
-      images.push({
-        url: uploaded.url,
-        fileId: uploaded.fileId,
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid package id",
       });
     }
-  }
 
-  /* ================= ARRAY PARSING ================= */
+    const cityDarshan = await CityDarshan.findById(id);
 
-  let parsedPlaces = cityDarshan.placesToCover;
-
-  if (placesToCover) {
-    parsedPlaces = placesToCover
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  let parsedInclusions = cityDarshan.inclusions;
-
-  if (inclusions) {
-    parsedInclusions = inclusions
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  let parsedExclusions = cityDarshan.exclusions;
-
-  if (exclusions) {
-    parsedExclusions = exclusions
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  let parsedVehicles = cityDarshan.vehicles;
-
-  if (vehicles) {
-    try {
-      parsedVehicles =
-        typeof vehicles === "string" ? JSON.parse(vehicles) : vehicles;
-    } catch (err) {
-      throw new ApiError(400, "Invalid vehicle data.");
+    if (!cityDarshan) {
+      return res.status(404).json({
+        success: false,
+        message: "City Darshan package not found",
+      });
     }
+
+    const parseJSON = (value, fallback) => {
+      try {
+        if (value === undefined || value === null || value === "") {
+          return fallback;
+        }
+        return JSON.parse(value);
+      } catch (err) {
+        return fallback;
+      }
+    };
+
+    const {
+      name,
+      description,
+      country,
+      state,
+      city,
+      numberOfAdults,
+      numberOfChildren,
+      totalDistance,
+      totalHours,
+      pickupTime,
+      dropTime,
+      priority,
+      isActive,
+      isVerified,
+    } = req.body;
+
+    const placesToCover = parseJSON(req.body.placesToCover, []);
+    const inclusions = parseJSON(req.body.inclusions, []);
+    const exclusions = parseJSON(req.body.exclusions, []);
+    const vehicles = parseJSON(req.body.vehicles, []);
+    const existingImages = parseJSON(req.body.existingImages, []);
+    const removedImageFileIds = parseJSON(req.body.removedImageFileIds, []);
+
+    // ================= VALIDATIONS =================
+    if (!name?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Package name is required",
+      });
+    }
+
+    if (!country || !mongoose.Types.ObjectId.isValid(country)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid country is required",
+      });
+    }
+
+    if (!state || !mongoose.Types.ObjectId.isValid(state)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid state is required",
+      });
+    }
+
+    if (!city || !mongoose.Types.ObjectId.isValid(city)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid city is required",
+      });
+    }
+
+    const allowedPriorities = ["featured", "recommended", "popular", "normal"];
+
+    const allowedVehicleTypes = [
+      "Mini (Hatchback)",
+      "Sedan",
+      "SUV",
+      "MUV",
+      "Tempo Traveller",
+      "Luxury Sedan",
+      "Luxury SUV",
+    ];
+
+    if (!Array.isArray(vehicles)) {
+      return res.status(400).json({
+        success: false,
+        message: "Vehicles must be an array",
+      });
+    }
+
+    for (const vehicle of vehicles) {
+      if (!allowedVehicleTypes.includes(vehicle?.vehicleType)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid vehicle type: ${vehicle?.vehicleType || ""}`,
+        });
+      }
+
+      if (
+        vehicle?.maxPersons === undefined ||
+        vehicle?.maxPersons === null ||
+        Number(vehicle.maxPersons) < 1
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Each vehicle must have a valid maxPersons value",
+        });
+      }
+
+      if (
+        vehicle?.price === undefined ||
+        vehicle?.price === null ||
+        Number(vehicle.price) < 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Each vehicle must have a valid price",
+        });
+      }
+    }
+
+    // ================= IMAGE DELETION =================
+    if (Array.isArray(removedImageFileIds) && removedImageFileIds.length > 0) {
+      try {
+        await DeleteBulkImage(
+          removedImageFileIds.filter(
+            (id) => typeof id === "string" && id.trim(),
+          ),
+        );
+      } catch (err) {
+        console.error("Error deleting removed package images:", err);
+      }
+    }
+
+    // ================= IMAGE UPLOAD =================
+    let uploadedImages = [];
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const uploadedImg = await UploadImages(
+          file.filename,
+          {
+            folderStructure: "/city-darshan/packages",
+          },
+          ["city-darshan", "package"],
+        );
+
+        uploadedImages.push({
+          url: uploadedImg.url,
+          fileId: uploadedImg.fileId,
+        });
+      }
+    }
+
+    // ================= FINAL IMAGE ARRAY =================
+    const sanitizedExistingImages = Array.isArray(existingImages)
+      ? existingImages
+          .filter((img) => img && img.url)
+          .map((img) => ({
+            url: img.url,
+            fileId: img.fileId || "",
+          }))
+      : [];
+
+    const finalImages = [...sanitizedExistingImages, ...uploadedImages];
+
+    // ================= UPDATE PACKAGE =================
+    cityDarshan.name = name.trim();
+    cityDarshan.description = description || "";
+    cityDarshan.country = country;
+    cityDarshan.state = state;
+    cityDarshan.city = city;
+
+    cityDarshan.numberOfAdults =
+      numberOfAdults !== undefined && numberOfAdults !== ""
+        ? Number(numberOfAdults)
+        : 2;
+
+    cityDarshan.numberOfChildren =
+      numberOfChildren !== undefined && numberOfChildren !== ""
+        ? Number(numberOfChildren)
+        : 0;
+
+    cityDarshan.placesToCover = Array.isArray(placesToCover)
+      ? placesToCover.map((item) => String(item).trim()).filter(Boolean)
+      : [];
+
+    cityDarshan.totalDistance =
+      totalDistance !== undefined && totalDistance !== ""
+        ? Number(totalDistance)
+        : undefined;
+
+    cityDarshan.totalHours =
+      totalHours !== undefined && totalHours !== ""
+        ? Number(totalHours)
+        : undefined;
+
+    cityDarshan.pickupTime = pickupTime || "";
+    cityDarshan.dropTime = dropTime || "";
+
+    cityDarshan.vehicles = vehicles.map((vehicle) => ({
+      vehicleType: vehicle.vehicleType,
+      maxPersons: Number(vehicle.maxPersons),
+      price: Number(vehicle.price),
+    }));
+
+    cityDarshan.inclusions = Array.isArray(inclusions)
+      ? inclusions.map((item) => String(item).trim()).filter(Boolean)
+      : [];
+
+    cityDarshan.exclusions = Array.isArray(exclusions)
+      ? exclusions.map((item) => String(item).trim()).filter(Boolean)
+      : [];
+
+    cityDarshan.priority = allowedPriorities.includes(priority)
+      ? priority
+      : "normal";
+
+    cityDarshan.isActive =
+      isActive === true || isActive === "true" || isActive === "1";
+
+    cityDarshan.isVerified =
+      isVerified === true || isVerified === "true" || isVerified === "1";
+
+    cityDarshan.images = finalImages;
+
+    await cityDarshan.save();
+
+    const updatedPackage = await CityDarshan.findById(cityDarshan._id)
+      .populate("country", "name")
+      .populate("state", "name")
+      .populate("city", "name");
+
+    return res.status(200).json({
+      success: true,
+      message: "City Darshan package updated successfully",
+      data: updatedPackage,
+    });
+  } catch (error) {
+    console.error("updateCityDarshanPackage error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update City Darshan package",
+      error: error.message,
+    });
   }
-
-  /* ================= UPDATE ================= */
-
-  cityDarshan.name = name ?? cityDarshan.name;
-  cityDarshan.description = description ?? cityDarshan.description;
-
-  cityDarshan.country = country ?? cityDarshan.country;
-  cityDarshan.state = state ?? cityDarshan.state;
-  cityDarshan.city = city ?? cityDarshan.city;
-
-  cityDarshan.numberOfAdults = numberOfAdults ?? cityDarshan.numberOfAdults;
-
-  cityDarshan.numberOfChildren =
-    numberOfChildren ?? cityDarshan.numberOfChildren;
-
-  cityDarshan.totalDistance = totalDistance ?? cityDarshan.totalDistance;
-
-  cityDarshan.totalHours = totalHours ?? cityDarshan.totalHours;
-
-  cityDarshan.pickupTime = pickupTime ?? cityDarshan.pickupTime;
-
-  cityDarshan.dropTime = dropTime ?? cityDarshan.dropTime;
-
-  cityDarshan.priority = priority ?? cityDarshan.priority;
-
-  cityDarshan.isActive = isActive ?? cityDarshan.isActive;
-
-  cityDarshan.isVerified = isVerified ?? cityDarshan.isVerified;
-
-  cityDarshan.placesToCover = parsedPlaces;
-  cityDarshan.inclusions = parsedInclusions;
-  cityDarshan.exclusions = parsedExclusions;
-  cityDarshan.vehicles = parsedVehicles;
-  cityDarshan.images = images;
-
-  await cityDarshan.save();
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        cityDarshan,
-        "City Darshan package updated successfully.",
-      ),
-    );
-});
+};
 
 const markAsActive = asyncHandler(async (req, res) => {
   const { packageId, adminId } = req.params;
@@ -366,7 +472,7 @@ const getCityDarshanById = asyncHandler(async (req, res) => {
 
 export {
   registerCityDarshan,
-  editCityDarshan,
+  updateCityDarshanPackage,
   markAsActive,
   markAsInactive,
   getAllCityDarshanPackages,
