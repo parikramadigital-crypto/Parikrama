@@ -5,7 +5,7 @@ import InputBox from "../../components/InputBox";
 import LoadingUI from "../../components/LoadingUI";
 import { FetchData } from "../../utils/FetchFromApi";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser, clearUser } from "../../redux/slices/authSlice";
 
 const AdminLogin = ({ startLoading, stopLoading }) => {
@@ -13,6 +13,8 @@ const AdminLogin = ({ startLoading, stopLoading }) => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
