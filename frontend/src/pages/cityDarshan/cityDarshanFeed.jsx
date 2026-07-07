@@ -9,10 +9,12 @@ import CityDarshanCard from "./cityDarshanCard";
 
 import { FetchData } from "../../utils/FetchFromApi";
 import { parseErrorMessage } from "../../utils/ErrorMessageParser";
+import { useNavigate } from "react-router-dom";
 
 const CityDarshanFeed = ({ startLoading, stopLoading }) => {
   const [packages, setPackages] = useState([]);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadPackages = async () => {
@@ -94,12 +96,29 @@ const CityDarshanFeed = ({ startLoading, stopLoading }) => {
           </div>
         </motion.div>
         {filteredPackages.length === 0 ? (
-          <div className="bg-white rounded-3xl p-16 text-center shadow">
-            <h2 className="text-2xl font-bold">No Packages Found</h2>
+          <div className="bg-white rounded-3xl p-2 md:p-16 text-center shadow">
+            {/* <h2 className="text-2xl font-bold">No Packages Found</h2> */}
 
-            <p className="text-neutral-500 mt-2">
+            {/* <p className="text-neutral-500 mt-2">
               Try changing your search keywords.
-            </p>
+            </p> */}
+            <h2 className="text-base md:text-2xl col-span-3 text-center w-full">
+              There are no city darshan packages currently available..{" "}
+            </h2>
+            <h2 className="col-span-3 text-center w-full flex-col flex">
+              Sorry for Inconvenience
+              <span className="flex flex-col lg:flex-row justify-center items-center gap-2 w-full">
+                <Button
+                  label={"Explore Places"}
+                  onClick={() => navigate("/explore")}
+                  normal={false}
+                />
+                <Button
+                  label={"Explore other Travel Packages"}
+                  onClick={() => navigate("/travel-packages")}
+                />
+              </span>
+            </h2>
           </div>
         ) : (
           <motion.div
