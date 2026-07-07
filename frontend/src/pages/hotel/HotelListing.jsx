@@ -194,12 +194,12 @@ const HotelListing = ({ startLoading, stopLoading }) => {
           className="mx-auto"
         />
       </div> */}
-      <h1 className="text-center w-full pb-10 text-3xl uppercase font-medium">
+      <h1 className="text-center w-full pb-2 md:pb-10 text-base md:text-3xl uppercase font-medium">
         Thank you for your interest in <br /> booking a hotel
       </h1>
       <div className="flex justify-between items-start w-full gap-5">
         {" "}
-        <div className="h-full flex flex-col justify-between items-start gap-16 overflow-hidden relative md:w-1/2 select-none">
+        <div className="h-full hidden lg:flex flex-col justify-between items-start gap-16 overflow-hidden relative md:w-1/2 select-none">
           <h1 className="text-xl flex flex-col font-semibold absolute top-0 left-0 p-5 z-40">
             <span className="uppercase py-10">Explore, discover, remember</span>
             <span className="text-4xl ">Parikrama</span> <br /> Welcomes you to
