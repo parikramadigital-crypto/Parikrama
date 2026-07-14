@@ -38,6 +38,8 @@ router.route("/get/all/food-courts").get(foodCourtFeed);
 router
   .route("/get/food-court/by-place-id/:foodCourtId")
   .get(getFoodCourtByPlaceId);
+
+// update food court
 router.route("/update/food-court/by-id/:foodCourtId").post(
   upload.fields([
     { name: "storeImages", maxCount: 5 },
