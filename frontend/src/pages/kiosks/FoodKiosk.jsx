@@ -266,17 +266,23 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
               Name={i.name}
               Required={i.required}
               Type={i.type}
+              className={localStorage.role === "Admin" ? "" : i.classname}
+              LabelClassname={localStorage.role === "Admin" ? "" : i.classname}
             />
           ))}
-          <div className="flex justify-between items-center">
-            <GetLocation />
-            {success && (
-              <p className="text-green-700 flex justify-center items-center gap-2">
-                <FaCircleCheck />
-                {success}
-              </p>
-            )}
-          </div>
+          {localStorage.role === "Admin" ? (
+            ""
+          ) : (
+            <div className="flex justify-between items-center">
+              <GetLocation />
+              {success && (
+                <p className="text-green-700 flex justify-center items-center gap-2">
+                  <FaCircleCheck />
+                  {success}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="py-8">
             <label className="block text-sm font-medium mb-1">City*</label>

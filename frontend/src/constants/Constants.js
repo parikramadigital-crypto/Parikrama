@@ -183,7 +183,8 @@ const mockPackages = {
       duration: "4 Nights / 5 Days",
       price: 25900,
       tags: ["Festival", "Culture"],
-      image: "https://images.unsplash.com/photo-1669015881702-951de590db31?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
+      image:
+        "https://images.unsplash.com/photo-1669015881702-951de590db31?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=800",
     },
     {
       id: 19,
@@ -559,20 +560,22 @@ export const foodKiosksFormInputs = [
     name: "specialFood",
     type: "text",
   },
-  // {
-  //   label: "Longitude",
-  //   placeHolder: "Longitude of the place",
-  //   name: "lng",
-  //   type: "text",
-  //   required: false,
-  // },
-  // {
-  //   label: "Latitude",
-  //   placeHolder: "Latitude of the place",
-  //   name: "lat",
-  //   type: "text",
-  //   required: false,
-  // },
+  {
+    label: "Longitude",
+    placeHolder: "Longitude of the place",
+    name: "lng",
+    type: "text",
+    required: false,
+    classname: "hidden",
+  },
+  {
+    label: "Latitude",
+    placeHolder: "Latitude of the place",
+    name: "lat",
+    type: "text",
+    required: false,
+    classname: "hidden",
+  },
   {
     label: "Establishment",
     placeHolder: "Place establishment year",
