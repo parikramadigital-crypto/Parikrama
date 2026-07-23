@@ -431,6 +431,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           Type="text"
           Required={false}
           Value={location?.longitude}
+          Disabled={localStorage.role === "Admin" ? true : false}
         />
         <InputBox
           className="hidden"
@@ -441,6 +442,7 @@ const FoodKiosk = ({ stopLoading, startLoading, onCancel, user }) => {
           Type="text"
           Required={false}
           Value={location?.latitude}
+          Disabled={localStorage.role === "Admin" ? true : false}
         />
       </form>
 
