@@ -31,7 +31,6 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
       );
       setData(response.data.data);
     } catch (err) {
-
     } finally {
       stopLoading();
     }
@@ -52,7 +51,6 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
       alert(response.data.message);
       foodCourt();
     } catch (err) {
-
       alert(parseErrorMessage(err.response.data));
     } finally {
       stopLoading();
@@ -237,10 +235,10 @@ const CurrentFoodKiosk = ({ startLoading, stopLoading }) => {
                   ""
                 )}
                 {data?.category === "Both" ? (
-                  <h1>
-                    <BiFoodTag className="text-green-700" /> /{" "}
+                  <p className="flex justify-center items-center">
+                    <BiFoodTag className="text-green-700" />
                     <BiFoodTag className="text-red-700" />
-                  </h1>
+                  </p>
                 ) : (
                   ""
                 )}
