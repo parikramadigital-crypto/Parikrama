@@ -325,7 +325,8 @@ const foodCourtFeed = asyncHandler(async (req, res) => {
     .populate({
       path: "state",
       select: "name",
-    });
+    })
+    .sort({ createdAt: -1 });
 
   res
     .status(201)
