@@ -43,6 +43,7 @@ import AddNewHotel from "./AddNewHotel";
 import AddNewClub from "./AddNewClub";
 import AddCountry from "./AddCountry";
 import SubAdmin from "./SubAdmin.jsx";
+import PricingModelForm from "./PricingModelForm.jsx";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   // hooks
@@ -85,6 +86,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [popup7, setPopup7] = useState(false);
   const [popup8, setPopup8] = useState(false);
   const [popup9, setPopup9] = useState(false);
+  const [popup10, setPopup10] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // quick options drop down
   // extras
@@ -302,6 +304,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
     { label: "Packages", count: 0 },
     { label: "Promotions", count: 0 },
     { label: "Sub Admins", count: 0 },
+    { label: "Pricing Models", count: 0 },
   ];
 
   const filteredSections =
@@ -515,6 +518,20 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <SubAdmins
                   TableData={subAdminData}
                   Text="Sub admins"
+                  user={user?._id}
+                />
+              </div>
+            )}
+            {activeSection === "Pricing Models" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"Add new pricing model"}
+                  onClick={() => setPopup10(true)}
+                />
+                <SubAdmins
+                  reloadDashboard={() => fetchDashboard()}
+                  TableData={subAdminData}
+                  Text="Pricing Models"
                   user={user?._id}
                 />
               </div>
@@ -818,6 +835,17 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <SubAdmin onCancel={() => setPopup9(false)} adminId={user?._id} />
+          </motion.div>
+        )}
+        {popup10 && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <PricingModelForm onCancel={() => setPopup10(false)} adminId={user?._id} />
           </motion.div>
         )}
         {socketNotifications.length > 0 && (
