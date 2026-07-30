@@ -24,6 +24,7 @@ import {
   SubAdmins,
   CityDarshanPackage,
   CityDarshanPackageBooking,
+  PricingModels,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -69,6 +70,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [hotEnquiryData, setHotEnquiryData] = useState([]);
   const [reviewedEnquiryData, setReviewedEnquiryData] = useState([]);
   const [countryData, setCountryData] = useState([]);
+  const [pricingModelData, setPricingModelData] = useState([]);
   const [socketNotifications, setSocketNotifications] = useState([]);
   const [cityDarshanPackage, setCityDarshanPackage] = useState([]);
   const [cityDarshanBooking, setCityDarshanBooking] = useState([]);
@@ -107,6 +109,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       const res = await FetchData("admin/dashboard/data", "get");
       // console.log(res);
       setPlaceData(res.data.data.place);
+      setPricingModelData(res.data.data.pricing);
       setCityData(res.data.data.city);
       setStateData(res.data.data.state);
       setFacilitator(res.data.data.activeFacilitator);
@@ -528,9 +531,9 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   label={"Add new pricing model"}
                   onClick={() => setPopup10(true)}
                 />
-                <SubAdmins
+                <PricingModels
                   reloadDashboard={() => fetchDashboard()}
-                  TableData={subAdminData}
+                  TableData={pricingModelData}
                   Text="Pricing Models"
                   user={user?._id}
                 />
@@ -845,7 +848,10 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
             className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
-            <PricingModelForm onCancel={() => setPopup10(false)} adminId={user?._id} />
+            <PricingModelForm
+              onCancel={() => setPopup10(false)}
+              adminId={user?._id}
+            />
           </motion.div>
         )}
         {socketNotifications.length > 0 && (
