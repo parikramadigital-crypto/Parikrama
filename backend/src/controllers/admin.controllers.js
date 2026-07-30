@@ -379,7 +379,7 @@ const dashboardData = asyncHandler(async (req, res) => {
     .populate("stateId cityId placeId")
     .sort({ createdAt: -1 });
   const pricing = await Pricing.find()
-    .select("madeFor modelName planDuration isActive")
+    .select("modelFor modelName planDuration isActive")
     .sort({ createdAt: -1 });
 
   // facilitators
