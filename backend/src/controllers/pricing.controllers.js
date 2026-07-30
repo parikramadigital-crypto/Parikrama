@@ -14,6 +14,7 @@ const createPricingModel = asyncHandler(async (req, res) => {
     discount,
     sellingPrice,
     planDuration,
+    customModelFor,
   } = req.body;
 
   if (
