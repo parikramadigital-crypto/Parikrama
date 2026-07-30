@@ -12,12 +12,18 @@ import { FaUserShield } from "react-icons/fa";
 const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
   const formRef = useRef(null);
   const [customModelInput, setShowCustomModelInput] = useState(false);
+  const [priceData, setPriceData] = useState({
+    mrp: "",
+    discount: "",
+    sellingPrice: "",
+  });
   const [faqs, setFaqs] = useState([
     {
       question: "",
       answer: "",
     },
   ]);
+  const [features, setFeatures] = useState([""]);
 
   const addFaqs = () => {
     setFaqs((prev) => [
@@ -28,17 +34,50 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
       },
     ]);
   };
+  const addFeatures = () => {
+    setFeatures((prev) => [...prev, ""]);
+  };
 
   const removeFaqs = (index) => {
     if (faqs.length === 1) return;
 
     setFaqs((prev) => prev.filter((_, i) => i !== index));
   };
+  const removeFeatures = (index) => {
+    if (features.length === 1) return;
+
+    setFeatures((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleFAQChange = (index, field, value) => {
     const updatedFaqs = [...faqs];
     updatedFaqs[index][field] = value;
     setFaqs(updatedFaqs);
+  };
+  const handleFeaturesChange = (index, value) => {
+    const updatedFeatures = [...features];
+    updatedFeatures[index] = value;
+    setFeatures(updatedFeatures);
+  };
+
+  const handlePriceChange = (e) => {
+    const { name, value } = e.target;
+
+    const updatedData = {
+      ...priceData,
+      [name]: value,
+    };
+
+    const mrp = parseFloat(updatedData.mrp) || 0;
+    const discount = parseFloat(updatedData.discount) || 0;
+
+    if (mrp > 0 && discount >= 0) {
+      updatedData.sellingPrice = (mrp - (mrp * discount) / 100).toFixed(2);
+    } else {
+      updatedData.sellingPrice = "";
+    }
+
+    setPriceData(updatedData);
   };
 
   const handleSubmit = async (e) => {
@@ -48,10 +87,17 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
       startLoading();
 
       const formData = new FormData(formRef.current);
+      formData.append(
+        "arrayData",
+        JSON.stringify({
+          faqs,
+          features: features.filter((i) => i.trim()),
+        }),
+      );
       const response = await FetchData(
-        `admin/register-sub-admin/${adminId}`,
+        `pricing-models/create/pricing-model/${adminId}`,
         "post",
-        // objectData,
+        formData,
       );
       alert(response.data.message);
       formRef.current.reset();
@@ -121,7 +167,7 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
               Model Name
             </label>
             <select
-              name="modelFor"
+              name="modelName"
               required
               // onChange={(e) => {
               //   if (e.target.value === "Custom") {
@@ -147,25 +193,35 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
               Tagline
             </label>
             <textarea
+            
               required={false}
               placeholder="Write a short tagline..."
-              name="bio"
+              name="tagline"
               rows="2"
               className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-md focus:ring-[#FFC20E] focus:border-[#FFC20E] outline-none transition duration-200 ease-in-out hover:shadow-md"
             />
           </div>
           <div className="flex justify-between items-center w-full gap-5">
-            <InputBox Name="mrp" Type="number" LabelName="MRP" />
+            <InputBox
+              Name="mrp"
+              Type="number"
+              LabelName="MRP"
+              onChange={handlePriceChange}
+              Value={priceData.mrp}
+            />
             <InputBox
               Name="discount"
               Type="number"
               LabelName="Discount (in %)"
+              onChange={handlePriceChange}
+              Value={priceData.discount}
             />
             <InputBox
               Name="sellingPrice"
               Type="number"
               LabelName="Discounted Price"
-              Disabled={true}
+              Value={priceData.sellingPrice}
+              // Disabled={true}
             />
           </div>
           <div className="w-full">
@@ -221,6 +277,33 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
                   label={"Remove"}
                   Disabled={faqs.length === 1}
                   onClick={() => removeFaqs(index)}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="w-full border border-neutral-300 rounded-xl p-5 gap-2 flex flex-col ">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-semibold">Features</h2>
+              <Button label={"Add"} type={"button"} onClick={addFeatures} />
+            </div>
+
+            {features.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-center items-start bg-neutral-100 rounded-xl w-full gap-5 px-5 py-2"
+              >
+                <InputBox
+                  LabelName={`Feature ${index + 1}`}
+                  Name={`features-${index}`}
+                  Value={item}
+                  onChange={(e) => handleFeaturesChange(index, e.target.value)}
+                />
+
+                <Button
+                  normal={false}
+                  label={"Remove"}
+                  Disabled={features.length === 1}
+                  onClick={() => removeFeatures(index)}
                 />
               </div>
             ))}
