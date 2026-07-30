@@ -92,6 +92,7 @@ import enquiryRoutes from "./routes/enquiry.routes.js";
 import flightRoutes from "./routes/flight.routes.js";
 import cityDarshanRoutes from "./routes/cityDarshan.routes.js";
 import paymentRoutes from "./routes/payment.routes.js";
+import pricingRoutes from "./routes/pricing.routes.js";
 
 app.use("/api/v1/states", stateRoutes);
 app.use("/api/v1/cities", cityRoutes);
@@ -112,6 +113,7 @@ app.use("/api/v1/country", countryRoutes);
 app.use("/api/v1/enquiry", enquiryRoutes);
 app.use("/api/v1/flight", flightRoutes);
 app.use("/api/v1/city-darshan/admin", cityDarshanRoutes);
+app.use("/api/v1/pricing-models", pricingRoutes);
 
 // payment routes
 app.use("/api/v1/payment", paymentRoutes);
