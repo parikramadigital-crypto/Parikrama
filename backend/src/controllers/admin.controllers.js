@@ -16,6 +16,7 @@ import { EnquiryDetails } from "../models/enquiry.models.js";
 import { Country } from "../models/country.models.js";
 import { CityDarshan } from "../models/cityDarshan.models.js";
 import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
+import { Pricing } from "../models/pricing.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -377,6 +378,9 @@ const dashboardData = asyncHandler(async (req, res) => {
   })
     .populate("stateId cityId placeId")
     .sort({ createdAt: -1 });
+  const pricing = await Pricing.find()
+    .select("madeFor modelName planDuration isActive")
+    .sort({ createdAt: -1 });
 
   // facilitators
   const activeFacilitator = await Facilitator.find({
@@ -416,6 +420,7 @@ const dashboardData = asyncHandler(async (req, res) => {
       enquiry,
       reviewedEnquiry,
       hotEnquiry,
+      pricing,
       activeFacilitator,
       inactiveFacilitator,
       cityPackage,
