@@ -1798,7 +1798,7 @@ const SubAdmins = ({ Text = "", TableData = [], user }) => {
                   <td className="px-5 py-3">{data?.employeeId}</td>
                   <td className="px-5 py-3">{data?.email}</td>
                   <td className="px-5 py-3">{data?.phoneNumber}</td>
-                  <td className="px-5 py-3">{data?.sectionList.length}</td>
+                  <td className="px-5 py-3">{data?.sectionList?.length}</td>
                 </tr>
               ))
             ) : (
@@ -1996,7 +1996,6 @@ const CityDarshanPackageBooking = ({
           />
         </div>
       </div>
-      {console.log(TableData)}
 
       <div className="w-full mt-1 h-[500px] overflow-scroll">
         <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
@@ -2051,6 +2050,115 @@ const CityDarshanPackageBooking = ({
   );
 };
 
+const PricingModels = ({
+  Text = "",
+  TableData = [],
+  user,
+  reloadDashboard,
+}) => {
+  console.log(TableData);
+  const [search, setSearch] = useState("");
+
+  const TableHeaders = [
+    "Model for",
+    "Model name",
+    "Duration",
+    "Active Status",
+    "Actions",
+  ];
+
+  const filteredData = useMemo(() => {
+    if (!search.trim()) return TableData;
+
+    const q = search.toLowerCase();
+
+    return TableData.filter((c) =>
+      `
+        ${c?.modelFor}
+        ${c?.modelName}
+        ${c?.planDuration}
+      `
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [search, TableData]);
+
+  const deletePackage = async ({ packageId }) => {
+    if (!window.confirm("Are you sure you want to delete this package?"))
+      return;
+
+    // try {
+    //   const response = await FetchData(
+    //     `packages/delete-package/${user}/${packageId}`,
+    //     "delete",
+    //   );
+    //   alert(response.data.message);
+    //   reloadDashboard();
+    // } catch (err) {}
+  };
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-2xl font-bold">
+          {Text} (<span className="text-sm">{filteredData.length}</span>)
+        </h2>
+
+        <div className="w-96">
+          <InputBox
+            Type="text"
+            Placeholder="Search pricing ..."
+            Value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-white"
+          />
+        </div>
+      </div>
+
+      <div className="w-full mt-1 h-[500px] overflow-scroll">
+        <table className="w-full text-sm text-left bg-white rounded-xl shadow-sm overflow-hidden">
+          <thead className="bg-gray-100 text-gray-600">
+            <tr>
+              {TableHeaders.map((header, index) => (
+                <th key={index} className="px-5 py-3 font-medium">
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.length > 0 ? (
+              filteredData.map((data) => (
+                <tr key={data._id} className="hover:bg-gray-50 border-b">
+                  <td className="px-5 py-3">{data?.modelFor || "na"}</td>
+                  <td className="px-5 py-3">{data?.modelName || "na"}</td>
+                  <td className="px-5 py-3 capitalize">
+                    {data?.planDuration || "na"}
+                  </td>
+                  <td
+                    className={`px-5 py-3 capitalize font-bold ${data?.isActive === true ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {data?.isActive === true ? "Active" : "Inactive"}
+                  </td>
+                  <td className="px-5 py-3">
+                    <Button label={"View / Edit"} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="text-center py-6 text-gray-500">
+                  No Data found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 export {
   City,
   State,
@@ -2068,5 +2176,6 @@ export {
   Country,
   SubAdmins,
   CityDarshanPackage,
+  PricingModels,
   CityDarshanPackageBooking,
 };
