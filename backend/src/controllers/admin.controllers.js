@@ -17,6 +17,9 @@ import { Country } from "../models/country.models.js";
 import { CityDarshan } from "../models/cityDarshan.models.js";
 import { CityDarshanBooking } from "../models/cityDarshanBooking.models.js";
 import { Pricing } from "../models/pricing.models.js";
+import { Visitor } from "../models/visitor.model.js";
+import { Hotels } from "../models/hotel.models.js";
+import { Club } from "../models/club.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -326,107 +329,277 @@ const loginAdmin = asyncHandler(async (req, res) => {
 });
 
 const dashboardData = asyncHandler(async (req, res) => {
-  //sub admins
-  const subAdmin = await Admin.find({ restrictedAccess: true }).sort({
-    createdAt: -1,
-  });
-  // states , city, country
-  const state = await State.find().populate("country").sort({ createdAt: -1 });
-  const city = await City.find().populate("state").sort({ createdAt: -1 });
-  const country = await Country.find().sort({ createdAt: -1 });
+  const { query } = req.params;
 
-  // food courts or kiosks
-  const foodCourts = await FoodCourt.find()
-    .populate("place")
-    .sort({ createdAt: -1 });
-  const underReviewCount = await FoodCourt.find({
-    active: false,
-    verified: false,
-  }).select("name");
+  switch (query) {
+    case "overview": {
+      const totalVisits = await Visitor.countDocuments();
+      const today = new Date().toISOString().slice(0, 10);
+      const todayVisits = await Visitor.countDocuments({
+        visitDate: today,
+      });
+      const uniqueVisitors = await Visitor.aggregate([
+        {
+          $group: {
+            _id: "$ip",
+          },
+        },
+        {
+          $count: "uniqueVisitors",
+        },
+      ]);
+      const placeOverview = await Place.find().select("name category");
 
-  //extras
-  const users = await UserSchema.find().sort({ createdAt: -1 });
+      return res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            totalVisits,
+            todayVisits,
+            uniqueVisitors: uniqueVisitors[0]?.uniqueVisitors || 0,
+            placeOverview,
+          },
+          "Data fetched successfully",
+        ),
+      );
+    }
 
-  // places
-  const place = await Place.find({ isActive: true })
-    .populate("city state")
-    .sort({ createdAt: -1 });
-  const inactivePlace = await Place.find({ isActive: false })
-    .populate("city state")
-    .sort({ createdAt: -1 });
+    case "subAdmin": {
+      const subAdmin = await Admin.find({ restrictedAccess: true }).sort({
+        createdAt: -1,
+      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, subAdmin, "Data fetched successfully"));
+    }
 
-  // promotions
-  const promotions = await Promotion.find()
-    .populate("place")
-    .sort({ createdAt: -1 });
-  const packages = await TravelPackages.find()
-    .sort({ createdAt: -1 })
-    .populate("state country");
-  const enquiry = await EnquiryDetails.find({
-    reviewedByAdmin: false,
-  })
-    .populate("stateId cityId placeId")
-    .sort({ createdAt: -1 });
-  const reviewedEnquiry = await EnquiryDetails.find({
-    reviewedByAdmin: true,
-  })
-    .populate("stateId cityId placeId")
-    .sort({ createdAt: -1 });
-  const hotEnquiry = await EnquiryDetails.find({
-    reviewedByAdmin: true,
-    markAsHotLead: true,
-  })
-    .populate("stateId cityId placeId")
-    .sort({ createdAt: -1 });
-  const pricing = await Pricing.find()
-    .select("modelFor modelName planDuration isActive")
-    .sort({ createdAt: -1 });
+    case "hotels": {
+      const hotels = await Hotels.find({ isActive: true })
+        .populate(
+          "address.city address.state address.country partnerClub listedBy createdBy",
+        )
+        .sort({ popularityScore: -1, starRating: -1 });
 
-  // facilitators
-  const activeFacilitator = await Facilitator.find({
-    isVerified: true,
-  })
-    .populate("state city place")
-    .sort({ createdAt: -1 });
-  const inactiveFacilitator = await Facilitator.find({
-    isVerified: false,
-  })
-    .populate("state city place")
-    .sort({ createdAt: -1 });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, hotels, "Data fetched successfully"));
+    }
 
-  const cityPackage = await CityDarshan.find({ isActive: true })
-    .populate({ path: "city", select: "name" })
-    .populate({ path: "state", select: "name" })
-    .select("name vehicles priority");
+    case "clubs": {
+      const clubs = await Club.find({ isActive: true })
+        .populate("createdBy")
+        .sort({ ratings: -1 })
+        .lean();
 
-  const cityPackageBooking = await CityDarshanBooking.find()
-    .select("bookingStatus totalAmount totalTravellers vehicle")
-    .populate({ path: "cityDarshan", select: "name city state" })
-    .populate({ path: "user", select: "name contactNumber" });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, clubs, "Data fetched successfully"));
+    }
 
-  return res.status(200).json(
-    new ApiResponse(200, {
-      subAdmin,
-      state,
-      city,
-      country,
-      foodCourts,
-      underReviewCount,
-      users,
-      place,
-      inactivePlace,
-      promotions,
-      packages,
-      enquiry,
-      reviewedEnquiry,
-      hotEnquiry,
-      pricing,
-      activeFacilitator,
-      inactiveFacilitator,
-      cityPackage,
-      cityPackageBooking,
-    }),
-  );
+    case "state": {
+      const state = await State.find()
+        .populate("country")
+        .sort({ createdAt: -1 });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, state, "Data fetched successfully"));
+    }
+
+    case "city": {
+      const city = await City.find().populate("state").sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, city, "Data fetched successfully"));
+    }
+
+    case "country": {
+      const country = await Country.find().sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, country, "Data fetched successfully"));
+    }
+
+    case "foodCourts": {
+      const foodCourts = await FoodCourt.find()
+        .populate("place")
+        .sort({ createdAt: -1 });
+
+      const underReviewCount = await FoodCourt.find({
+        active: false,
+        verified: false,
+      }).select("name");
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { foodCourts, underReviewCount },
+            "Data fetched successfully",
+          ),
+        );
+    }
+
+    case "users": {
+      const users = await UserSchema.find().sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, users, "Data fetched successfully"));
+    }
+
+    case "place": {
+      const place = await Place.find({ isActive: true })
+        .populate("city state")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, place, "Data fetched successfully"));
+    }
+
+    case "inactivePlace": {
+      const inactivePlace = await Place.find({ isActive: false })
+        .populate("city state")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, inactivePlace, "Data fetched successfully"));
+    }
+
+    case "promotions": {
+      const promotions = await Promotion.find()
+        .populate("place")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, promotions, "Data fetched successfully"));
+    }
+
+    case "packages": {
+      const packages = await TravelPackages.find()
+        .sort({ createdAt: -1 })
+        .populate("state country");
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, packages, "Data fetched successfully"));
+    }
+
+    case "enquiry": {
+      const enquiry = await EnquiryDetails.find({
+        reviewedByAdmin: false,
+      })
+        .populate("stateId cityId placeId")
+        .sort({ createdAt: -1 });
+      const reviewedEnquiry = await EnquiryDetails.find({
+        reviewedByAdmin: true,
+      })
+        .populate("stateId cityId placeId")
+        .sort({ createdAt: -1 });
+      const hotEnquiry = await EnquiryDetails.find({
+        reviewedByAdmin: true,
+        markAsHotLead: true,
+      })
+        .populate("stateId cityId placeId")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { enquiry, reviewedEnquiry, hotEnquiry },
+            "Data fetched successfully",
+          ),
+        );
+    }
+
+    case "pricing": {
+      const pricing = await Pricing.find()
+        .select("modelFor modelName planDuration isActive")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, pricing, "Data fetched successfully"));
+    }
+
+    case "activeFacilitator": {
+      const activeFacilitator = await Facilitator.find({
+        isVerified: true,
+      })
+        .populate("state city place")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, activeFacilitator, "Data fetched successfully"),
+        );
+    }
+
+    case "inactiveFacilitator": {
+      const inactiveFacilitator = await Facilitator.find({
+        isVerified: false,
+      })
+        .populate("state city place")
+        .sort({ createdAt: -1 });
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            inactiveFacilitator,
+            "Data fetched successfully",
+          ),
+        );
+    }
+
+    case "cityPackage": {
+      const cityPackage = await CityDarshan.find({ isActive: true })
+        .populate({ path: "city", select: "name" })
+        .populate({ path: "state", select: "name" })
+        .select("name vehicles priority");
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, cityPackage, "Data fetched successfully"));
+    }
+
+    case "cityPackageBooking": {
+      const cityPackageBooking = await CityDarshanBooking.find()
+        .select("bookingStatus totalAmount totalTravellers vehicle")
+        .populate({ path: "cityDarshan", select: "name city state" })
+        .populate({ path: "user", select: "name contactNumber" });
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, cityPackageBooking, "Data fetched successfully"),
+        );
+    }
+
+    case "cityPackageBooking": {
+      const cityPackageBooking = await CityDarshanBooking.find()
+        .select("bookingStatus totalAmount totalTravellers vehicle")
+        .populate({ path: "cityDarshan", select: "name city state" })
+        .populate({ path: "user", select: "name contactNumber" });
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, cityPackageBooking, "Data fetched successfully"),
+        );
+    }
+    default:
+      throw new ApiError(400, "Invalid session or query");
+  }
 });
 
 const getSubAdminById = asyncHandler(async (req, res) => {
