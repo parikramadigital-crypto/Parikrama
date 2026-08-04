@@ -6,6 +6,7 @@ import {
   deletePricingModel,
   getAllPricingModel,
   getPricingModelById,
+  getPricingModelByMadeFor,
 } from "../controllers/pricing.controllers.js";
 
 const router = Router();
@@ -22,5 +23,8 @@ router
   .delete(deletePricingModel);
 router.route("/get/pricing-model/all").get(getAllPricingModel);
 router.route("/get/pricing-model/by-id").get(getPricingModelById);
+router
+  .route("/get/pricing-model/all/by-modelFor/:modelFor")
+  .get(getPricingModelByMadeFor);
 
 export default router;

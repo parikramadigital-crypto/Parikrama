@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Admin } from "../models/admin.models.js";
 import { Pricing } from "../models/pricing.models.js";
+import { model } from "mongoose";
 
 const createPricingModel = asyncHandler(async (req, res) => {
   const { adminId } = req.params;
@@ -32,11 +33,12 @@ const createPricingModel = asyncHandler(async (req, res) => {
   if (!admin) throw new ApiError(400, "Invalid request");
 
   const { features, faqs } = JSON.parse(req.body.arrayData);
+  const modelMadeFor = modelFor.toLowercase();
 
   if (admin.restrictedAccess === true) {
     const pricingModel = await Pricing.create({
       admin: adminId,
-      modelFor,
+      modelFor: modelMadeFor,
       customModelFor,
       modelName,
       tagline,
@@ -54,7 +56,7 @@ const createPricingModel = asyncHandler(async (req, res) => {
   if (admin.restrictedAccess === false) {
     const pricingModel = await Pricing.create({
       admin: adminId,
-      modelFor,
+      modelFor: modelMadeFor,
       customModelFor,
       modelName,
       tagline,
@@ -146,6 +148,22 @@ const getPricingModelById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, pricingModel, "Data fetched successfully !"));
 });
 
+const getPricingModelByMadeFor = asyncHandler(async (req, res) => {
+  const { modelFor } = req.params;
+  if (!modelFor) throw new ApiError(400, "Model Id not found !");
+
+  const pricingModel = await Pricing.find({
+    modelFor: modelFor,
+    isActive: true,
+  }).select("-admin");
+  console.log(pricingModel);
+  if (!pricingModel) throw new ApiError(400, "No model found");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, pricingModel, "Data fetched successfully !"));
+});
+
 export {
   createPricingModel,
   markAsActive,
@@ -153,4 +171,5 @@ export {
   deletePricingModel,
   getAllPricingModel,
   getPricingModelById,
+  getPricingModelByMadeFor,
 };
