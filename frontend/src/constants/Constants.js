@@ -785,3 +785,47 @@ export const INDIAN_AIRPORTS = [
   { city: "Dibrugarh", code: "DIB" },
   { city: "Port Blair", code: "IXZ" },
 ];
+
+export const ExecutiveInputs = [
+  {
+    label: "Name",
+    name: "name",
+    type: "text",
+  },
+  {
+    label: "Email",
+    name: "email",
+    type: "email",
+  },
+  {
+    label: "Contact Number",
+    name: "contactNumber",
+    type: "text",
+  },
+  {
+    label: "Alternate Contact Number",
+    name: "alternateContactNumber",
+    type: "text",
+  },
+  {
+    label: "Password",
+    name: "password",
+    type: "password",
+    passwordTrue: true,
+  },
+  {
+    label: "City",
+    name: "city",
+    type: "text",
+  },
+  {
+    label: "State",
+    name: "state",
+    type: "text",
+  },
+  {
+    label: "Employee Code",
+    name: "city",
+    type: "text",
+  },
+];
