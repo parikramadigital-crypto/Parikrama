@@ -117,9 +117,7 @@ const refreshUserToken = asyncHandler(async (req, res) => {
   const decoded = Jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
   const user = await UserSchema.findById(decoded._id);
-  console.log("before condition", decoded._id);
   if (!user) throw new ApiError(401, "Invalid refresh token");
-  console.log("after condition", decoded._id);
 
   const { AccessToken, RefreshToken } = await generateAccessAndRefreshTokens(
     user._id,
@@ -186,7 +184,6 @@ const getBookings = asyncHandler(async (req, res) => {
         "transactionNumber paymentStatus gatewayOrderId gatewayPaymentId amount currency createdAt",
     })
     .sort({ createdAt: -1 });
-  console.log("Bookings", bookings);
   return res
     .status(200)
     .json(
