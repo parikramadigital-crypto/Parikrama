@@ -107,6 +107,13 @@ const ClubUpdates = lazy(() => import("./pages/club/ClubUpdates"));
 const ContactUs = lazy(() => import("./pages/contactus/ContactUs"));
 // CORPORATE
 const CorporatePlan = lazy(() => import("./pages/corporate/CorporatePlan"));
+// EXECUTIVE
+const ExecutiveDashboard = lazy(
+  () => import("./pages/sales-marketing/ExecutiveDashboard"),
+);
+const RegisterExecutive = lazy(
+  () => import("./pages/sales-marketing/RegisterExecutive"),
+);
 /* ================= LOADING SCREEN ================= */
 
 const PageLoader = () => {
@@ -303,6 +310,12 @@ function App() {
               path="/current/community/:communityId"
               element={<CurrentCommunity />}
             />
+            {/* ================= EXECUTIVE SECTION ================= */}
+            <Route
+              path="/executive/dashboard"
+              element={<ExecutiveDashboard />}
+            />
+            <Route path="/executive/form" element={<RegisterExecutive />} />
             {/* ================= FALLBACK ================= */}
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
