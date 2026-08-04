@@ -51,29 +51,9 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formRef = useRef();
-  // All the data which are getting displayed
-  const [placeData, setPlaceData] = useState([]);
-  const [stateData, setStateData] = useState([]);
-  const [cityData, setCityData] = useState([]);
-  const [facilitator, setFacilitator] = useState([]);
-  const [subAdminData, setSubAdminData] = useState([]);
-  const [inactivePlaceData, setInactivePlaceData] = useState([]);
-  const [inactiveFacilitator, setInactiveFacilitator] = useState([]);
-  const [promotionData, setPromotionData] = useState([]);
-  const [packageData, setPackageData] = useState([]);
-  const [foodKioskData, setFoodKioskData] = useState([]);
-  const [pendingFoodCount, setPendingFoodCount] = useState([]);
-  const [hotelData, setHotelData] = useState([]);
-  const [clubData, setClubData] = useState([]);
-  const [userData, setUserData] = useState([]);
-  const [enquiryData, setEnquiryData] = useState([]);
-  const [hotEnquiryData, setHotEnquiryData] = useState([]);
-  const [reviewedEnquiryData, setReviewedEnquiryData] = useState([]);
-  const [countryData, setCountryData] = useState([]);
-  const [pricingModelData, setPricingModelData] = useState([]);
+
+  const [data, setData] = useState([]);
   const [socketNotifications, setSocketNotifications] = useState([]);
-  const [cityDarshanPackage, setCityDarshanPackage] = useState([]);
-  const [cityDarshanBooking, setCityDarshanBooking] = useState([]);
   // preview
   const [imagePreviews, setImagePreviews] = useState([]);
   // redux subscription
@@ -95,46 +75,15 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   const [activeSection, setActiveSection] = useState(
     () => localStorage.getItem("activeSection") || "Overview",
   );
-  const [stats, setStats] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  const fetchStats = async () => {
-    const res = await FetchData("analytics/visitors", "get");
-    setStats(res.data.data);
-  };
-
-  const fetchDashboard = async () => {
+  const fetchDashboard = async ({ query }) => {
+    if (!query) return;
     try {
       startLoading();
-      const res = await FetchData("admin/dashboard/data", "get");
-      // console.log(res);
-      setPlaceData(res.data.data.place);
-      setPricingModelData(res.data.data.pricing);
-      setCityData(res.data.data.city);
-      setStateData(res.data.data.state);
-      setFacilitator(res.data.data.activeFacilitator);
-      setInactivePlaceData(res.data.data.inactivePlace);
-      setInactiveFacilitator(res.data.data.inactiveFacilitator);
-      setPromotionData(res.data.data.promotions);
-      setPackageData(res.data.data.packages);
-      setFoodKioskData(res.data.data.foodCourts);
-      setUserData(res.data.data.users);
-      setEnquiryData(res.data.data.enquiry);
-      setHotEnquiryData(res.data.data.hotEnquiry);
-      setReviewedEnquiryData(res.data.data.reviewedEnquiry);
-      setCountryData(res.data.data.country);
-      setSubAdminData(res.data.data.subAdmin);
-      setPendingFoodCount(res.data.data.underReviewCount);
-      setCityDarshanPackage(res.data.data.cityPackage);
-      setCityDarshanBooking(res.data.data.cityPackageBooking);
-
-      // Fetch hotels separately
-      const hotelRes = await FetchData("hotels", "get");
-      setHotelData(hotelRes?.data?.data || []);
-
-      // Fetch clubs separately
-      const clubRes = await FetchData("clubs", "get");
-      setClubData(clubRes?.data?.data || []);
+      const res = await FetchData(`admin/dashboard/data/${query}`, "get");
+      console.log(query, res);
+      setData(res.data.data);
     } catch (err) {
       // console.log(err);
     } finally {
@@ -143,7 +92,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   };
 
   useEffect(() => {
-    fetchDashboard();
+    fetchDashboard({ query: localStorage.getItem("query") });
   }, [user]);
 
   useEffect(() => {
@@ -166,10 +115,6 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
       socket.off("new-food-place", handleNewFoodPlace);
       socket.disconnect();
     };
-  }, []);
-
-  useEffect(() => {
-    fetchStats();
   }, []);
 
   const logout = () => {
@@ -257,25 +202,16 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
 
     try {
       startLoading();
-
       const formData = new FormData(formRef.current);
-
-      // force priority if mobile
       if (formData.get("isMobile") === "true") {
         formData.set("priority", "Max");
       }
-
-      // for (let pair of formData.entries()) {
-      //   console.log(pair[0] + ": " + pair[1]);
-      // }
-
       const response = await FetchData(
         `promotions/make/promotions/${user?._id}`,
         "post",
         formData,
         true,
       );
-
       cancelPopup();
       alert(response.data.message);
     } catch (err) {
@@ -286,28 +222,38 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
   };
 
   const sections = [
-    { label: "Overview", count: 0 },
-    { label: "Enquiries", count: enquiryData.length || 0 },
-    { label: "City Darshan Bookings", count: 0 },
-    { label: "Hotels", count: 0 },
-    { label: "Clubs", count: 0 },
-    { label: "Active Places", count: 0 },
-    { label: "Inactive Places", count: inactivePlaceData.length || 0 },
-    { label: "Food Place", count: pendingFoodCount.length || 0 },
-    { label: "Users", count: 0 },
-    { label: "Verified Facilitator", count: 0 },
+    { query: "overview", label: "Overview", count: 0 },
+    { query: "enquiry", label: "Enquiries", count: 0 || 0 },
+    { query: "cityPackageBooking", label: "City Darshan Bookings", count: 0 },
+    { query: "hotels", label: "Hotels", count: 0 },
+    { query: "clubs", label: "Clubs", count: 0 },
+    { query: "place", label: "Active Places", count: 0 },
     {
-      label: "Non-Verified Facilitator",
-      count: inactiveFacilitator.length || 0,
+      query: "inactivePlace",
+      label: "Inactive Places",
+      count: 0 || 0,
     },
-    { label: "Cities", count: 0 },
-    { label: "States", count: 0 },
-    { label: "Countries", count: 0 },
-    { label: "City Darshan Packages", count: 0 },
-    { label: "Packages", count: 0 },
-    { label: "Promotions", count: 0 },
-    { label: "Sub Admins", count: 0 },
-    { label: "Pricing Models", count: 0 },
+    {
+      query: "foodCourts",
+      label: "Food Place",
+      count: 0 || 0,
+    },
+    { query: "users", label: "Users", count: 0 },
+    { query: "activeFacilitator", label: "Verified Facilitator", count: 0 },
+    {
+      query: "inactiveFacilitator",
+      label: "Non-Verified Facilitator",
+      count: 0 || 0,
+    },
+    { query: "city", label: "Cities", count: 0 },
+    { query: "state", label: "States", count: 0 },
+    { query: "country", label: "Countries", count: 0 },
+    { query: "cityPackage", label: "City Darshan Packages", count: 0 },
+    { query: "packages", label: "Packages", count: 0 },
+    { query: "promotions", label: "Promotions", count: 0 },
+    { query: "subAdmin", label: "Sub Admins", count: 0 },
+    { query: "pricing", label: "Pricing Models", count: 0 },
+    { query: "marketingExecutive", label: "Marketing executive", count: 0 },
   ];
 
   const filteredSections =
@@ -333,7 +279,8 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => {
                     localStorage.setItem("activeSection", section.label);
                     setActiveSection(section.label);
-                    // setMenuOpen(false); // close menu on click (mobile)
+                    localStorage.setItem("query", section.query);
+                    fetchDashboard({ query: localStorage.getItem("query") });
                   }}
                 >
                   <p className="flex justify-between items-center w-full">
@@ -362,44 +309,45 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 <div className="flex flex-col gap-4 w-fit">
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Total Visits</h3>
-                    <p className="text-2xl font-bold">{stats?.totalVisits}</p>
+                    <p className="text-2xl font-bold">{data?.totalVisits}</p>
                   </div>
 
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Today's Visitors</h3>
-                    <p className="text-2xl font-bold">{stats?.todayVisits}</p>
+                    <p className="text-2xl font-bold">{data?.todayVisits}</p>
                   </div>
 
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Unique Users</h3>
-                    <p className="text-2xl font-bold">
-                      {stats?.uniqueVisitors}
-                    </p>
+                    <p className="text-2xl font-bold">{data?.uniqueVisitors}</p>
                   </div>
                 </div>
                 {/* <CitiesByStateBarChart cities={cityData} /> */}
                 {/* <StatesDonutChart states={stateData} /> */}
-                <CategoryPieChart places={placeData} />
+                <CategoryPieChart places={data?.placeOverview} />
               </div>
             )}
             {activeSection === "Enquiries" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
                 <Enquiry
-                  TableData={enquiryData}
-                  TableData2={reviewedEnquiryData}
-                  TableData3={hotEnquiryData}
+                  tableData={data}
                   Text="Enquiries"
                   user={user?._id}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
             {activeSection === "City Darshan Bookings" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
                 <CityDarshanPackageBooking
-                  TableData={cityDarshanBooking}
+                  TableData={data}
                   Text="City Darshan Bookings"
                   user={user?._id}
-                  reloadDashboard={() => fetchDashboard()}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
@@ -410,9 +358,11 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup6(true)}
                 />
                 <Hotels
-                  TableData={hotelData}
+                  TableData={data}
                   Text="Listed Hotels"
-                  reloadDashboard={() => fetchDashboard()}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
@@ -423,18 +373,20 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup7(true)}
                 />
                 <Clubs
-                  TableData={clubData}
+                  TableData={data}
                   Text="Listed Clubs"
-                  reloadDashboard={() => fetchDashboard()}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
             {activeSection === "Active Places" && (
-              <Place TableData={placeData} Text="Listed Places" />
+              <Place TableData={data} Text="Listed Places" />
             )}
             {activeSection === "Inactive Places" && (
               <InactivePlace
-                TableData={inactivePlaceData}
+                TableData={data}
                 Text="Places under review"
                 user={user?._id}
               />
@@ -446,8 +398,10 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup5(true)}
                 />
                 <FoodKiosks
-                  reloadDashboard={() => fetchDashboard()}
-                  TableData={foodKioskData}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
+                  TableData={data?.foodCourts}
                   Text="Food kiosks"
                   user={user?._id}
                 />
@@ -455,38 +409,40 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             )}
             {activeSection === "Users" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
-                <Users TableData={userData} Text="User details" />
+                <Users TableData={data} Text="User details" />
               </div>
             )}
             {activeSection === "Verified Facilitator" && (
-              <Facilitator TableData={facilitator} Text="Active Facilitator" />
+              <Facilitator TableData={data} Text="Active Facilitator" />
             )}
             {activeSection === "Non-Verified Facilitator" && (
               <InactiveFacilitator
-                TableData={inactiveFacilitator}
+                TableData={data}
                 Text="Facilitator under review"
                 user={user?._id}
               />
             )}
             {activeSection === "Cities" && (
-              <City TableData={cityData} Text="Listed Cities" />
+              <City TableData={data} Text="Listed Cities" />
             )}
             {activeSection === "States" && (
-              <State TableData={stateData} Text="Listed States" />
+              <State TableData={data} Text="Listed States" />
             )}
             {activeSection === "Countries" && (
               <div className="">
                 <Button label={"Add country"} onClick={() => setPopup8(true)} />
-                <Country TableData={countryData} Text="Listed Countries" />
+                <Country TableData={data} Text="Listed Countries" />
               </div>
             )}
             {activeSection === "City Darshan Packages" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
                 <CityDarshanPackage
-                  TableData={cityDarshanPackage}
+                  TableData={data}
                   Text="City Darshan Packages"
                   user={user?._id}
-                  reloadDashboard={() => fetchDashboard()}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
@@ -497,19 +453,23 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup4(true)}
                 />
                 <TravelPackages
-                  TableData={packageData}
+                  TableData={data}
                   Text="Travel Packages"
                   user={user?._id}
-                  reloadDashboard={() => fetchDashboard()}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
                 />
               </div>
             )}
             {activeSection === "Promotions" && (
               <Promotions
-                TableData={promotionData}
+                TableData={data}
                 Text="Promotions"
                 user={user?._id}
-                reloadDashboard={() => fetchDashboard()}
+                reloadDashboard={() =>
+                  fetchDashboard({ query: localStorage.getItem("query") })
+                }
               />
             )}
             {activeSection === "Sub Admins" && (
@@ -519,7 +479,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup9(true)}
                 />
                 <SubAdmins
-                  TableData={subAdminData}
+                  TableData={data}
                   Text="Sub admins"
                   user={user?._id}
                 />
@@ -532,9 +492,27 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                   onClick={() => setPopup10(true)}
                 />
                 <PricingModels
-                  reloadDashboard={() => fetchDashboard()}
-                  TableData={pricingModelData}
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
+                  TableData={data}
                   Text="Pricing Models"
+                  user={user?._id}
+                />
+              </div>
+            )}
+            {activeSection === "Marketing Executive" && (
+              <div className="w-full h-full flex flex-col justify-start items-start">
+                <Button
+                  label={"Add market executive"}
+                  onClick={() => setPopup10(true)}
+                />
+                <PricingModels
+                  reloadDashboard={() =>
+                    fetchDashboard({ query: localStorage.getItem("query") })
+                  }
+                  TableData={data}
+                  Text="Marketing Executive"
                   user={user?._id}
                 />
               </div>
@@ -551,7 +529,9 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 </h1>
               }
               className={"w-full text-nowrap"}
-              onClick={() => fetchDashboard()}
+              onClick={() =>
+                fetchDashboard({ query: localStorage.getItem("query") })
+              }
             />
             <Button
               label={

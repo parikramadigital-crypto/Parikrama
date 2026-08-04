@@ -1274,14 +1274,11 @@ const Users = ({ Text = "", TableData = [] }) => {
   );
 };
 
-const Enquiry = ({
-  Text = "",
-  TableData = [],
-  TableData2 = [],
-  TableData3 = [],
-  user,
-  reloadDashboard,
-}) => {
+const Enquiry = ({ Text = "", tableData, user, reloadDashboard }) => {
+  const TableData = tableData.enquiry;
+  const TableData2 = tableData.reviewedEnquiry;
+  const TableData3 = tableData.hotEnquiry;
+
   const [search, setSearch] = useState("");
   const [request, setRequest] = useState();
   const [popup, setPopup] = useState(false);
@@ -1429,7 +1426,7 @@ const Enquiry = ({
     <div className="w-full">
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-2xl font-bold">
-          {Text} (<span className="text-sm">{filteredData.length}</span>)
+          {Text} (<span className="text-sm">{filteredData?.length}</span>)
         </h2>
 
         <div className="bg-neutral-300 px-3 py-2 flex justify-center items-center gap-2 rounded-xl">
@@ -1504,8 +1501,8 @@ const Enquiry = ({
           </thead>
 
           <tbody>
-            {filteredData.length > 0 ? (
-              filteredData.map((data) => (
+            {filteredData?.length > 0 ? (
+              filteredData?.map((data) => (
                 <tr key={data._id} className="hover:bg-gray-50 border-b">
                   <td className="px-5 py-3">
                     <button

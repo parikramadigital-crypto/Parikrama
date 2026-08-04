@@ -14,6 +14,7 @@ import { parseErrorMessage } from "../../utils/ErrorMessageParser";
 import { TbLivePhotoFilled } from "react-icons/tb";
 import logo from "../../assets/Logo1.png";
 import CityDarshanBookedCard from "../cityDarshan/cityDarshanBookedCard";
+import { FaRupeeSign } from "react-icons/fa";
 
 const UserDashboard = ({ startLoading, stopLoading }) => {
   const { user } = useSelector((state) => state.auth);
@@ -23,6 +24,7 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
   const formRef = useRef();
   const userRole = localStorage.role;
   const [model, setModel] = useState(false);
+  const [pricing, setPricing] = useState([]);
   const [rightBanner, setRightBanner] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedState, setSelectedState] = useState("");
@@ -127,6 +129,26 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
     }
   };
 
+  const getPricingPackages = async () => {
+    try {
+      startLoading();
+      const response = await FetchData(
+        `pricing-models/get/pricing-model/all/by-modelFor/${"user"}`,
+        "get",
+      );
+      console.log(response);
+      setPricing(response.data.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      stopLoading();
+    }
+  };
+
+  useEffect(() => {
+    getPricingPackages();
+  }, []);
+
   return userRole === "User" ? (
     <div className="flex flex-col gap-5">
       <h1 className="text-2xl font-semibold md:px-20 md:text-left text-center capitalize">
@@ -165,6 +187,70 @@ const UserDashboard = ({ startLoading, stopLoading }) => {
         </div>
       </div>
       <Explore userProfile={true} />
+      {/* show all the pricing packages  */}
+      {console.log(pricing)}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 place-items-center gap-2 px-5">
+        {pricing?.map((i, index) => (
+          <div className="flex flex-col border w-full items-start border-[#FFC20D] rounded-lg overflow-hidden">
+            <h1 className="bg-[#FFC20D] w-full text-center py-8 text-3xl uppercase font-semibold flex flex-col justify-center items-center ">
+              {i?.modelName}
+              <span className="font-light normal-case text-sm">
+                {i?.tagline}
+              </span>
+            </h1>
+            <div className="px-5 py-10 flex flex-col w-full gap-5 items-start">
+              <div className="text-sm flex justify-center items-end gap-2 w-full">
+                <span className="text-3xl font-semibold flex justify-center items-end gap-2 italic">
+                  <FaRupeeSign /> {i?.price?.sellingPrice}{" "}
+                  <span className="text-xs ">/ month</span>
+                </span>
+                <span className="flex justify-center items-center line-through">
+                  <FaRupeeSign />
+                  {i?.price?.mrp}
+                </span>
+                <span className="bg-[#FFC20D] px-1">
+                  {i?.price?.discount}% off
+                </span>
+              </div>
+              <div className="text-sm">
+                <h2 className="font-semibold">Plan features: </h2>
+                <div className="px-2 w-full">
+                  {i?.features?.map((i, index) => (
+                    <ul key={index}>
+                      <li>
+                        {index + 1}. {i}
+                      </li>
+                    </ul>
+                  ))}
+                </div>
+              </div>
+              <div className="text-xs">
+                <h2 className="font-semibold ">Faqs: </h2>
+                <div className="px-2 w-full">
+                  {i?.faqs?.map((i, index) => (
+                    <div key={index}>
+                      <p className="font-semibold ">
+                        {index + 1}. {i?.question} ?
+                      </p>
+                      <p>- {i?.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#FFC20D] w-full flex justify-center items-center p-2 gap-4">
+              {i?.planDuration === "Quarter"
+                ? "3 months"
+                : i?.planDuration === "Half-Year"
+                  ? "6 months"
+                  : i?.planDuration === "Per-Year"
+                    ? "12 months"
+                    : ""}
+              <Button normal={false} className={"bg-white"} label={"Get"} />
+            </div>
+          </div>
+        ))}
+      </div>
       <AnimatePresence>
         {model && (
           <motion.div
