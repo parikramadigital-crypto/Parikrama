@@ -28,7 +28,7 @@ router.route("/register/:adminId").post(registerAdmin);
 router.route("/register-sub-admin/:adminId").post(createSubAdmin);
 router.route("/login").post(loginAdmin);
 router.route("/auth/refresh-tokens").post(regenerateAdminRefreshToken);
-router.route("/dashboard/data").get(dashboardData);
+router.route("/dashboard/data/:query").get(dashboardData);
 
 router.route("/states").get(getAllStates);
 router.route("/cities").get(getAllCities);

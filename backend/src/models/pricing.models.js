@@ -9,8 +9,8 @@ const pricingSchema = new mongoose.Schema(
     },
     modelFor: {
       type: String,
-      enum: ["User", "Facilitator", "Food Place", "Hotel", "Custom"],
-      default: "Food Place",
+      enum: ["user", "facilitator", "food place", "hotel", "custom"],
+      default: "facilitator",
       required: true,
     },
     customModelFor: String,
