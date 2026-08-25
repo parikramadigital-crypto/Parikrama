@@ -25,6 +25,7 @@ import {
   CityDarshanPackage,
   CityDarshanPackageBooking,
   PricingModels,
+  SalesMarketingExecutive,
 } from "../../components/ui/TableUI";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdAdd, MdAddLocationAlt, MdOutlineRule } from "react-icons/md";
@@ -503,13 +504,13 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
                 />
               </div>
             )}
-            {activeSection === "Marketing Executive" && (
+            {activeSection === "Marketing executive" && (
               <div className="w-full h-full flex flex-col justify-start items-start">
                 <Button
                   label={"Add market executive"}
                   onClick={() => setPopup11(true)}
                 />
-                <PricingModels
+                <SalesMarketingExecutive
                   reloadDashboard={() =>
                     fetchDashboard({ query: localStorage.getItem("query") })
                   }

@@ -193,7 +193,6 @@ const PricingModelForm = ({ startLoading, stopLoading, onCancel, adminId }) => {
               Tagline
             </label>
             <textarea
-            
               required={false}
               placeholder="Write a short tagline..."
               name="tagline"
