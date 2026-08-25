@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { UploadImages, DeleteImage } from "../utils/imageKit.io.js";
 import { generateAccessAndRefreshTokens } from "../utils/TokenGenerator.js";
 import Jwt from "jsonwebtoken";
+import { sendWelcomeSMS } from "../workers/sms.workers.js";
 
 const registerCommunity = asyncHandler(async (req, res) => {
   const {
@@ -122,6 +123,9 @@ const registerCommunity = asyncHandler(async (req, res) => {
     community._id,
     "Community",
   );
+
+  // welcome message
+  await sendWelcomeSMS(contactNumber);
 
   return res.status(201).json(
     new ApiResponse(
