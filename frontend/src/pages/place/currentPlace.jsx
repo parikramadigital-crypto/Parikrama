@@ -72,14 +72,14 @@ const CurrentPlace = ({ startLoading, stopLoading }) => {
       </div>
 
       {/* Content + Sticky Circle */}
-      <div className="flex  gap-10 lg:px-20 px-5 py-20 ">
+      <div className="flex  gap-10 px-5 py-20">
         {/* LEFT CONTENT (SCROLLS) */}
         <div className="flex flex-col justify-start items-start gap-6 w-full">
           <div className="w-full overflow-x-hidden flex flex-col gap-2 justify-center items-center md:hidden">
             <h1>This is an itinerary of {data?.city?.name}</h1>
             <CityPlacesCircle
-            cityLong={data?.city?.location?.coordinates[0]}
-            cityLat={data?.city?.location?.coordinates[1]}
+              cityLong={data?.city?.location?.coordinates[0]}
+              cityLat={data?.city?.location?.coordinates[1]}
               cityName={data?.city?.name}
               places={recommendations}
             />
