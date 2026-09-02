@@ -814,16 +814,6 @@ export const ExecutiveInputs = [
     passwordTrue: true,
   },
   {
-    label: "City",
-    name: "city",
-    type: "text",
-  },
-  {
-    label: "State",
-    name: "state",
-    type: "text",
-  },
-  {
     label: "Employee Code",
     name: "city",
     type: "text",
