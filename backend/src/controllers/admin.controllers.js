@@ -20,6 +20,7 @@ import { Pricing } from "../models/pricing.models.js";
 import { Visitor } from "../models/visitor.model.js";
 import { Hotels } from "../models/hotel.models.js";
 import { Club } from "../models/club.models.js";
+import { Executive } from "../models/executive.models.js";
 // import { generateUniqueEmployeePin } from "../utils/UniquePinEmployee.js";
 
 const regenerateAdminRefreshToken = asyncHandler(async (req, res) => {
@@ -596,6 +597,13 @@ const dashboardData = asyncHandler(async (req, res) => {
         .json(
           new ApiResponse(200, cityPackageBooking, "Data fetched successfully"),
         );
+    }
+
+    case "marketingExecutive": {
+      const executive = await Executive.find();
+      return res
+        .status(200)
+        .json(new ApiResponse(200, executive, "Data fetched successfully"));
     }
     default:
       throw new ApiError(400, "Invalid session or query");
