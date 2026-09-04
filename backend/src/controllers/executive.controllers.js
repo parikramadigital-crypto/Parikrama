@@ -31,10 +31,11 @@ const createExecutive = asyncHandler(async (req, res) => {
   if (!admin) throw new ApiError(400, "Not a valid admin");
 
   let uploadedImage = null;
-
-  uploadedImage = await UploadImages(req.file.filename, {
-    folderStructure: `profileImage/executive/${sanitizeFolderName(name)}`,
-  });
+  if (req.file) {
+    uploadedImage = await UploadImages(req?.file?.filename, {
+      folderStructure: `profileImage/executive/${sanitizeFolderName(name)}`,
+    });
+  }
 
   const newExecutive = await Executive.create({
     name,
@@ -55,7 +56,9 @@ const createExecutive = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, newExecutive, "Created Successfully"));
+    .json(
+      new ApiResponse(200, { newExecutive, password }, "Created Successfully"),
+    );
 });
 
 export { createExecutive };
