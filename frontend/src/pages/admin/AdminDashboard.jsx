@@ -843,7 +843,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             initial={{ opacity: 0, x: -100 }}
             exit={{ opacity: 0, x: 100 }}
             transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
-            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+            className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <RegisterExecutive
               onClose={() => setPopup11(false)}
