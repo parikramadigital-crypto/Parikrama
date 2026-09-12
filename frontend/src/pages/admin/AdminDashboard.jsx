@@ -47,6 +47,7 @@ import AddCountry from "./AddCountry";
 import SubAdmin from "./SubAdmin.jsx";
 import PricingModelForm from "./PricingModelForm.jsx";
 import RegisterExecutive from "../sales-marketing/RegisterExecutive.jsx";
+import VisitorAnalyticsChart from "../../components/ui/VisitorAnalyticsChart.jsx";
 
 const AdminDashboard = ({ startLoading, stopLoading }) => {
   // hooks
@@ -309,24 +310,32 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
           <div className="w-full px-5 overflow-scroll bg-neutral-100 rounded-md h-[90%]">
             {activeSection === "Overview" && (
               <div className="flex gap-5">
+                {/* LEFT */}
                 <div className="flex flex-col gap-4 w-fit">
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Total Visits</h3>
-                    <p className="text-2xl font-bold">{data?.totalVisits}</p>
+                    <p className="text-2xl font-bold">
+                      {data?.totalVisits || 0}
+                    </p>
                   </div>
-
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Today's Visitors</h3>
-                    <p className="text-2xl font-bold">{data?.todayVisits}</p>
+                    <p className="text-2xl font-bold">
+                      {data?.todayVisits || 0}
+                    </p>
                   </div>
-
                   <div className="bg-white p-4 shadow rounded">
                     <h3>Unique Users</h3>
-                    <p className="text-2xl font-bold">{data?.uniqueVisitors}</p>
+                    <p className="text-2xl font-bold">
+                      {data?.uniqueVisitors || 0}
+                    </p>
                   </div>
                 </div>
-                {/* <CitiesByStateBarChart cities={cityData} /> */}
-                {/* <StatesDonutChart states={stateData} /> */}
+                {/* CENTER */}
+                <div className="flex-1 min-w-0">
+                  <VisitorAnalyticsChart analytics={data?.visitorAnalytics} />
+                </div>
+                {/* RIGHT */}
                 <CategoryPieChart places={data?.placeOverview} />
               </div>
             )}
@@ -846,6 +855,7 @@ const AdminDashboard = ({ startLoading, stopLoading }) => {
             className="fixed top-0 left-0 h-screen w-full flex justify-center items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
           >
             <RegisterExecutive
+              login={false}
               onClose={() => setPopup11(false)}
               handleReload={() =>
                 fetchDashboard({

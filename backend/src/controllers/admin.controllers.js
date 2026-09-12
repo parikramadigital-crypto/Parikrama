@@ -334,11 +334,24 @@ const dashboardData = asyncHandler(async (req, res) => {
 
   switch (query) {
     case "overview": {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const endOfToday = new Date(startOfToday);
+      endOfToday.setDate(endOfToday.getDate() + 1);
+
+      // Total visits
       const totalVisits = await Visitor.countDocuments();
-      const today = new Date().toISOString().slice(0, 10);
+
+      // Today's visits
       const todayVisits = await Visitor.countDocuments({
-        visitDate: today,
+        visitedAt: {
+          $gte: startOfToday,
+          $lt: endOfToday,
+        },
       });
+
+      // Unique users - all time
       const uniqueVisitors = await Visitor.aggregate([
         {
           $group: {
@@ -349,8 +362,57 @@ const dashboardData = asyncHandler(async (req, res) => {
           $count: "uniqueVisitors",
         },
       ]);
-      const placeOverview = await Place.find().select("name category");
 
+      // ----------------------------------
+      // TODAY'S HOURLY VISITOR ANALYTICS
+      // ----------------------------------
+
+      const hourlyVisitors = await Visitor.aggregate([
+        {
+          $match: {
+            visitedAt: {
+              $gte: startOfToday,
+              $lt: endOfToday,
+            },
+          },
+        },
+
+        {
+          $group: {
+            _id: {
+              $hour: "$visitedAt",
+            },
+            visits: {
+              $sum: 1,
+            },
+          },
+        },
+
+        {
+          $project: {
+            _id: 0,
+            hour: "$_id",
+            visits: 1,
+          },
+        },
+
+        {
+          $sort: {
+            hour: 1,
+          },
+        },
+      ]);
+
+      const visitorAnalytics = Array.from({ length: 24 }, (_, hour) => {
+        const existing = hourlyVisitors.find((item) => item.hour === hour);
+
+        return {
+          hour,
+          visits: existing?.visits || 0,
+        };
+      });
+
+      const placeOverview = await Place.find().select("name category");
       return res.status(200).json(
         new ApiResponse(
           200,
@@ -358,6 +420,7 @@ const dashboardData = asyncHandler(async (req, res) => {
             totalVisits,
             todayVisits,
             uniqueVisitors: uniqueVisitors[0]?.uniqueVisitors || 0,
+            visitorAnalytics,
             placeOverview,
           },
           "Data fetched successfully",
