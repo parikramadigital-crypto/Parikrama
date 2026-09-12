@@ -151,6 +151,7 @@ function App() {
         const endpointMap = {
           Admin: "admin/auth/refresh-tokens",
           User: "users/auth/refresh-tokens",
+          Executive: "executive/auth/refresh-tokens",
           Facilitator: "facilitator/auth/refresh-token",
           Community: "communities/community/auth/refresh-token",
         };
