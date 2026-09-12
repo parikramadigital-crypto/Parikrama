@@ -3,9 +3,7 @@ import { FetchData } from "../../utils/FetchFromApi";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
 import Button from "../../components/Button";
-
 import { MdFoodBank, MdNoFood } from "react-icons/md";
 import { ImSpoonKnife } from "react-icons/im";
 import { IoMdAdd } from "react-icons/io";
@@ -27,7 +25,8 @@ const ExecutiveDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.auth);
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
 
   const [data, setData] = useState({});
   const [showDetails, setShowDetails] = useState(true);
@@ -37,27 +36,18 @@ const ExecutiveDashboard = () => {
 
   const [copied, setCopied] = useState(false);
 
-  // ------------------------------------------------
-  // FETCH DASHBOARD
-  // ------------------------------------------------
-
   const fetchDashboard = async () => {
     try {
       setLoading(true);
       setError("");
-
-      // Change endpoint according to your backend
       const response = await FetchData(
         `executive/dashboard/${user?._id}`,
         "get",
       );
-
       console.log("Executive Dashboard:", response);
-
       setData(response?.data?.data || {});
     } catch (err) {
       console.log(err);
-
       setError(
         err?.response?.data?.message ||
           "Unable to load dashboard. Please try again.",
@@ -73,18 +63,11 @@ const ExecutiveDashboard = () => {
     }
   }, [user?._id]);
 
-  // ------------------------------------------------
-  // COPY COUPON
-  // ------------------------------------------------
-
   const handleCopyCoupon = async () => {
     if (!data?.couponCode) return;
-
     try {
       await navigator.clipboard.writeText(data.couponCode);
-
       setCopied(true);
-
       setTimeout(() => {
         setCopied(false);
       }, 2000);
@@ -93,66 +76,47 @@ const ExecutiveDashboard = () => {
     }
   };
 
-  // ------------------------------------------------
-  // LOGOUT
-  // ------------------------------------------------
-
   const handleLogout = async () => {
     try {
-      // Call logout API here if required
-
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-
-      // Dispatch your logout redux action here
-      // dispatch(logout());
-
+      localStorage.removeItem("AccessToken");
+      localStorage.removeItem("RefreshToken");
       navigate("/");
     } catch (error) {
       console.log(error);
     }
   };
 
-  // ------------------------------------------------
-  // USER DETAILS
-  // ------------------------------------------------
-
   const userData = [
     {
       label: "Name",
-      value: data?.name,
+      value: user?.name,
     },
     {
       label: "Contact",
-      value: data?.contactNumber,
+      value: user?.contactNumber,
     },
     {
       label: "Email",
-      value: data?.email,
+      value: user?.email,
     },
     {
       label: "Employee Code",
-      value: data?.employeeCode,
+      value: user?.employeeId,
     },
     {
       label: "Coupon Code",
-      value: data?.couponCode,
+      value: user?.couponCode,
     },
     {
       label: "Location",
-      value:
-        data?.city?.name || data?.state?.name
-          ? `${data?.city?.name || ""}${
-              data?.city?.name && data?.state?.name ? ", " : ""
-            }${data?.state?.name || ""}`
-          : "NA",
+      value: (
+        <span>
+          {user?.otherCity === false ? user?.city : user?.otherCityName} |{" "}
+          {user?.otherState === false ? user?.state : user?.otherStateName}
+        </span>
+      ),
     },
   ];
-
-  // ------------------------------------------------
-  // DASHBOARD STATS
-  // Adjust these according to backend response
-  // ------------------------------------------------
 
   const stats = [
     {
@@ -173,10 +137,6 @@ const ExecutiveDashboard = () => {
     },
   ];
 
-  // ------------------------------------------------
-  // LOADING
-  // ------------------------------------------------
-
   if (loading) {
     return (
       <div className="w-full min-h-[70vh] flex flex-col justify-center items-center gap-4">
@@ -187,25 +147,18 @@ const ExecutiveDashboard = () => {
     );
   }
 
-  return (
+  return user ? (
     <div className="w-full min-h-screen bg-neutral-50 px-4 md:px-8 lg:px-12 py-6">
-      {/* -------------------------------------------- */}
-      {/* HEADER */}
-      {/* -------------------------------------------- */}
-
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
         <div>
           <p className="text-sm text-neutral-500">Executive Dashboard</p>
-
           <h1 className="text-2xl md:text-3xl font-semibold">
             Welcome, {data?.name?.split(" ")[0] || "Executive"}
           </h1>
-
           <p className="text-neutral-500 mt-1">
             Manage your places and facilitators from here.
           </p>
         </div>
-
         <button
           onClick={fetchDashboard}
           className="flex items-center justify-center gap-2 border border-neutral-300 rounded-lg px-4 py-2 hover:bg-neutral-100 transition-all w-fit"
@@ -214,10 +167,6 @@ const ExecutiveDashboard = () => {
           Refresh
         </button>
       </div>
-
-      {/* -------------------------------------------- */}
-      {/* ERROR */}
-      {/* -------------------------------------------- */}
 
       {error && (
         <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex justify-between items-center">
@@ -228,11 +177,6 @@ const ExecutiveDashboard = () => {
           </button>
         </div>
       )}
-
-      {/* -------------------------------------------- */}
-      {/* STATS */}
-      {/* -------------------------------------------- */}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {stats.map((item, index) => (
           <motion.div
@@ -263,15 +207,7 @@ const ExecutiveDashboard = () => {
         ))}
       </div>
 
-      {/* -------------------------------------------- */}
-      {/* MAIN SECTION */}
-      {/* -------------------------------------------- */}
-
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* ------------------------------------------ */}
-        {/* DETAILS */}
-        {/* ------------------------------------------ */}
-
         <div className="w-full lg:w-3/4">
           <button
             onClick={() => setShowDetails((prev) => !prev)}
@@ -316,13 +252,11 @@ const ExecutiveDashboard = () => {
               >
                 <div className="bg-white border border-neutral-200 rounded-xl mt-3 p-5 md:p-7">
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-7">
-                    {/* PROFILE IMAGE */}
-
                     <div className="shrink-0">
-                      {data?.profileImage?.url ? (
+                      {user?.image?.url ? (
                         <img
-                          src={data.profileImage.url}
-                          alt={data?.name || "Executive"}
+                          src={user?.image?.url}
+                          alt={user?.name || "Executive"}
                           className="h-36 w-36 lg:h-40 lg:w-40 rounded-full object-cover bg-neutral-200"
                         />
                       ) : (
@@ -331,9 +265,6 @@ const ExecutiveDashboard = () => {
                         </div>
                       )}
                     </div>
-
-                    {/* DETAILS */}
-
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-5">
                       {userData.map((item) => (
                         <div key={item.label}>
@@ -348,13 +279,9 @@ const ExecutiveDashboard = () => {
                       ))}
                     </div>
                   </div>
-
-                  {/* LOCATION */}
-
                   {(data?.city?.name || data?.state?.name) && (
                     <div className="mt-7 pt-5 border-t border-neutral-200 flex items-center gap-2 text-neutral-600">
                       <IoLocationOutline />
-
                       <span>
                         {data?.city?.name}
                         {data?.city?.name && data?.state?.name && ", "}
@@ -362,8 +289,6 @@ const ExecutiveDashboard = () => {
                       </span>
                     </div>
                   )}
-
-                  {/* LOGOUT */}
 
                   <div className="mt-7 pt-5 border-t border-neutral-200">
                     <Button
@@ -382,18 +307,12 @@ const ExecutiveDashboard = () => {
           </AnimatePresence>
         </div>
 
-        {/* ------------------------------------------ */}
-        {/* QUICK ACTIONS */}
-        {/* ------------------------------------------ */}
-
         <div className="w-full lg:w-1/4">
           <div className="bg-white border border-neutral-200 rounded-xl p-5">
             <h2 className="font-semibold text-lg">Quick Actions</h2>
-
             <p className="text-sm text-neutral-500 mt-1 mb-5">
               Common executive actions
             </p>
-
             <div className="flex flex-col gap-3">
               <Button
                 onClick={() => navigate("/executive/food-place/add")}
@@ -405,7 +324,6 @@ const ExecutiveDashboard = () => {
                 }
                 className="w-full"
               />
-
               <Button
                 onClick={() => navigate("/executive/facilitator/add")}
                 label={
@@ -416,7 +334,6 @@ const ExecutiveDashboard = () => {
                 }
                 className="w-full"
               />
-
               <Button
                 onClick={handleCopyCoupon}
                 disabled={!data?.couponCode}
@@ -439,15 +356,11 @@ const ExecutiveDashboard = () => {
               />
             </div>
 
-            {/* COUPON DISPLAY */}
-
             {data?.couponCode && (
               <div className="mt-5 bg-neutral-100 rounded-lg p-4">
                 <p className="text-xs text-neutral-500">Your coupon code</p>
-
                 <div className="flex justify-between items-center mt-1">
                   <strong className="tracking-wider">{data.couponCode}</strong>
-
                   <button
                     onClick={handleCopyCoupon}
                     className="p-2 hover:bg-neutral-200 rounded-lg transition-all"
@@ -461,18 +374,12 @@ const ExecutiveDashboard = () => {
         </div>
       </div>
 
-      {/* -------------------------------------------- */}
-      {/* FOOD PLACES */}
-      {/* -------------------------------------------- */}
-
       <div className="mt-8 bg-white border border-neutral-200 rounded-xl p-5 md:p-7">
         <div className="flex justify-between items-center mb-5">
           <div>
             <h2 className="text-xl font-semibold">Food Places</h2>
-
             <p className="text-sm text-neutral-500">Places added by you</p>
           </div>
-
           <Button
             onClick={() => navigate("/executive/food-place/add")}
             normal={false}
@@ -484,7 +391,6 @@ const ExecutiveDashboard = () => {
             }
           />
         </div>
-
         {data?.foodPlaces?.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.foodPlaces.map((place) => (
@@ -530,16 +436,10 @@ const ExecutiveDashboard = () => {
           </div>
         )}
       </div>
-
-      {/* -------------------------------------------- */}
-      {/* FACILITATORS */}
-      {/* -------------------------------------------- */}
-
       <div className="mt-6 bg-white border border-neutral-200 rounded-xl p-5 md:p-7">
         <div className="flex justify-between items-center mb-5">
           <div>
             <h2 className="text-xl font-semibold">Facilitators</h2>
-
             <p className="text-sm text-neutral-500">
               Facilitators added by you
             </p>
@@ -567,14 +467,12 @@ const ExecutiveDashboard = () => {
                   <div className="w-11 h-11 rounded-full bg-neutral-100 flex justify-center items-center">
                     <FaUserTie />
                   </div>
-
                   <div>
                     <h3 className="font-semibold">
                       {facilitator?.name ||
                         facilitator?.businessName ||
                         "Facilitator"}
                     </h3>
-
                     <p className="text-sm text-neutral-500">
                       {facilitator?.city?.name || data?.city?.name}
                     </p>
@@ -586,13 +484,10 @@ const ExecutiveDashboard = () => {
         ) : (
           <div className="py-12 flex flex-col justify-center items-center text-center">
             <FaUsers className="text-5xl text-neutral-300" />
-
             <h3 className="font-semibold mt-4">No facilitators added yet</h3>
-
             <p className="text-neutral-500 text-sm mt-1">
               Facilitators added by you will appear here.
             </p>
-
             <button
               onClick={() => navigate("/executive/facilitator/add")}
               className="mt-4 flex items-center gap-2 font-medium"
@@ -603,6 +498,13 @@ const ExecutiveDashboard = () => {
           </div>
         )}
       </div>
+    </div>
+  ) : (
+    <div className="flex justify-center items-center w-full">
+      <h2 className="text-2xl font-bold text-center">
+        <p className="text-5xl ">⚠️</p>
+        Restricted Access !! Please log in to view the dashboard.
+      </h2>
     </div>
   );
 };
