@@ -11,7 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { TbLivePhotoFilled } from "react-icons/tb";
 import logo from "../../assets/Logo1.png";
 import FloatNavBar from "../../components/ui/FloatNavBar";
-import { FaAngleDoubleDown, FaAngleDoubleRight } from "react-icons/fa";
+import {
+  FaAngleDoubleDown,
+  FaAngleDoubleRight,
+  FaWhatsapp,
+} from "react-icons/fa";
 
 const Hero = ({ stopLoading, startLoading }) => {
   const [data, setData] = useState([]);
@@ -217,7 +221,14 @@ const Hero = ({ stopLoading, startLoading }) => {
         </div>
       </div>
 
-      <div className="sticky md:fixed md:bottom-10 md:right-10 right-5 bottom-5 md:w-fit w-full flex justify-end items-end px-10">
+      <div className="sticky md:fixed md:bottom-10 md:right-10 right-5 bottom-5 md:w-fit w-full flex flex-col justify-end items-end px-10 gap-5">
+        <a
+          href="https://wa.me/919599350524"
+          target="_blank"
+          className="flex justify-center items-center flex-col gap-2 bg-[#FFC20E] md:bg-neutral-200 rounded-full py-3 px-3 shadow-black shadow-2xl cursor-pointer hover:scale-105 duration-300 ease-in-out"
+        >
+          <FaWhatsapp className="text-green-700 text-3xl" />
+        </a>
         <button
           onClick={() => navigate("/live-telecasts")}
           className="flex justify-center items-center flex-col gap-2 bg-[#FFC20E] md:bg-neutral-200 rounded-full md:rounded-md md:py-3 py-5 px-3 shadow-black shadow-2xl cursor-pointer hover:scale-105 duration-300 ease-in-out"
