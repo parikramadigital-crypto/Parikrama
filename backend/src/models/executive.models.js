@@ -18,6 +18,8 @@ const executiveSchema = new mongoose.Schema(
     otherStateName: String,
     state: { type: mongoose.Schema.Types.ObjectId, ref: "State" },
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
+    foodPlace: [{ type: mongoose.Schema.Types.ObjectId, ref: "FoodCourt" }],
+    facilitator: [{ type: mongoose.Schema.Types.ObjectId, ref: "Facilitator" }],
   },
   { timestamps: true },
 );
