@@ -89,6 +89,8 @@ const facilitatorSchema = new mongoose.Schema(
       // required: true,
     },
 
+    executive: { type: mongoose.Schema.Types.ObjectId, ref: "Executive" },
+
     /* ================= IMAGES ================= */
     images: [
       {

@@ -28,6 +28,7 @@ const foodCourtSchema = new mongoose.Schema(
       required: true,
     },
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
+    executive: { type: mongoose.Schema.Types.ObjectId, ref: "Executive" },
     storeImages: [{ url: String, fileId: String }],
     foodImages: [{ url: String, fileId: String }],
     menuImages: [{ url: String, fileId: String }],
