@@ -2183,18 +2183,18 @@ const SalesMarketingExecutive = ({
     );
   }, [search, TableData]);
 
-  const deletePackage = async ({ packageId }) => {
-    if (!window.confirm("Are you sure you want to delete this package?"))
+  const deleteExecutive = async ({ executiveId }) => {
+    if (!window.confirm("Are you sure you want to delete this Executive?"))
       return;
 
-    // try {
-    //   const response = await FetchData(
-    //     `packages/delete-package/${user}/${packageId}`,
-    //     "delete",
-    //   );
-    //   alert(response.data.message);
-    //   reloadDashboard();
-    // } catch (err) {}
+    try {
+      const response = await FetchData(
+        `executive/delete-executive/${user}/${executiveId}`,
+        "delete",
+      );
+      alert(response.data.message);
+      reloadDashboard();
+    } catch (err) {}
   };
 
   return (
@@ -2236,6 +2236,13 @@ const SalesMarketingExecutive = ({
                   <td className="px-5 py-3">
                     <button onClick={() => navigate(`/${data?._id}`)}>
                       View
+                    </button>
+                    <button
+                      onClick={() =>
+                        deleteExecutive({ executiveId: data?._id })
+                      }
+                    >
+                      Delete
                     </button>
                   </td>
                 </tr>

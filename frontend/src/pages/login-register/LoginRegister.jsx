@@ -3,12 +3,13 @@ import { FaChevronRight } from "react-icons/fa6";
 import UserRegisterLogin from "../user/RegisterLogin";
 import FacilitatorAuth from "../facilitator/FacilitatorAuth";
 import CommunityRegForm from "../community/communityRegForm";
+import RegisterExecutive from "../sales-marketing/RegisterExecutive";
 
 const LoginRegister = () => {
   const [activeState, setActiveState] = useState(
     () => localStorage.getItem("activeState") || "User",
   );
-  const sections = ["User", "Facilitator", "Community"];
+  const sections = ["User", "Facilitator", "Community", "Executive"];
   return (
     <div className="flex flex-col justify-center items-center gap- py-10">
       <div className="flex justify-center items-center w-fit">
@@ -38,6 +39,7 @@ const LoginRegister = () => {
         {activeState === "User" && <UserRegisterLogin />}
         {activeState === "Facilitator" && <FacilitatorAuth />}
         {activeState === "Community" && <CommunityRegForm />}
+        {activeState === "Executive" && <RegisterExecutive />}
       </div>
     </div>
   );
