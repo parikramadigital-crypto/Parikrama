@@ -160,9 +160,10 @@ const createFoodCourtExecutive = asyncHandler(async (req, res) => {
     city,
     state,
     establishment,
+    markAsVerified,
   } = req.body;
   const { executiveId } = req.params;
-
+  console.log("markAsVerified", markAsVerified);
   const executive = await Executive.findById(executiveId);
   if (!executive) return new ApiError(400, "Invalid request from executive");
 
@@ -271,8 +272,11 @@ const createFoodCourtExecutive = asyncHandler(async (req, res) => {
     menuImages: menuImages,
     establishment,
     active: true,
-    verified: true,
+    verified: markAsVerified === "on" ? true : false,
   });
+
+  executive.foodPlace.push(newFoodCourt);
+  await executive.save();
 
   res
     .status(201)
@@ -282,7 +286,12 @@ const createFoodCourtExecutive = asyncHandler(async (req, res) => {
 });
 
 const createFacilitatorExecutive = asyncHandler(async (req, res) => {
-  const { name, phone, password, role, email, otherRole, city } = req.body;
+  const { name, phone, password, role, otherRole, city, state } = req.body;
+  const { executiveId } = req.params;
+
+  const executive = await Executive.findById(executiveId);
+  if (!executive) return new ApiError(400, "Invalid request from executive");
+
   if (!name || !phone || !password) {
     throw new ApiError(400, "Required fields missing");
   }
@@ -290,7 +299,7 @@ const createFacilitatorExecutive = asyncHandler(async (req, res) => {
   const existing = await Facilitator.findOne({ phone: phone });
 
   if (existing) {
-    throw new ApiError(409, "You are already registered, kindly login !");
+    throw new ApiError(409, "This facilitator is already registered");
   }
   // Must be at least 8 characters, contain 1 uppercase, 1 lowercase, 1 digit, and 1 special character
   if (
@@ -301,28 +310,55 @@ const createFacilitatorExecutive = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid password");
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const sanitize = (str = "") =>
+    str
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9-_]/g, "")
+      .replace(/\s+/g, "-");
+
+  const safeName = sanitize(name);
+  const safePhone = sanitize(phone);
+
+  let profileImages = [];
+  if (req.files?.profileImage?.length) {
+    const img = req.files.profileImage[0];
+    const uploaded = await UploadImages(img.filename, {
+      folderStructure: `facilitators/${safeName}-${safePhone}/profile`,
+    });
+
+    profileImages.push({
+      url: uploaded.url,
+      fileId: uploaded.fileId,
+    });
+  }
+
   const facilitator = await Facilitator.create({
     name,
-    email,
     phone,
     password,
     role,
     otherRole,
+    images: profileImages,
     city,
-    otp,
+    state,
   });
-  await sendOtpSMS(phone, otp);
-  await sendFacilitatorRegistrationSMS(phone);
+  // await sendOtpSMS(phone, otp);
+  // await sendFacilitatorRegistrationSMS(phone);
 
-  res.status(201).json(
-    new ApiResponse(
-      201,
-      // { otp },
-      { facilitator, otp },
-      "Registration complete ! Now please enter OTP to complete the verificaiton.",
-    ),
-  );
+  executive.facilitator.push(facilitator);
+  await executive.save();
+
+  res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        facilitator,
+        "Registration complete ! Now please enter OTP to complete the verificaiton.",
+      ),
+    );
 });
 
 const dashboardData = asyncHandler(async (req, res) => {
