@@ -561,6 +561,13 @@ export const foodKiosksFormInputs = [
     type: "text",
   },
   {
+    label: "Establishment",
+    placeHolder: "Place establishment year",
+    name: "establishment",
+    type: "text",
+    required: false,
+  },
+  {
     label: "Longitude",
     placeHolder: "Longitude of the place",
     name: "lng",
@@ -575,13 +582,6 @@ export const foodKiosksFormInputs = [
     type: "text",
     required: false,
     classname: "hidden",
-  },
-  {
-    label: "Establishment",
-    placeHolder: "Place establishment year",
-    name: "establishment",
-    type: "text",
-    required: false,
   },
 ];
 
