@@ -20,8 +20,11 @@ import {
   FaUtensils,
 } from "react-icons/fa";
 import { FiRefreshCw } from "react-icons/fi";
+import LoadingUI from "../../components/LoadingUI";
+import AddFoodPlaceByExecutive from "./AddFoodPlaceForm";
+import AddFacilitatorByExecutive from "./AddFacilitatorForm";
 
-const ExecutiveDashboard = () => {
+const ExecutiveDashboard = ({ startLoading, stopLoading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -34,10 +37,14 @@ const ExecutiveDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [addFood, setAddFood] = useState(false);
+  const [addFacilitator, setAddFacilitator] = useState(false);
+
   const [copied, setCopied] = useState(false);
 
   const fetchDashboard = async () => {
     try {
+      startLoading();
       setLoading(true);
       setError("");
       const response = await FetchData(
@@ -54,6 +61,7 @@ const ExecutiveDashboard = () => {
       );
     } finally {
       setLoading(false);
+      stopLoading();
     }
   };
 
@@ -118,21 +126,22 @@ const ExecutiveDashboard = () => {
     },
   ];
 
+  console.log(data);
+
   const stats = [
     {
       title: "Food Places",
-      value: data?.foodPlaces?.length || 0,
+      value: data?.foodPlace?.length || 0,
       icon: <FaUtensils className="text-[#FFC20D]" />,
     },
     {
       title: "Facilitators",
-      value: data?.facilitators?.length || 0,
+      value: data?.facilitator?.length || 0,
       icon: <FaUsers className="text-[#FFC20D]" />,
     },
     {
       title: "Total Added",
-      value:
-        (data?.foodPlaces?.length || 0) + (data?.facilitators?.length || 0),
+      value: (data?.foodPlace?.length || 0) + (data?.facilitator?.length || 0),
       icon: <IoMdAdd className="text-[#FFC20D]" />,
     },
   ];
@@ -159,13 +168,15 @@ const ExecutiveDashboard = () => {
             Manage your places and facilitators from here.
           </p>
         </div>
-        <button
+        <Button
           onClick={fetchDashboard}
-          className="flex items-center justify-center gap-2 border border-neutral-300 rounded-lg px-4 py-2 hover:bg-neutral-100 transition-all w-fit"
-        >
-          <FiRefreshCw />
-          Refresh
-        </button>
+          label={
+            <h1 className="flex justify-center items-center gap-3">
+              <FiRefreshCw />
+              Refresh
+            </h1>
+          }
+        />
       </div>
 
       {error && (
@@ -315,7 +326,7 @@ const ExecutiveDashboard = () => {
             </p>
             <div className="flex flex-col gap-3">
               <Button
-                onClick={() => navigate("/executive/food-place/add")}
+                onClick={() => setAddFood(true)}
                 label={
                   <span className="flex justify-center items-center gap-2">
                     <ImSpoonKnife />
@@ -325,7 +336,7 @@ const ExecutiveDashboard = () => {
                 className="w-full"
               />
               <Button
-                onClick={() => navigate("/executive/facilitator/add")}
+                onClick={() => setAddFacilitator(true)}
                 label={
                   <span className="flex justify-center items-center gap-2">
                     <IoMdAdd />
@@ -381,7 +392,7 @@ const ExecutiveDashboard = () => {
             <p className="text-sm text-neutral-500">Places added by you</p>
           </div>
           <Button
-            onClick={() => navigate("/executive/food-place/add")}
+            onClick={() => setAddFood(true)}
             normal={false}
             label={
               <h1 className="flex items-center gap-2 text-sm font-medium">
@@ -391,12 +402,13 @@ const ExecutiveDashboard = () => {
             }
           />
         </div>
-        {data?.foodPlaces?.length > 0 ? (
+        {data?.foodPlace?.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.foodPlaces.map((place) => (
-              <div
+            {data?.foodPlace?.map((place) => (
+              <button
+                onClick={() => navigate(`/current/food-court/${place?._id}`)}
                 key={place._id}
-                className="border border-neutral-200 rounded-xl p-4"
+                className="border border-neutral-200 rounded-xl p-4 cursor-pointer hover:border-neutral-300 duration-300 ease-in-out"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full bg-neutral-100 flex justify-center items-center">
@@ -408,12 +420,12 @@ const ExecutiveDashboard = () => {
                       {place?.name || "Food Place"}
                     </h3>
 
-                    <p className="text-sm text-neutral-500">
+                    {/* <p className="text-sm text-neutral-500">
                       {place?.city?.name || data?.city?.name}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         ) : (
@@ -427,7 +439,7 @@ const ExecutiveDashboard = () => {
             </p>
 
             <button
-              onClick={() => navigate("/executive/food-place/add")}
+              onClick={() => setAddFood(true)}
               className="mt-4 flex items-center gap-2 font-medium"
             >
               <IoMdAdd />
@@ -445,7 +457,7 @@ const ExecutiveDashboard = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate("/executive/facilitator/add")}
+            onClick={() => setAddFacilitator(true)}
             normal={false}
             label={
               <h1 className="flex items-center gap-2 text-sm font-medium">
@@ -456,9 +468,9 @@ const ExecutiveDashboard = () => {
           />
         </div>
 
-        {data?.facilitators?.length > 0 ? (
+        {data?.facilitator?.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.facilitators.map((facilitator) => (
+            {data?.facilitator?.map((facilitator) => (
               <div
                 key={facilitator._id}
                 className="border border-neutral-200 rounded-xl p-4"
@@ -468,14 +480,10 @@ const ExecutiveDashboard = () => {
                     <FaUserTie />
                   </div>
                   <div>
-                    <h3 className="font-semibold">
-                      {facilitator?.name ||
-                        facilitator?.businessName ||
-                        "Facilitator"}
-                    </h3>
-                    <p className="text-sm text-neutral-500">
+                    <h3 className="font-semibold">{facilitator?.name}</h3>
+                    {/* <p className="text-sm text-neutral-500">
                       {facilitator?.city?.name || data?.city?.name}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>
@@ -489,7 +497,7 @@ const ExecutiveDashboard = () => {
               Facilitators added by you will appear here.
             </p>
             <button
-              onClick={() => navigate("/executive/facilitator/add")}
+              onClick={() => setAddFacilitator(true)}
               className="mt-4 flex items-center gap-2 font-medium"
             >
               <IoMdAdd />
@@ -498,6 +506,37 @@ const ExecutiveDashboard = () => {
           </div>
         )}
       </div>
+      {/* popups are below  */}
+      <AnimatePresence>
+        {addFood && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <AddFoodPlaceByExecutive
+              onClose={() => setAddFood(false)}
+              executiveId={user?._id}
+            />
+          </motion.div>
+        )}
+        {addFacilitator && (
+          <motion.div
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ type: "spring", duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-0 left-0 h-screen w-full flex justify-start items-center flex-col z-50 bg-black/90 overflow-scroll no-scrollbar"
+          >
+            <AddFacilitatorByExecutive
+              onClose={() => setAddFacilitator(false)}
+              executiveId={user?._id}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   ) : (
     <div className="flex justify-center items-center w-full">
@@ -509,4 +548,4 @@ const ExecutiveDashboard = () => {
   );
 };
 
-export default ExecutiveDashboard;
+export default LoadingUI(ExecutiveDashboard);
