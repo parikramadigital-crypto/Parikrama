@@ -30,7 +30,10 @@ router.route("/create/new/executive/verified/food-court/:executiveId").post(
 
 router
   .route("/create/new/facilitator/verified/facilitator/:executiveId")
-  .post(upload.single("image"), createFacilitatorExecutive);
+  .post(
+    upload.fields([{ name: "profileImage", maxCount: 1 }]),
+    createFacilitatorExecutive,
+  );
 
 router.route("/delete-executive/:adminId/:executiveId").delete(deleteExecutive);
 
