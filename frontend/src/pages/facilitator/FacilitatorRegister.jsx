@@ -292,7 +292,7 @@ const FacilitatorRegister = ({
   };
 
   return (
-    <div className="flex justify-start items-start md:w-[90vw]">
+    <div className="flex justify-start items-start ">
       <form
         ref={formRef}
         onSubmit={
