@@ -55,7 +55,6 @@ const CommunityRegForm = ({
       const response = await FetchData("promotions/get/all/promotions", "get");
       setRightBanner(response.data.data.promotionsMid);
     } catch (err) {
-
     } finally {
       stopLoading();
     }
@@ -93,7 +92,6 @@ const CommunityRegForm = ({
       formRef.current.reset();
       navigate("/login/community");
     } catch (err) {
-
       alert(parseErrorMessage(err.response.data));
       // formRef.current.reset();
       // setProfilePreview([]);
@@ -140,9 +138,7 @@ const CommunityRegForm = ({
       );
 
       alert(response.data.message);
-    } catch (err) {
-
-    }
+    } catch (err) {}
   };
 
   return (
@@ -169,7 +165,7 @@ const CommunityRegForm = ({
           {updateProfile === true ? (
             ""
           ) : (
-            <div className="flex justify-center items-center gap-5 ">
+            <div className="flex justify-center items-center gap-5 flex-col">
               <div className="flex justify-center items-center lg:hidden gap-5">
                 <h1>Already registered ?</h1>
                 <Button

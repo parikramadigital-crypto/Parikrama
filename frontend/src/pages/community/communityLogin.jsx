@@ -42,7 +42,7 @@ const CommunityLogin = () => {
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
-      <h1>This is community login</h1>
+      <h1 className="font-semibold text-xl">This is community login</h1>
       <form
         ref={formRef}
         onSubmit={handleLogin}
