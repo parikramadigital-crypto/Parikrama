@@ -244,7 +244,7 @@ const RegisterExecutive = ({
         className="flex flex-col justify-center items-center gap-5 w-full"
       >
         {login === true ? (
-          <div className="w-full">
+          <div className="w-1/2">
             <InputBox
               LabelName="Email"
               Name="email"
