@@ -7,6 +7,8 @@ import {
   deleteExecutive,
   loginExecutive,
   regenerateExecutiveRefreshToken,
+  getExecutiveByID,
+  executiveActivity,
 } from "../controllers/executive.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
@@ -17,7 +19,9 @@ router
   .post(upload.single("image"), createExecutive);
 router.route("/login/executive").post(loginExecutive);
 router.route("/auth/refresh-tokens").post(regenerateExecutiveRefreshToken);
+router.route("/current/:action/executive/:executiveId").post(executiveActivity);
 router.route("/dashboard/:executiveId").get(dashboardData);
+router.route("/current/executive/by-id/:executiveId").get(getExecutiveByID);
 
 router.route("/create/new/executive/verified/food-court/:executiveId").post(
   upload.fields([

@@ -383,6 +383,50 @@ const dashboardData = asyncHandler(async (req, res) => {
     );
 });
 
+const getExecutiveByID = asyncHandler(async (req, res) => {
+  const { executiveId } = req.params;
+  if (!executiveId) throw new ApiError(400, "Invalid request");
+
+  const executive = await Executive.findById(executiveId)
+    .select("-password")
+    .populate({ path: "city", select: "name" })
+    .populate({ path: "state", select: "name" })
+    .populate({ path: "admin", select: "name" })
+    .populate({ path: "foodPlace", select: "name" })
+    .populate({ path: "facilitator", select: "name" });
+  if (!executive) throw new ApiError(400, "Executive not found");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, executive, "Data fetched successfully !"));
+});
+
+const executiveActivity = asyncHandler(async (req, res) => {
+  const { executiveId, action } = req.params;
+  console.log("executiveId", executiveId, " action", action);
+  if (!executiveId || !action)
+    throw new ApiError(400, "Something went wrong, please try again later !");
+
+  const executive = await Executive.findByIdAndUpdate(executiveId, {
+    isActive: action === "inactive" ? false : action === "active" ? true : true,
+  });
+  if (!executive) throw new ApiError(400, "Something went wrong");
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        executive,
+        action === "inactive"
+          ? "Marked as inactive"
+          : action === "active"
+            ? "Marked as active"
+            : "",
+      ),
+    );
+});
+
 export {
   createExecutive,
   loginExecutive,
@@ -390,5 +434,7 @@ export {
   deleteExecutive,
   createFacilitatorExecutive,
   createFoodCourtExecutive,
+  getExecutiveByID,
+  executiveActivity,
   dashboardData,
 };
