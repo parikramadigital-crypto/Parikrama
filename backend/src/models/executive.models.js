@@ -20,6 +20,7 @@ const executiveSchema = new mongoose.Schema(
     admin: { type: mongoose.Schema.Types.ObjectId, ref: "Admin" },
     foodPlace: [{ type: mongoose.Schema.Types.ObjectId, ref: "FoodCourt" }],
     facilitator: [{ type: mongoose.Schema.Types.ObjectId, ref: "Facilitator" }],
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true },
 );
