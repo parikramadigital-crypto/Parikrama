@@ -114,6 +114,9 @@ const ExecutiveDashboard = lazy(
 const RegisterExecutive = lazy(
   () => import("./pages/sales-marketing/RegisterExecutive"),
 );
+const CurrentExecutive = lazy(
+  () => import("./pages/sales-marketing/CurrentExecutive"),
+);
 /* ================= LOADING SCREEN ================= */
 
 const PageLoader = () => {
@@ -317,6 +320,10 @@ function App() {
               element={<ExecutiveDashboard />}
             />
             <Route path="/executive/form" element={<RegisterExecutive />} />
+            <Route
+              path="/current/executive/:executiveId"
+              element={<CurrentExecutive />}
+            />
             {/* ================= FALLBACK ================= */}
             {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
