@@ -2164,7 +2164,7 @@ const SalesMarketingExecutive = ({
 }) => {
   console.log(TableData);
   const [search, setSearch] = useState("");
-
+  const navigate = useNavigate();
   const TableHeaders = ["Name", "Employee Code", "Contact Number", "Actions"];
 
   const filteredData = useMemo(() => {
@@ -2233,11 +2233,17 @@ const SalesMarketingExecutive = ({
                   <td className="px-5 py-3">{data?.name || "na"}</td>
                   <td className="px-5 py-3">{data?.employeeId || "na"}</td>
                   <td className="px-5 py-3">{data?.contactNumber || "na"}</td>
-                  <td className="px-5 py-3">
-                    <button onClick={() => navigate(`/${data?._id}`)}>
+                  <td className="px-5 py-3 flex justify-start items-start gap-4">
+                    <button
+                      className="text-blue-600 hover:underline cursor-pointer"
+                      onClick={() =>
+                        navigate(`/current/executive/${data?._id}`)
+                      }
+                    >
                       View
                     </button>
                     <button
+                      className="text-red-600 hover:underline cursor-pointer"
                       onClick={() =>
                         deleteExecutive({ executiveId: data?._id })
                       }
