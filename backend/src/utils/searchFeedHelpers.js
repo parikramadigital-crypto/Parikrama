@@ -1,4 +1,6 @@
 import { Place } from "../models/place.models.js";
+import { State } from "../models/state.models.js";
+import { Country } from "../models/country.models.js";
 
 export async function getDirectMatches(query) {
   return await Place.find(
@@ -20,6 +22,14 @@ export async function getFuzzyMatches(query, excludeIds) {
   const terms = query.split(" ").filter((t) => t.length > 1);
 
   const regex = terms.map((t) => new RegExp(t, "i"));
+  const matchingCountries = await Country.find({
+    $or: regex.map((term) => ({ name: term })),
+  }).select("_id");
+  const matchingStates = matchingCountries.length
+    ? await State.find({
+        country: { $in: matchingCountries.map((country) => country._id) },
+      }).select("_id")
+    : [];
 
   return await Place.find({
     _id: { $nin: excludeIds },
@@ -28,6 +38,9 @@ export async function getFuzzyMatches(query, excludeIds) {
       { name: { $in: regex } },
       { cityName: { $in: regex } },
       { stateName: { $in: regex } },
+      ...(matchingStates.length
+        ? [{ state: { $in: matchingStates.map((state) => state._id) } }]
+        : []),
       { description: { $in: regex } },
       { category: { $in: regex } },
       { tags: { $in: terms } },
