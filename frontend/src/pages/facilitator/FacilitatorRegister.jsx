@@ -137,8 +137,7 @@ const FacilitatorRegister = ({
         if (step === "VERIFY" && facilitator?._id) {
           await handleCancelRegistration();
         }
-      } catch (error) {
-      }
+      } catch (error) {}
 
       window.removeEventListener("popstate", handleBackButton);
       window.history.back();
@@ -201,7 +200,10 @@ const FacilitatorRegister = ({
     if (completeProfile === true) {
       const getPlaces = async () => {
         try {
-          const response = await FetchData(`places/city/by-id/${CityID}`, "get");
+          const response = await FetchData(
+            `places/city/by-id/${CityID}`,
+            "get",
+          );
           setFilteredPlaces(response.data.data || []);
         } catch (err) {
           // console.log(err);
@@ -393,18 +395,15 @@ const FacilitatorRegister = ({
                     >
                       <option value="">Select your role</option>
                       {[
-                        "Travel Guide",
-                        "Photographer",
-                        "Spiritual Guide",
-                        "Temple Guide",
-                        "Tour Guide",
-                        "Activity Instructor",
-                        "Driver",
-                        "Boat Captain",
+                        "Tour and travel guide",
+                        "Photographer ",
+                        "Spiritual guide",
+                        "Activity instructions ",
+                        "Cab service",
+                        "Boat captain ",
                         "Porter",
-                        "Translator",
-                        "Geat Outfitter",
-                        "Itinerary Planner",
+                        "Language Translator",
+                        "Itinerary planner",
                         "Agency Representative",
                         "Others",
                       ].map((c) => (
